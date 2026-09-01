@@ -2,32 +2,129 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
-}
-
-@media (prefers-color-scheme: dark) {
+@layer base {
   :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
+    color-scheme: light;
+
+    /* Surfaces */
+    --color-bg: #fbf7f0;
+    --color-surface: #fffcf6;
+    --color-sunken: #f3eadb;
+
+    /* Borders */
+    --color-border: #e7dbc9;
+    --color-border-strong: #d6c4ac;
+
+    /* Ink */
+    --color-ink: #2a1d14;
+    --color-ink-muted: #594636;
+    --color-ink-subtle: #8a7563;
+
+    /* Brand */
+    --color-gold: #b07c35;
+    --color-gold-hover: #96682a;
+    --color-gold-ink: #fff9ee;
+    --color-gold-soft: #f6e8cf;
+
+    /* Accents */
+    --color-leaf: #5b7a4e;
+    --color-clay: #a6462c;
+
+    --color-overlay: rgba(42, 29, 20, 0.42);
+
+    /* Admin */
+    --color-admin-bg: #f4efe6;
+    --color-admin-panel: #fffdf8;
+    --color-admin-row: #faf5ec;
+
+    /* Radii (theme-invariant) */
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 18px;
+    --radius-xl: 28px;
+    --radius-2xl: 40px;
+    --radius-pill: 999px;
+
+    /* Shadows */
+    --shadow-xs: 0 1px 2px rgba(42, 29, 20, 0.06);
+    --shadow-sm: 0 2px 6px rgba(42, 29, 20, 0.07);
+    --shadow-md: 0 8px 20px -6px rgba(42, 29, 20, 0.14);
+    --shadow-lg: 0 20px 44px -14px rgba(42, 29, 20, 0.22);
+    --shadow-xl: 0 36px 76px -24px rgba(42, 29, 20, 0.3);
+
+    /* --font-display / --font-sans / --font-mono are intentionally NOT
+       declared here — next/font/google owns them via the generated
+       classNames on <html> in layout.tsx, which carry metric-adjusted
+       fallback stacks. Redeclaring them here would risk overriding that. */
   }
-}
 
-body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
-}
+  /* Deliberately `.dark` (not [data-theme="dark"], which the design
+     source uses) — matches this project's documented dark-mode
+     convention (inline pre-paint bootstrap script toggling a class on
+     <html>) and Tailwind's `darkMode: 'class'`. */
+  .dark {
+    color-scheme: dark;
 
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
+    --color-bg: #161210;
+    --color-surface: #201a16;
+    --color-sunken: #2a221c;
+
+    --color-border: #382d25;
+    --color-border-strong: #4c3d31;
+
+    --color-ink: #f4ece1;
+    --color-ink-muted: #d3c3b2;
+    --color-ink-subtle: #a08d7b;
+
+    --color-gold: #dda857;
+    --color-gold-hover: #ebbb6e;
+    --color-gold-ink: #241804;
+    --color-gold-soft: #36281a;
+
+    --color-leaf: #8fae7f;
+    --color-clay: #d9765a;
+
+    --color-overlay: rgba(8, 5, 3, 0.62);
+
+    --color-admin-bg: #131010;
+    --color-admin-panel: #1d1815;
+    --color-admin-row: #241e19;
+
+    --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.35);
+    --shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.4);
+    --shadow-md: 0 8px 20px -6px rgba(0, 0, 0, 0.5);
+    --shadow-lg: 0 20px 44px -14px rgba(0, 0, 0, 0.6);
+    --shadow-xl: 0 36px 76px -24px rgba(0, 0, 0, 0.7);
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    @apply bg-bg text-ink font-sans antialiased;
+    font-size: 16px;
+    line-height: 1.55;
+  }
+
+  ::selection {
+    background: var(--color-gold-soft);
+    color: var(--color-ink);
+  }
+
+  /* Not present in the design source — added here since it's a real gap
+     (no explicit focus ring defined) rather than a port. */
+  :focus-visible {
+    outline: 2px solid var(--color-gold);
+    outline-offset: 2px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+    }
   }
 }
