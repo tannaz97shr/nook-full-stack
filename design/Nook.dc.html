@@ -1,0 +1,1912 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" />
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300..700;1,6..72,300..600&family=Karla:ital,wght@0,300..700;1,400..600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+:root{
+  --color-bg:#FBF7F0; --color-surface:#FFFCF6; --color-sunken:#F3EADB;
+  --color-border:#E7DBC9; --color-border-strong:#D6C4AC;
+  --color-ink:#2A1D14; --color-ink-muted:#594636; --color-ink-subtle:#8A7563;
+  --color-gold:#B07C35; --color-gold-hover:#96682A; --color-gold-ink:#FFF9EE; --color-gold-soft:#F6E8CF;
+  --color-leaf:#5B7A4E; --color-clay:#A6462C;
+  --color-overlay:rgba(42,29,20,.42);
+  --color-admin-bg:#F4EFE6; --color-admin-panel:#FFFDF8; --color-admin-row:#FAF5EC;
+  --font-display:"Newsreader",Georgia,"Times New Roman",serif;
+  --font-sans:"Karla","Helvetica Neue",Helvetica,Arial,sans-serif;
+  --font-mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+  --radius-sm:8px; --radius-md:12px; --radius-lg:18px; --radius-xl:28px; --radius-2xl:40px; --radius-pill:999px;
+  --shadow-xs:0 1px 2px rgba(42,29,20,.06);
+  --shadow-sm:0 2px 6px rgba(42,29,20,.07);
+  --shadow-md:0 8px 20px -6px rgba(42,29,20,.14);
+  --shadow-lg:0 20px 44px -14px rgba(42,29,20,.22);
+  --shadow-xl:0 36px 76px -24px rgba(42,29,20,.30);
+  color-scheme:light;
+}
+[data-theme="dark"]{
+  --color-bg:#161210; --color-surface:#201A16; --color-sunken:#2A221C;
+  --color-border:#382D25; --color-border-strong:#4C3D31;
+  --color-ink:#F4ECE1; --color-ink-muted:#D3C3B2; --color-ink-subtle:#A08D7B;
+  --color-gold:#DDA857; --color-gold-hover:#EBBB6E; --color-gold-ink:#241804; --color-gold-soft:#36281A;
+  --color-leaf:#8FAE7F; --color-clay:#D9765A;
+  --color-overlay:rgba(8,5,3,.62);
+  --color-admin-bg:#131010; --color-admin-panel:#1D1815; --color-admin-row:#241E19;
+  --shadow-xs:0 1px 2px rgba(0,0,0,.35);
+  --shadow-sm:0 2px 6px rgba(0,0,0,.4);
+  --shadow-md:0 8px 20px -6px rgba(0,0,0,.5);
+  --shadow-lg:0 20px 44px -14px rgba(0,0,0,.6);
+  --shadow-xl:0 36px 76px -24px rgba(0,0,0,.7);
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--color-bg);color:var(--color-ink);font-family:var(--font-sans);font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased;text-wrap:pretty}
+h1,h2,h3,h4,p,figure{margin:0}
+button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
+input,select,textarea{font:inherit;color:inherit}
+a{color:var(--color-gold);text-decoration:none}
+a:hover{color:var(--color-gold-hover);text-decoration:underline;text-underline-offset:3px}
+img{max-width:100%}
+::selection{background:var(--color-gold-soft);color:var(--color-ink)}
+@keyframes nkFadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@keyframes nkFade{from{opacity:0}to{opacity:1}}
+@keyframes nkSlideIn{from{transform:translateX(100%)}to{transform:none}}
+@keyframes nkPop{0%{opacity:0;transform:translateY(14px) scale(.96)}100%{opacity:1;transform:none}}
+@keyframes nkToast{0%{opacity:0;transform:translateY(16px)}12%{opacity:1;transform:none}86%{opacity:1;transform:none}100%{opacity:0;transform:translateY(-6px)}}
+</style>
+</helmet>
+
+<div style="min-height:100vh;background:var(--color-bg);color:var(--color-ink);font-family:var(--font-sans);transition:background .25s ease,color .25s ease">
+
+<sc-if value="{{ isShop }}" hint-placeholder-val="{{ true }}">
+<header style="position:sticky;top:0;z-index:40;background:color-mix(in srgb,var(--color-bg) 86%,transparent);backdrop-filter:blur(14px) saturate(1.2);border-bottom:1px solid var(--color-border)">
+  <div style="max-width:1240px;margin:0 auto;padding:0 clamp(16px,4vw,40px);height:72px;display:flex;align-items:center;gap:clamp(12px,3vw,36px)">
+    <button onClick="{{ goHome }}" style="display:flex;align-items:baseline;gap:2px;flex:0 0 auto">
+      <span style="font-family:var(--font-display);font-size:27px;font-weight:600;letter-spacing:-.02em;line-height:1">Nook</span>
+      <span style="width:5px;height:5px;border-radius:var(--radius-pill);background:var(--color-gold);display:block;margin-bottom:4px"></span>
+    </button>
+
+    <sc-if value="{{ wideNav }}" hint-placeholder-val="{{ true }}">
+    <nav style="display:flex;align-items:center;gap:clamp(14px,2.2vw,30px);margin-left:6px">
+      <button onClick="{{ goHome }}" style="position:relative;padding:6px 0;font-size:15px;font-weight:500;color:var(--color-ink-muted)" style-hover="color:var(--color-gold)">Home<sc-if value="{{ atHome }}"><span style="position:absolute;left:0;right:0;bottom:0;height:2px;border-radius:var(--radius-pill);background:var(--color-gold)"></span></sc-if></button>
+      <button onClick="{{ goMenu }}" style="position:relative;padding:6px 0;font-size:15px;font-weight:500;color:var(--color-ink-muted)" style-hover="color:var(--color-gold)">Menu<sc-if value="{{ atMenu }}"><span style="position:absolute;left:0;right:0;bottom:0;height:2px;border-radius:var(--radius-pill);background:var(--color-gold)"></span></sc-if></button>
+      <button onClick="{{ goGallery }}" style="position:relative;padding:6px 0;font-size:15px;font-weight:500;color:var(--color-ink-muted)" style-hover="color:var(--color-gold)">Gallery<sc-if value="{{ atGallery }}"><span style="position:absolute;left:0;right:0;bottom:0;height:2px;border-radius:var(--radius-pill);background:var(--color-gold)"></span></sc-if></button>
+      <button onClick="{{ goAbout }}" style="position:relative;padding:6px 0;font-size:15px;font-weight:500;color:var(--color-ink-muted)" style-hover="color:var(--color-gold)">About<sc-if value="{{ atAbout }}"><span style="position:absolute;left:0;right:0;bottom:0;height:2px;border-radius:var(--radius-pill);background:var(--color-gold)"></span></sc-if></button>
+      <button onClick="{{ goContact }}" style="position:relative;padding:6px 0;font-size:15px;font-weight:500;color:var(--color-ink-muted)" style-hover="color:var(--color-gold)">Contact</button>
+    </nav>
+    </sc-if>
+
+    <div style="flex:1"></div>
+
+    <button onClick="{{ toggleTheme }}" title="{{ themeLabel }}" style="width:38px;height:38px;display:grid;place-items:center;border-radius:var(--radius-pill);border:1px solid var(--color-border);color:var(--color-ink-muted);flex:0 0 auto" style-hover="border-color:var(--color-border-strong);color:var(--color-gold)">
+      <span style="font-size:15px;line-height:1">{{ themeGlyph }}</span>
+    </button>
+
+    <sc-if value="{{ wideNav }}" hint-placeholder-val="{{ true }}">
+    <button onClick="{{ goAccountArea }}" style="padding:9px 16px;border-radius:var(--radius-pill);border:1px solid var(--color-border);font-size:14px;font-weight:600;color:var(--color-ink-muted);flex:0 0 auto;white-space:nowrap" style-hover="border-color:var(--color-border-strong);color:var(--color-ink)">{{ accountLabel }}</button>
+    </sc-if>
+
+    <button onClick="{{ openCart }}" style="position:relative;display:flex;align-items:center;gap:9px;padding:10px 18px;border-radius:var(--radius-pill);background:var(--color-gold);color:var(--color-gold-ink);font-size:14px;font-weight:700;box-shadow:var(--shadow-sm);flex:0 0 auto" style-hover="background:var(--color-gold-hover)">
+      <span>Cart</span>
+      <span style="min-width:21px;height:21px;padding:0 6px;display:grid;place-items:center;border-radius:var(--radius-pill);background:color-mix(in srgb,var(--color-gold-ink) 16%,transparent);font-family:var(--font-mono);font-size:12px;font-weight:500">{{ cartCount }}</span>
+    </button>
+
+    <sc-if value="{{ narrowNav }}">
+    <button onClick="{{ toggleNavPanel }}" style="width:38px;height:38px;display:grid;place-items:center;border-radius:var(--radius-pill);border:1px solid var(--color-border);color:var(--color-ink);flex:0 0 auto">
+      <span style="display:grid;gap:4px">
+        <span style="width:16px;height:1.5px;background:currentColor;display:block"></span>
+        <span style="width:16px;height:1.5px;background:currentColor;display:block"></span>
+        <span style="width:16px;height:1.5px;background:currentColor;display:block"></span>
+      </span>
+    </button>
+    </sc-if>
+  </div>
+
+  <sc-if value="{{ navPanelOpen }}">
+  <div style="border-top:1px solid var(--color-border);background:var(--color-surface);padding:10px clamp(16px,4vw,40px) 18px;display:grid;gap:2px;animation:nkFade .18s ease">
+    <button onClick="{{ goHome }}" style="text-align:left;padding:12px 4px;font-size:17px;font-weight:500;border-bottom:1px solid var(--color-border)">Home</button>
+    <button onClick="{{ goMenu }}" style="text-align:left;padding:12px 4px;font-size:17px;font-weight:500;border-bottom:1px solid var(--color-border)">Menu</button>
+    <button onClick="{{ goGallery }}" style="text-align:left;padding:12px 4px;font-size:17px;font-weight:500;border-bottom:1px solid var(--color-border)">Gallery</button>
+    <button onClick="{{ goAbout }}" style="text-align:left;padding:12px 4px;font-size:17px;font-weight:500;border-bottom:1px solid var(--color-border)">About</button>
+    <button onClick="{{ goContact }}" style="text-align:left;padding:12px 4px;font-size:17px;font-weight:500;border-bottom:1px solid var(--color-border)">Contact</button>
+    <button onClick="{{ goAccountArea }}" style="text-align:left;padding:12px 4px;font-size:17px;font-weight:500;color:var(--color-gold)">{{ accountLabel }}</button>
+  </div>
+  </sc-if>
+</header>
+</sc-if>
+
+<sc-if value="{{ isHome }}" hint-placeholder-val="{{ true }}">
+<main>
+  <section style="max-width:1240px;margin:0 auto;padding:clamp(28px,5vw,64px) clamp(16px,4vw,40px) clamp(24px,4vw,48px);display:grid;gap:clamp(24px,4vw,56px);grid-template-columns:repeat(auto-fit,minmax(min(100%,330px),1fr));align-items:center">
+    <div style="max-width:560px">
+      <div style="display:inline-flex;align-items:center;gap:8px;padding:6px 14px 6px 10px;border-radius:var(--radius-pill);background:var(--color-gold-soft);color:var(--color-gold);font-size:13px;font-weight:600;letter-spacing:.01em;margin-bottom:22px">
+        <span style="width:6px;height:6px;border-radius:var(--radius-pill);background:var(--color-gold);display:block"></span>
+        Open today until 4pm
+      </div>
+      <h1 style="font-family:var(--font-display);font-weight:500;font-size:clamp(2.6rem,6.4vw,4.3rem);line-height:1.02;letter-spacing:-.025em;margin-bottom:20px">A quiet corner<br /><span style="font-style:italic;color:var(--color-gold)">and a proper</span> flat white.</h1>
+      <p style="font-size:clamp(1rem,1.5vw,1.15rem);line-height:1.6;color:var(--color-ink-muted);max-width:44ch;margin-bottom:32px">Small-batch roasts, bread baked out the back, and a table by the window that's usually free before nine. Order ahead and we'll have it waiting.</p>
+      <div style="display:flex;flex-wrap:wrap;gap:12px;align-items:center">
+        <button onClick="{{ goMenu }}" style="padding:15px 30px;border-radius:var(--radius-pill);background:var(--color-gold);color:var(--color-gold-ink);font-size:16px;font-weight:700;box-shadow:var(--shadow-md)" style-hover="background:var(--color-gold-hover);transform:translateY(-1px)">See the menu</button>
+        <button onClick="{{ goContact }}" style="padding:15px 26px;border-radius:var(--radius-pill);border:1px solid var(--color-border-strong);font-size:16px;font-weight:600;color:var(--color-ink)" style-hover="background:var(--color-sunken)">Find us</button>
+      </div>
+    </div>
+    <div style="position:relative">
+      <div style="border-radius:var(--radius-2xl);overflow:hidden;box-shadow:var(--shadow-xl);aspect-ratio:4/5;background:var(--color-sunken)">
+        <img src="img/hero-latte-art.jpeg" alt="Latte with heart art, steam rising" style="width:100%;height:100%;object-fit:cover;display:block" />
+      </div>
+      <div style="position:absolute;left:-6px;bottom:-18px;width:min(46%,190px);border-radius:var(--radius-xl);overflow:hidden;box-shadow:var(--shadow-lg);border:5px solid var(--color-bg);aspect-ratio:1/1;background:var(--color-sunken)">
+        <img src="img/brownie-lattes.png" alt="Brownie and two lattes" style="width:100%;height:100%;object-fit:cover;display:block" />
+      </div>
+    </div>
+  </section>
+
+  <section style="background:var(--color-sunken);border-top:1px solid var(--color-border);border-bottom:1px solid var(--color-border);margin-top:clamp(28px,4vw,44px)">
+    <div style="max-width:1240px;margin:0 auto;padding:clamp(44px,6vw,76px) clamp(16px,4vw,40px)">
+      <h2 style="font-family:var(--font-display);font-weight:500;font-size:clamp(1.75rem,3.4vw,2.5rem);letter-spacing:-.02em;margin-bottom:clamp(28px,4vw,48px);max-width:22ch">Three things we're stubborn about</h2>
+      <div style="display:grid;gap:clamp(24px,3vw,40px);grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr))">
+        <div style="padding-top:22px;border-top:2px solid var(--color-gold)">
+          <div style="font-family:var(--font-mono);font-size:13px;color:var(--color-gold);margin-bottom:14px">01</div>
+          <h3 style="font-family:var(--font-display);font-size:1.4rem;font-weight:500;margin-bottom:10px">Roasted eleven days ago, tops</h3>
+          <p style="color:var(--color-ink-muted);font-size:15px;line-height:1.62">We take one 12kg drop a week from a roaster four suburbs over. Whatever's left on Sunday goes home with staff.</p>
+        </div>
+        <div style="padding-top:22px;border-top:2px solid var(--color-border-strong)">
+          <div style="font-family:var(--font-mono);font-size:13px;color:var(--color-gold);margin-bottom:14px">02</div>
+          <h3 style="font-family:var(--font-display);font-size:1.4rem;font-weight:500;margin-bottom:10px">The pastry case is baked here</h3>
+          <p style="color:var(--color-ink-muted);font-size:15px;line-height:1.62">Laminated dough on Tuesdays and Fridays, so the croissants are gone by eleven. We're not sorry, but we are aware.</p>
+        </div>
+        <div style="padding-top:22px;border-top:2px solid var(--color-border-strong)">
+          <div style="font-family:var(--font-mono);font-size:13px;color:var(--color-gold);margin-bottom:14px">03</div>
+          <h3 style="font-family:var(--font-display);font-size:1.4rem;font-weight:500;margin-bottom:10px">No music loud enough to shout over</h3>
+          <p style="color:var(--color-ink-muted);font-size:15px;line-height:1.62">Wifi's on the receipt. Stay as long as you like — we'd rather a full room than a fast one.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section style="max-width:1240px;margin:0 auto;padding:clamp(44px,6vw,80px) clamp(16px,4vw,40px)">
+    <div style="display:flex;flex-wrap:wrap;gap:16px;align-items:end;justify-content:space-between;margin-bottom:clamp(22px,3vw,34px)">
+      <div>
+        <div style="font-family:var(--font-mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--color-ink-subtle);margin-bottom:10px">Popular this week</div>
+        <h2 style="font-family:var(--font-display);font-weight:500;font-size:clamp(1.75rem,3.4vw,2.5rem);letter-spacing:-.02em">What people keep ordering</h2>
+      </div>
+      <button onClick="{{ goMenu }}" style="padding:12px 22px;border-radius:var(--radius-pill);border:1px solid var(--color-border-strong);font-size:15px;font-weight:600" style-hover="background:var(--color-sunken)">Full menu →</button>
+    </div>
+    <div style="display:grid;gap:clamp(16px,2vw,24px);grid-template-columns:repeat(auto-fill,minmax(min(100%,250px),1fr))">
+      <sc-for list="{{ featured }}" as="it" hint-placeholder-count="4">
+        <button onClick="{{ it.onOpen }}" style="text-align:left;display:block;background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-xl);overflow:hidden;box-shadow:var(--shadow-xs)" style-hover="box-shadow:var(--shadow-lg);transform:translateY(-3px)">
+          <div style="aspect-ratio:4/3;background:var(--color-sunken)">
+            <img src="{{ it.img }}" alt="{{ it.name }}" style="width:100%;height:100%;object-fit:cover;display:block" />
+          </div>
+          <div style="padding:16px 18px 18px">
+            <div style="font-family:var(--font-display);font-size:1.18rem;font-weight:500;line-height:1.2;margin-bottom:6px">{{ it.name }}</div>
+            <div style="font-size:13.5px;color:var(--color-ink-subtle);line-height:1.5;margin-bottom:12px;min-height:40px">{{ it.desc }}</div>
+            <div style="font-family:var(--font-mono);font-size:14px;color:var(--color-gold);text-align:right">{{ it.priceLabel }}</div>
+          </div>
+        </button>
+      </sc-for>
+    </div>
+  </section>
+
+  <section style="max-width:1240px;margin:0 auto;padding:0 clamp(16px,4vw,40px) clamp(56px,7vw,96px)">
+    <div style="position:relative;border-radius:var(--radius-2xl);overflow:hidden;box-shadow:var(--shadow-lg);min-height:clamp(300px,42vw,420px);display:grid">
+      <img src="img/interior-night.png" alt="Nook interior in the evening" style="grid-area:1/1;width:100%;height:100%;object-fit:cover;display:block" />
+      <div style="grid-area:1/1;background:linear-gradient(100deg,rgba(24,15,9,.86) 0%,rgba(24,15,9,.55) 48%,rgba(24,15,9,.12) 100%)"></div>
+      <div style="grid-area:1/1;position:relative;padding:clamp(28px,5vw,60px);display:flex;flex-direction:column;justify-content:center;max-width:600px">
+        <h2 style="font-family:var(--font-display);font-weight:500;font-size:clamp(1.7rem,3.6vw,2.6rem);line-height:1.1;letter-spacing:-.02em;color:#FBF7F0;margin-bottom:14px">Earn a free coffee<br />roughly every ninth visit</h2>
+        <p style="color:rgba(251,247,240,.78);font-size:16px;line-height:1.6;max-width:42ch;margin-bottom:26px">A point per dollar, no card to lose. Sign in before you order and it tracks itself.</p>
+        <div style="display:flex;flex-wrap:wrap;gap:12px">
+          <button onClick="{{ goAuth }}" style="padding:14px 28px;border-radius:var(--radius-pill);background:#FBF7F0;color:#2A1D14;font-size:15px;font-weight:700" style-hover="background:#fff">Join rewards</button>
+          <button onClick="{{ goRewards }}" style="padding:14px 24px;border-radius:var(--radius-pill);border:1px solid rgba(251,247,240,.4);color:#FBF7F0;font-size:15px;font-weight:600" style-hover="background:rgba(251,247,240,.12)">How it works</button>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+</sc-if>
+
+<sc-if value="{{ isMenu }}">
+<main style="max-width:1240px;margin:0 auto;padding:clamp(28px,4vw,48px) clamp(16px,4vw,40px) clamp(56px,7vw,90px)">
+  <div style="margin-bottom:clamp(22px,3vw,32px);max-width:620px">
+    <h1 style="font-family:var(--font-display);font-weight:500;font-size:clamp(2.2rem,5vw,3.2rem);letter-spacing:-.025em;line-height:1.05;margin-bottom:12px">Menu</h1>
+    <p style="color:var(--color-ink-muted);font-size:16.5px;line-height:1.6">Everything's made to order between 7am and 3:30pm. Pick a pickup time at checkout.</p>
+  </div>
+
+  <div style="position:sticky;top:72px;z-index:20;background:color-mix(in srgb,var(--color-bg) 92%,transparent);backdrop-filter:blur(10px);margin:0 calc(-1 * clamp(16px,4vw,40px));padding:14px clamp(16px,4vw,40px);border-bottom:1px solid var(--color-border);margin-bottom:clamp(24px,3vw,36px)">
+    <div style="display:flex;gap:9px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px">
+      <sc-for list="{{ cats }}" as="c" hint-placeholder-count="5">
+        <button onClick="{{ c.onSelect }}" style="{{ c.style }}">
+          <span>{{ c.name }}</span>
+          <span style="font-family:var(--font-mono);font-size:11.5px;opacity:.6">{{ c.count }}</span>
+        </button>
+      </sc-for>
+    </div>
+  </div>
+
+  <div style="display:grid;gap:clamp(16px,2vw,24px);grid-template-columns:repeat(auto-fill,minmax(min(100%,272px),1fr))">
+    <sc-for list="{{ items }}" as="it" hint-placeholder-count="6">
+      <article style="{{ it.cardStyle }}">
+        <div style="position:relative;aspect-ratio:4/3;background:var(--color-sunken);overflow:hidden">
+          <img src="{{ it.img }}" alt="{{ it.name }}" style="{{ it.imgStyle }}" />
+          <sc-if value="{{ it.soldOut }}">
+            <div style="position:absolute;inset:0;display:grid;place-items:center;background:color-mix(in srgb,var(--color-bg) 52%,transparent)">
+              <span style="padding:8px 18px;border-radius:var(--radius-pill);background:var(--color-surface);border:1px solid var(--color-border-strong);color:var(--color-clay);font-size:13px;font-weight:700;letter-spacing:.02em;box-shadow:var(--shadow-sm)">Sold out</span>
+            </div>
+          </sc-if>
+        </div>
+        <div style="padding:16px 18px 18px;display:flex;flex-direction:column;flex:1;gap:10px">
+          <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px">
+            <h3 style="font-family:var(--font-display);font-size:1.2rem;font-weight:500;line-height:1.2">{{ it.name }}</h3>
+          </div>
+          <p style="font-size:13.5px;color:var(--color-ink-subtle);line-height:1.5">{{ it.desc }}</p>
+          <sc-if value="{{ it.hasBadges }}">
+            <div style="display:flex;flex-wrap:wrap;gap:6px">
+              <sc-for list="{{ it.badges }}" as="b" hint-placeholder-count="2">
+                <span title="{{ b.title }}" style="display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:var(--radius-pill);background:var(--color-sunken);border:1px solid var(--color-border);font-family:var(--font-mono);font-size:10.5px;font-weight:500;letter-spacing:.04em;color:var(--color-ink-muted)">{{ b.label }}</span>
+              </sc-for>
+            </div>
+          </sc-if>
+          <div style="flex:1"></div>
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding-top:4px">
+            <div style="display:grid">
+              <sc-if value="{{ it.isFrom }}"><span style="font-size:11px;color:var(--color-ink-subtle);letter-spacing:.03em">From</span></sc-if>
+              <span style="font-family:var(--font-mono);font-size:16px;font-weight:500;color:var(--color-ink);line-height:1.2">{{ it.priceText }}</span>
+            </div>
+            <button onClick="{{ it.onAdd }}" disabled="{{ it.soldOut }}" title="{{ it.addTitle }}" style="{{ it.addStyle }}">{{ it.addLabel }}</button>
+          </div>
+        </div>
+      </article>
+    </sc-for>
+  </div>
+
+  <p style="margin-top:clamp(28px,4vw,44px);font-size:13px;color:var(--color-ink-subtle);max-width:60ch">Dietary badges: <strong style="font-weight:600;color:var(--color-ink-muted)">VE</strong> vegan · <strong style="font-weight:600;color:var(--color-ink-muted)">GF</strong> gluten free · <strong style="font-weight:600;color:var(--color-ink-muted)">DF</strong> dairy free · <strong style="font-weight:600;color:var(--color-ink-muted)">NUT</strong> contains nuts. Kitchen is not a nut-free environment.</p>
+</main>
+</sc-if>
+
+<sc-if value="{{ isGallery }}">
+<main style="max-width:1240px;margin:0 auto;padding:clamp(28px,4vw,52px) clamp(16px,4vw,40px) clamp(56px,7vw,90px)">
+  <div style="max-width:600px;margin-bottom:clamp(26px,4vw,40px)">
+    <h1 style="font-family:var(--font-display);font-weight:500;font-size:clamp(2.2rem,5vw,3.2rem);letter-spacing:-.025em;line-height:1.05;margin-bottom:12px">The room, the food</h1>
+    <p style="color:var(--color-ink-muted);font-size:16.5px;line-height:1.6">Mostly taken on quiet mornings by whoever's on bar. Tap any photo to see it bigger.</p>
+  </div>
+  <div style="display:grid;gap:clamp(10px,1.4vw,16px);grid-template-columns:repeat(auto-fill,minmax(min(100%,215px),1fr));grid-auto-rows:12px">
+    <sc-for list="{{ gallery }}" as="g" hint-placeholder-count="9">
+      <button onClick="{{ g.onOpen }}" style="{{ g.style }}">
+        <img src="{{ g.src }}" alt="{{ g.caption }}" style="width:100%;height:100%;object-fit:cover;display:block;transition:transform .5s cubic-bezier(.2,.8,.3,1)" style-hover="transform:scale(1.045)" />
+        <span style="position:absolute;left:0;right:0;bottom:0;padding:26px 14px 12px;background:linear-gradient(transparent,rgba(20,12,7,.72));color:#FBF7F0;font-size:12.5px;font-weight:500;text-align:left;opacity:0;transition:opacity .25s ease" style-hover="opacity:1">{{ g.caption }}</span>
+      </button>
+    </sc-for>
+  </div>
+</main>
+</sc-if>
+
+<sc-if value="{{ lightboxOpen }}">
+<div style="position:fixed;inset:0;z-index:80;display:flex;flex-direction:column;background:rgba(14,9,6,.94);animation:nkFade .2s ease">
+  <div style="flex:0 0 auto;display:flex;align-items:center;justify-content:space-between;gap:14px;padding:16px clamp(16px,4vw,28px)">
+    <span style="font-family:var(--font-mono);font-size:12.5px;color:rgba(251,247,240,.6)">{{ lightboxIndex }}</span>
+    <button onClick="{{ closeLightbox }}" style="width:38px;height:38px;display:grid;place-items:center;border-radius:var(--radius-pill);border:1px solid rgba(251,247,240,.28);color:#FBF7F0;font-size:15px" style-hover="background:rgba(251,247,240,.14)">✕</button>
+  </div>
+  <div style="flex:1;min-height:0;display:flex;align-items:center;gap:clamp(8px,2vw,20px);padding:0 clamp(12px,3vw,28px)">
+    <button onClick="{{ prevPhoto }}" style="width:44px;height:44px;flex:0 0 auto;display:grid;place-items:center;border-radius:var(--radius-pill);border:1px solid rgba(251,247,240,.28);color:#FBF7F0;font-size:17px" style-hover="background:rgba(251,247,240,.14)">‹</button>
+    <div style="flex:1;height:100%;display:grid;place-items:center;min-width:0">
+      <img src="{{ lightboxSrc }}" alt="{{ lightboxCaption }}" style="max-width:100%;max-height:100%;object-fit:contain;border-radius:var(--radius-md);box-shadow:0 40px 90px -30px rgba(0,0,0,.9)" />
+    </div>
+    <button onClick="{{ nextPhoto }}" style="width:44px;height:44px;flex:0 0 auto;display:grid;place-items:center;border-radius:var(--radius-pill);border:1px solid rgba(251,247,240,.28);color:#FBF7F0;font-size:17px" style-hover="background:rgba(251,247,240,.14)">›</button>
+  </div>
+  <div style="flex:0 0 auto;padding:18px clamp(16px,4vw,28px) 26px;text-align:center">
+    <span style="font-size:14.5px;color:rgba(251,247,240,.82)">{{ lightboxCaption }}</span>
+  </div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isAbout }}">
+<main>
+  <section style="max-width:1240px;margin:0 auto;padding:clamp(28px,4vw,56px) clamp(16px,4vw,40px) 0">
+    <div style="max-width:760px">
+      <div style="font-family:var(--font-mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--color-gold);margin-bottom:18px">Since 2019</div>
+      <h1 style="font-family:var(--font-display);font-weight:500;font-size:clamp(2.3rem,5.6vw,3.6rem);letter-spacing:-.025em;line-height:1.06;margin-bottom:24px">We took over a laundromat and kept the tiles</h1>
+      <p style="font-size:clamp(1.05rem,1.7vw,1.3rem);line-height:1.6;color:var(--color-ink-muted)">Rosa spent nine years making coffee for other people's cafes. Dan spent eleven fixing espresso machines in the back of a van. The lease on 41 Ashgrove came up in the winter of 2019 and neither of us had a better idea.</p>
+    </div>
+  </section>
+
+  <section style="max-width:1240px;margin:clamp(34px,5vw,60px) auto 0;padding:0 clamp(16px,4vw,40px)">
+    <div style="border-radius:var(--radius-2xl);overflow:hidden;box-shadow:var(--shadow-lg);aspect-ratio:16/8;background:var(--color-sunken)">
+      <img src="img/interior-night.png" alt="Nook interior, evening" style="width:100%;height:100%;object-fit:cover;display:block" />
+    </div>
+    <p style="font-family:var(--font-mono);font-size:11.5px;color:var(--color-ink-subtle);margin-top:12px">The front room, about six o'clock in June.</p>
+  </section>
+
+  <section style="max-width:1240px;margin:0 auto;padding:clamp(44px,6vw,80px) clamp(16px,4vw,40px)">
+    <div style="display:grid;gap:clamp(28px,5vw,64px);grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr))">
+      <div style="display:grid;gap:22px;align-content:start">
+        <h2 style="font-family:var(--font-display);font-weight:500;font-size:clamp(1.6rem,3vw,2.1rem);letter-spacing:-.02em;line-height:1.2">The first year we got almost everything wrong</h2>
+        <p style="color:var(--color-ink-muted);font-size:16px;line-height:1.68">We opened with fourteen drinks on the board and a grinder that couldn't keep up past eight in the morning. By March we'd cut the menu in half, moved the pastry case to where the queue actually forms, and learned that people will wait four minutes for a good flat white and not one second for a bad one.</p>
+        <p style="color:var(--color-ink-muted);font-size:16px;line-height:1.68">What stayed from the laundromat: the green floor tiles, the north window, and the habit of knowing regulars by their order rather than their name. Dan still fixes the machines himself. Rosa still tastes every batch at six-fifteen.</p>
+      </div>
+      <div style="display:grid;gap:clamp(12px,1.6vw,18px);grid-template-columns:1fr 1fr;align-content:start">
+        <div style="border-radius:var(--radius-xl);overflow:hidden;aspect-ratio:3/4;box-shadow:var(--shadow-md);background:var(--color-sunken)">
+          <img src="img/machine-pour.jpeg" alt="Espresso pouring" style="width:100%;height:100%;object-fit:cover;display:block" />
+        </div>
+        <div style="border-radius:var(--radius-xl);overflow:hidden;aspect-ratio:3/4;box-shadow:var(--shadow-md);margin-top:clamp(20px,4vw,44px);background:var(--color-sunken)">
+          <img src="img/table-outdoor.jpeg" alt="Coffee and buns on an outdoor table" style="width:100%;height:100%;object-fit:cover;display:block" />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section style="background:var(--color-sunken);border-top:1px solid var(--color-border);border-bottom:1px solid var(--color-border)">
+    <div style="max-width:900px;margin:0 auto;padding:clamp(48px,7vw,96px) clamp(16px,4vw,40px);text-align:center">
+      <p style="font-family:var(--font-display);font-style:italic;font-weight:400;font-size:clamp(1.5rem,3.4vw,2.3rem);line-height:1.32;letter-spacing:-.015em">"A cafe is just a room where someone has decided to be careful about small things."</p>
+      <div style="font-family:var(--font-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--color-ink-subtle);margin-top:24px">Rosa Feld · co-owner</div>
+    </div>
+  </section>
+
+  <section style="max-width:1240px;margin:0 auto;padding:clamp(44px,6vw,80px) clamp(16px,4vw,40px)">
+    <h2 style="font-family:var(--font-display);font-weight:500;font-size:clamp(1.6rem,3vw,2.1rem);letter-spacing:-.02em;margin-bottom:clamp(24px,3vw,36px)">Where the coffee comes from</h2>
+    <div style="display:grid;gap:0;max-width:820px">
+      <div style="display:grid;gap:6px 24px;grid-template-columns:auto 1fr;padding:20px 0;border-top:1px solid var(--color-border)">
+        <span style="font-family:var(--font-mono);font-size:13px;color:var(--color-gold);min-width:60px">2019</span>
+        <div><div style="font-weight:600;font-size:15.5px;margin-bottom:4px">Ridge & Fold, Brunswick</div><p style="color:var(--color-ink-subtle);font-size:14.5px;line-height:1.55">Our house blend since week one. Twelve kilos a week, collected on Mondays.</p></div>
+      </div>
+      <div style="display:grid;gap:6px 24px;grid-template-columns:auto 1fr;padding:20px 0;border-top:1px solid var(--color-border)">
+        <span style="font-family:var(--font-mono);font-size:13px;color:var(--color-gold);min-width:60px">2022</span>
+        <div><div style="font-weight:600;font-size:15.5px;margin-bottom:4px">Single-origin filter rotation</div><p style="color:var(--color-ink-subtle);font-size:14.5px;line-height:1.55">One lot at a time, usually Ethiopian or Colombian. Whatever's on is written on the mirror.</p></div>
+      </div>
+      <div style="display:grid;gap:6px 24px;grid-template-columns:auto 1fr;padding:20px 0;border-top:1px solid var(--color-border);border-bottom:1px solid var(--color-border)">
+        <span style="font-family:var(--font-mono);font-size:13px;color:var(--color-gold);min-width:60px">2024</span>
+        <div><div style="font-weight:600;font-size:15.5px;margin-bottom:4px">Bakery moved in-house</div><p style="color:var(--color-ink-subtle);font-size:14.5px;line-height:1.55">Sofia joined and put a deck oven where the dryers used to be. Laminating Tuesdays and Fridays.</p></div>
+      </div>
+    </div>
+    <div style="margin-top:clamp(32px,4vw,48px);display:flex;flex-wrap:wrap;gap:12px">
+      <button onClick="{{ goMenu }}" style="padding:15px 30px;border-radius:var(--radius-pill);background:var(--color-gold);color:var(--color-gold-ink);font-size:16px;font-weight:700;box-shadow:var(--shadow-md)" style-hover="background:var(--color-gold-hover)">Order something</button>
+      <button onClick="{{ goContact }}" style="padding:15px 26px;border-radius:var(--radius-pill);border:1px solid var(--color-border-strong);font-size:16px;font-weight:600" style-hover="background:var(--color-sunken)">Come by instead</button>
+    </div>
+  </section>
+</main>
+</sc-if>
+
+<sc-if value="{{ isContact }}">
+<main style="max-width:1240px;margin:0 auto;padding:clamp(28px,4vw,52px) clamp(16px,4vw,40px) clamp(56px,7vw,90px)">
+  <div style="max-width:600px;margin-bottom:clamp(28px,4vw,44px)">
+    <h1 style="font-family:var(--font-display);font-weight:500;font-size:clamp(2.2rem,5vw,3.2rem);letter-spacing:-.025em;line-height:1.05;margin-bottom:12px">Come find us</h1>
+    <p style="color:var(--color-ink-muted);font-size:16.5px;line-height:1.6">Third shopfront from the corner, green door, usually a dog tied up outside.</p>
+  </div>
+
+  <div style="display:grid;gap:clamp(20px,3vw,32px);grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));align-items:start">
+    <div style="display:grid;gap:clamp(16px,2vw,22px)">
+      <div style="background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-xl);padding:clamp(20px,3vw,28px);box-shadow:var(--shadow-xs)">
+        <div style="font-family:var(--font-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--color-ink-subtle);margin-bottom:16px">Hours</div>
+        <div style="display:grid;gap:12px">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:14px;padding-bottom:12px;border-bottom:1px solid var(--color-border)">
+            <span style="font-size:15.5px;font-weight:600">Monday – Friday</span>
+            <span style="font-family:var(--font-mono);font-size:14px;color:var(--color-ink-muted)">7:00 – 16:00</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:14px;padding-bottom:12px;border-bottom:1px solid var(--color-border)">
+            <span style="font-size:15.5px;font-weight:600">Saturday</span>
+            <span style="font-family:var(--font-mono);font-size:14px;color:var(--color-ink-muted)">8:00 – 15:00</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:14px;padding-bottom:12px;border-bottom:1px solid var(--color-border)">
+            <span style="font-size:15.5px;font-weight:600">Sunday</span>
+            <span style="font-family:var(--font-mono);font-size:14px;color:var(--color-ink-muted)">8:00 – 14:00</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:14px">
+            <span style="font-size:15.5px;font-weight:600;color:var(--color-ink-subtle)">Public holidays</span>
+            <span style="font-family:var(--font-mono);font-size:14px;color:var(--color-ink-subtle)">Closed</span>
+          </div>
+        </div>
+        <div style="margin-top:20px;display:inline-flex;align-items:center;gap:8px;padding:7px 14px 7px 11px;border-radius:var(--radius-pill);background:var(--color-gold-soft);color:var(--color-gold);font-size:13px;font-weight:600">
+          <span style="width:6px;height:6px;border-radius:var(--radius-pill);background:var(--color-gold);display:block"></span>
+          Kitchen closes 15:30
+        </div>
+      </div>
+
+      <div style="background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-xl);padding:clamp(20px,3vw,28px);box-shadow:var(--shadow-xs);display:grid;gap:18px">
+        <div>
+          <div style="font-family:var(--font-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--color-ink-subtle);margin-bottom:8px">Address</div>
+          <p style="font-size:16px;line-height:1.55">41 Ashgrove Lane<br />Carlton North, VIC 3054</p>
+        </div>
+        <div>
+          <div style="font-family:var(--font-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--color-ink-subtle);margin-bottom:8px">Getting here</div>
+          <p style="font-size:14.5px;line-height:1.6;color:var(--color-ink-muted)">Tram 96 to Stop 22, then two minutes east. Two-hour street parking on Ashgrove, free after 10am.</p>
+        </div>
+        <div style="display:grid;gap:8px;justify-items:start">
+          <div style="font-family:var(--font-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--color-ink-subtle);margin-bottom:0">Get in touch</div>
+          <a href="#" style="font-size:15.5px;font-weight:600">hello@nook.cafe</a>
+          <a href="#" style="font-size:15.5px;font-weight:600">(03) 9041 8827</a>
+          <a href="#" style="font-size:15.5px;font-weight:600">@nook.carltonnorth</a>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:grid;gap:clamp(16px,2vw,22px)">
+      <div style="position:relative;border-radius:var(--radius-xl);overflow:hidden;border:1px solid var(--color-border);box-shadow:var(--shadow-xs);aspect-ratio:4/3;background-color:var(--color-sunken);background-image:repeating-linear-gradient(135deg,color-mix(in srgb,var(--color-border) 60%,transparent) 0 1px,transparent 1px 11px);display:grid;place-items:center">
+        <div style="text-align:center;padding:24px">
+          <div style="font-family:var(--font-mono);font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--color-ink-subtle);margin-bottom:10px">Map embed</div>
+          <div style="font-family:var(--font-display);font-size:1.25rem;font-weight:500;margin-bottom:6px">41 Ashgrove Lane</div>
+          <p style="font-family:var(--font-mono);font-size:11.5px;color:var(--color-ink-subtle);max-width:26ch;line-height:1.6">Google Maps / Mapbox iframe drops in here at 4:3</p>
+        </div>
+        <span style="position:absolute;top:14px;right:14px;padding:6px 12px;border-radius:var(--radius-pill);background:var(--color-surface);border:1px solid var(--color-border);font-size:12px;font-weight:600;color:var(--color-ink-muted)">Open in Maps ↗</span>
+      </div>
+      <div style="border-radius:var(--radius-xl);overflow:hidden;box-shadow:var(--shadow-md);aspect-ratio:16/10;background:var(--color-sunken)">
+        <img src="img/exterior-green.png" alt="Nook shopfront" style="width:100%;height:100%;object-fit:cover;display:block" />
+      </div>
+    </div>
+  </div>
+</main>
+</sc-if>
+
+<sc-if value="{{ isAuth }}">
+<main style="max-width:1240px;margin:0 auto;padding:clamp(24px,4vw,48px) clamp(16px,4vw,40px) clamp(48px,6vw,80px)">
+  <div style="display:grid;gap:clamp(24px,4vw,48px);grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));align-items:center">
+    <div style="border-radius:var(--radius-2xl);overflow:hidden;box-shadow:var(--shadow-lg);aspect-ratio:4/5;background:var(--color-sunken);position:relative;display:grid">
+      <img src="img/cappuccino-marble.jpeg" alt="Coffee on a marble table" style="grid-area:1/1;width:100%;height:100%;object-fit:cover;display:block" />
+      <div style="grid-area:1/1;background:linear-gradient(180deg,rgba(24,15,9,.1),rgba(24,15,9,.72))"></div>
+      <div style="grid-area:1/1;align-self:end;padding:clamp(22px,3vw,34px)">
+        <p style="font-family:var(--font-display);font-style:italic;font-size:clamp(1.2rem,2.2vw,1.6rem);line-height:1.35;color:#FBF7F0">A point a dollar. Nine coffees in, the tenth is on us.</p>
+      </div>
+    </div>
+    <div style="max-width:420px;width:100%;justify-self:center">
+      <h1 style="font-family:var(--font-display);font-weight:500;font-size:clamp(1.9rem,4vw,2.6rem);letter-spacing:-.02em;line-height:1.1;margin-bottom:8px">{{ authTitle }}</h1>
+      <p style="color:var(--color-ink-muted);font-size:15.5px;line-height:1.6;margin-bottom:26px">{{ authBlurb }}</p>
+
+      <button onClick="{{ signIn }}" style="width:100%;display:flex;align-items:center;justify-content:center;gap:11px;padding:14px;border-radius:var(--radius-pill);border:1px solid var(--color-border-strong);background:var(--color-surface);font-size:15px;font-weight:600" style-hover="background:var(--color-sunken)">
+        <span style="width:19px;height:19px;border-radius:var(--radius-pill);background:conic-gradient(from -45deg,#EA4335 0 25%,#FBBC05 0 50%,#34A853 0 75%,#4285F4 0);display:block"></span>
+        Continue with Google
+      </button>
+
+      <div style="display:flex;align-items:center;gap:14px;margin:22px 0">
+        <span style="flex:1;height:1px;background:var(--color-border)"></span>
+        <span style="font-family:var(--font-mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--color-ink-subtle)">or</span>
+        <span style="flex:1;height:1px;background:var(--color-border)"></span>
+      </div>
+
+      <div style="display:grid;gap:14px">
+        <sc-if value="{{ isSignup }}">
+        <label style="display:grid;gap:7px">
+          <span style="font-size:13.5px;font-weight:600;color:var(--color-ink-muted)">Name</span>
+          <input type="text" placeholder="Rosa Feld" style="width:100%;padding:14px 16px;border-radius:var(--radius-md);border:1px solid var(--color-border-strong);background:var(--color-surface);font-size:15px" />
+        </label>
+        </sc-if>
+        <label style="display:grid;gap:7px">
+          <span style="font-size:13.5px;font-weight:600;color:var(--color-ink-muted)">Email</span>
+          <input type="email" placeholder="you@example.com" style="width:100%;padding:14px 16px;border-radius:var(--radius-md);border:1px solid var(--color-border-strong);background:var(--color-surface);font-size:15px" />
+        </label>
+        <label style="display:grid;gap:7px">
+          <span style="font-size:13.5px;font-weight:600;color:var(--color-ink-muted)">Password</span>
+          <input type="password" placeholder="••••••••" style="width:100%;padding:14px 16px;border-radius:var(--radius-md);border:1px solid var(--color-border-strong);background:var(--color-surface);font-size:15px" />
+        </label>
+        <button onClick="{{ signIn }}" style="width:100%;padding:16px;border-radius:var(--radius-pill);background:var(--color-gold);color:var(--color-gold-ink);font-size:16px;font-weight:700;box-shadow:var(--shadow-md);margin-top:4px" style-hover="background:var(--color-gold-hover)">{{ authCta }}</button>
+      </div>
+
+      <p style="font-size:14px;color:var(--color-ink-subtle);margin-top:22px;text-align:center">{{ authSwitchText }} <button onClick="{{ toggleAuthMode }}" style="font-weight:700;color:var(--color-gold);text-decoration:underline;text-underline-offset:3px">{{ authSwitchCta }}</button></p>
+      <p style="font-size:13px;color:var(--color-ink-subtle);margin-top:18px;text-align:center;line-height:1.55">Ordering as a guest is fine too — you just won't collect points. <button onClick="{{ goMenu }}" style="text-decoration:underline;text-underline-offset:3px;color:var(--color-ink-muted)">Skip for now</button></p>
+    </div>
+  </div>
+</main>
+</sc-if>
+
+<sc-if value="{{ isAccountArea }}">
+<main style="max-width:1240px;margin:0 auto;padding:clamp(24px,4vw,48px) clamp(16px,4vw,40px) clamp(56px,7vw,90px)">
+  <div style="display:flex;flex-wrap:wrap;align-items:center;gap:18px;margin-bottom:clamp(22px,3vw,32px)">
+    <div style="width:62px;height:62px;border-radius:var(--radius-pill);background:var(--color-gold-soft);color:var(--color-gold);display:grid;place-items:center;font-family:var(--font-display);font-size:25px;font-weight:500;flex:0 0 auto">RF</div>
+    <div style="flex:1;min-width:180px">
+      <h1 style="font-family:var(--font-display);font-weight:500;font-size:clamp(1.7rem,3.4vw,2.3rem);letter-spacing:-.02em;line-height:1.15">Rosa Feld</h1>
+      <p style="font-size:14.5px;color:var(--color-ink-subtle);margin-top:2px">Member since March 2024 · 340 points</p>
+    </div>
+    <button onClick="{{ signOut }}" style="padding:11px 20px;border-radius:var(--radius-pill);border:1px solid var(--color-border);font-size:14px;font-weight:600;color:var(--color-ink-muted)" style-hover="border-color:var(--color-border-strong);color:var(--color-ink)">Sign out</button>
+  </div>
+
+  <div style="display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;border-bottom:1px solid var(--color-border);margin-bottom:clamp(24px,3vw,36px);padding-bottom:0">
+    <sc-for list="{{ accountTabs }}" as="t" hint-placeholder-count="3">
+      <button onClick="{{ t.onGo }}" style="{{ t.style }}">{{ t.name }}</button>
+    </sc-for>
+  </div>
+
+  <sc-if value="{{ isAccount }}">
+  <div style="display:grid;gap:clamp(18px,2.5vw,26px);grid-template-columns:repeat(auto-fit,minmax(min(100%,290px),1fr));align-items:start">
+    <div style="background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-xl);padding:clamp(20px,3vw,28px);box-shadow:var(--shadow-xs)">
+      <h2 style="font-family:var(--font-display);font-size:1.3rem;font-weight:500;margin-bottom:6px">Saved details</h2>
+      <p style="font-size:14px;color:var(--color-ink-subtle);line-height:1.55;margin-bottom:22px">We use these to call your name out and text you when it's ready.</p>
+      <div style="display:grid;gap:16px">
+        <label style="display:grid;gap:7px">
+          <span style="font-size:13.5px;font-weight:600;color:var(--color-ink-muted)">Name</span>
+          <input type="text" value="Rosa Feld" readonly="" style="width:100%;padding:13px 15px;border-radius:var(--radius-md);border:1px solid var(--color-border);background:var(--color-bg);font-size:15px" />
+        </label>
+        <label style="display:grid;gap:7px">
+          <span style="font-size:13.5px;font-weight:600;color:var(--color-ink-muted)">Mobile</span>
+          <input type="tel" value="0412 883 907" readonly="" style="width:100%;padding:13px 15px;border-radius:var(--radius-md);border:1px solid var(--color-border);background:var(--color-bg);font-size:15px" />
+        </label>
+        <label style="display:grid;gap:7px">
+          <span style="font-size:13.5px;font-weight:600;color:var(--color-ink-muted)">Email</span>
+          <input type="email" value="rosa@feld.co" readonly="" style="width:100%;padding:13px 15px;border-radius:var(--radius-md);border:1px solid var(--color-border);background:var(--color-bg);font-size:15px" />
+        </label>
+        <button style="justify-self:start;padding:12px 24px;border-radius:var(--radius-pill);background:var(--color-gold);color:var(--color-gold-ink);font-size:14.5px;font-weight:700;margin-top:4px" style-hover="background:var(--color-gold-hover)">Save changes</button>
+      </div>
+    </div>
+
+    <div style="display:grid;gap:clamp(18px,2.5vw,26px)">
+      <div style="background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-xl);padding:clamp(20px,3vw,28px);box-shadow:var(--shadow-xs)">
+        <h2 style="font-family:var(--font-display);font-size:1.3rem;font-weight:500;margin-bottom:18px">The usual</h2>
+        <div style="display:flex;gap:14px;align-items:center;padding:12px;border-radius:var(--radius-lg);background:var(--color-bg);border:1px solid var(--color-border)">
+          <div style="width:56px;height:56px;border-radius:var(--radius-md);overflow:hidden;flex:0 0 auto;background:var(--color-sunken)">
+            <img src="img/hero-latte-art.jpeg" alt="Flat white" style="width:100%;height:100%;object-fit:cover;display:block" />
+          </div>
+          <div style="flex:1;min-width:0">
+            <div style="font-size:15px;font-weight:600">Flat White</div>
+            <div style="font-size:12.5px;color:var(--color-ink-subtle)">Regular · Oat · Extra shot</div>
+          </div>
+          <button onClick="{{ reorderUsual }}" style="padding:9px 17px;border-radius:var(--radius-pill);background:var(--color-gold);color:var(--color-gold-ink);font-size:13.5px;font-weight:700;flex:0 0 auto" style-hover="background:var(--color-gold-hover)">Add</button>
+        </div>
+      </div>
+      <div style="background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-xl);padding:clamp(20px,3vw,28px);box-shadow:var(--shadow-xs)">
+        <h2 style="font-family:var(--font-display);font-size:1.3rem;font-weight:500;margin-bottom:18px">Preferences</h2>
+        <div style="display:grid;gap:14px">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:14px;padding-bottom:14px;border-bottom:1px solid var(--color-border)">
+            <div><div style="font-size:15px;font-weight:600">Text me when it's ready</div><div style="font-size:13px;color:var(--color-ink-subtle)">To 0412 883 907</div></div>
+            <span style="width:44px;height:26px;border-radius:var(--radius-pill);background:var(--color-gold);display:flex;align-items:center;padding:3px;justify-content:flex-end;flex:0 0 auto"><span style="width:20px;height:20px;border-radius:var(--radius-pill);background:var(--color-gold-ink);display:block"></span></span>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:14px">
+            <div><div style="font-size:15px;font-weight:600">Weekly what's-on email</div><div style="font-size:13px;color:var(--color-ink-subtle)">Sent Thursdays, skippable</div></div>
+            <span style="width:44px;height:26px;border-radius:var(--radius-pill);background:var(--color-border-strong);display:flex;align-items:center;padding:3px;flex:0 0 auto"><span style="width:20px;height:20px;border-radius:var(--radius-pill);background:var(--color-surface);display:block"></span></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ isOrders }}">
+  <div style="display:grid;gap:clamp(14px,2vw,18px);max-width:840px">
+    <sc-for list="{{ history }}" as="o" hint-placeholder-count="3">
+      <div style="background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-xl);padding:clamp(18px,2.5vw,24px);box-shadow:var(--shadow-xs);display:grid;gap:16px">
+        <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;justify-content:space-between">
+          <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+            <span style="font-family:var(--font-mono);font-size:14px;font-weight:500">{{ o.no }}</span>
+            <span style="{{ o.chipStyle }}">{{ o.status }}</span>
+          </div>
+          <span style="font-size:13.5px;color:var(--color-ink-subtle)">{{ o.date }}</span>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:center">
+          <sc-for list="{{ o.thumbs }}" as="t" hint-placeholder-count="2">
+            <span style="width:40px;height:40px;border-radius:var(--radius-sm);overflow:hidden;background:var(--color-sunken);display:block"><img src="{{ t }}" alt="" style="width:100%;height:100%;object-fit:cover;display:block" /></span>
+          </sc-for>
+          <span style="font-size:14.5px;color:var(--color-ink-muted);flex:1;min-width:160px">{{ o.summary }}</span>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;padding-top:14px;border-top:1px solid var(--color-border)">
+          <div style="display:flex;align-items:baseline;gap:12px">
+            <span style="font-family:var(--font-mono);font-size:16px;font-weight:500">{{ o.total }}</span>
+            <span style="font-size:13px;color:var(--color-gold);font-weight:600">{{ o.points }}</span>
+          </div>
+          <button onClick="{{ o.onReorder }}" style="padding:10px 20px;border-radius:var(--radius-pill);border:1px solid var(--color-border-strong);font-size:14px;font-weight:600" style-hover="background:var(--color-sunken)">Order again</button>
+        </div>
+      </div>
+    </sc-for>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ isRewards }}">
+  <div style="display:grid;gap:clamp(18px,2.5vw,26px)">
+    <div style="position:relative;overflow:hidden;border-radius:var(--radius-2xl);background:var(--color-ink);color:var(--color-bg);padding:clamp(24px,4vw,40px);box-shadow:var(--shadow-lg)">
+      <div style="position:relative;display:grid;gap:clamp(20px,3vw,36px);grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));align-items:center">
+        <div>
+          <div style="font-family:var(--font-mono);font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;opacity:.6;margin-bottom:12px">Points balance</div>
+          <div style="display:flex;align-items:baseline;gap:10px;margin-bottom:20px">
+            <span style="font-family:var(--font-display);font-size:clamp(3rem,7vw,4.6rem);font-weight:500;line-height:.9;letter-spacing:-.03em">340</span>
+            <span style="font-size:15px;opacity:.7">of 500</span>
+          </div>
+          <div style="height:10px;border-radius:var(--radius-pill);background:rgba(251,247,240,.18);overflow:hidden;margin-bottom:12px">
+            <div style="width:68%;height:100%;border-radius:var(--radius-pill);background:var(--color-gold)"></div>
+          </div>
+          <p style="font-size:14.5px;opacity:.78;line-height:1.55">160 points to a free large coffee. That's about four more visits.</p>
+        </div>
+        <div style="display:grid;gap:12px">
+          <div style="display:flex;justify-content:space-between;gap:14px;padding-bottom:12px;border-bottom:1px solid rgba(251,247,240,.16);font-size:14.5px"><span style="opacity:.72">Earned this year</span><span style="font-family:var(--font-mono)">1,240</span></div>
+          <div style="display:flex;justify-content:space-between;gap:14px;padding-bottom:12px;border-bottom:1px solid rgba(251,247,240,.16);font-size:14.5px"><span style="opacity:.72">Redeemed</span><span style="font-family:var(--font-mono)">900</span></div>
+          <div style="display:flex;justify-content:space-between;gap:14px;font-size:14.5px"><span style="opacity:.72">Rate</span><span style="font-family:var(--font-mono)">1 pt / $1</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <h2 style="font-family:var(--font-display);font-size:clamp(1.4rem,2.6vw,1.8rem);font-weight:500;letter-spacing:-.015em;margin-bottom:18px">Rewards you can redeem</h2>
+      <div style="display:grid;gap:clamp(14px,2vw,20px);grid-template-columns:repeat(auto-fill,minmax(min(100%,250px),1fr))">
+        <sc-for list="{{ rewards }}" as="r" hint-placeholder-count="4">
+          <div style="{{ r.cardStyle }}">
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px">
+              <span style="font-family:var(--font-mono);font-size:13px;color:var(--color-gold);font-weight:500">{{ r.cost }}</span>
+              <span style="{{ r.tagStyle }}">{{ r.tag }}</span>
+            </div>
+            <h3 style="font-family:var(--font-display);font-size:1.2rem;font-weight:500;line-height:1.25;margin-bottom:6px">{{ r.name }}</h3>
+            <p style="font-size:13.5px;color:var(--color-ink-subtle);line-height:1.5;margin-bottom:18px">{{ r.desc }}</p>
+            <button disabled="{{ r.locked }}" style="{{ r.btnStyle }}">{{ r.btnLabel }}</button>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+
+    <p style="font-size:13px;color:var(--color-ink-subtle);line-height:1.6;max-width:64ch">Points land the moment an order is marked complete. Orders placed as a guest can't be added to a balance afterwards — worth signing in first if you're close to a reward.</p>
+  </div>
+  </sc-if>
+</main>
+</sc-if>
+
+<sc-if value="{{ isConfirm }}">
+<main style="max-width:840px;margin:0 auto;padding:clamp(28px,4vw,56px) clamp(16px,4vw,40px) clamp(56px,7vw,90px)">
+  <div style="text-align:center;margin-bottom:clamp(30px,4vw,44px)">
+    <div style="width:66px;height:66px;margin:0 auto 22px;border-radius:var(--radius-pill);background:var(--color-gold-soft);color:var(--color-gold);display:grid;place-items:center;font-size:27px">✓</div>
+    <h1 style="font-family:var(--font-display);font-weight:500;font-size:clamp(2rem,4.6vw,2.9rem);letter-spacing:-.025em;line-height:1.08;margin-bottom:12px">We've got it, thanks</h1>
+    <p style="color:var(--color-ink-muted);font-size:16.5px;line-height:1.6;max-width:46ch;margin:0 auto">Order <span style="font-family:var(--font-mono);color:var(--color-ink)">{{ orderNo }}</span> is with the bar. We'll call your name at the pickup end of the counter.</p>
+  </div>
+
+  <div style="background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-xl);padding:clamp(22px,3.5vw,34px);box-shadow:var(--shadow-sm);margin-bottom:clamp(18px,2.5vw,26px)">
+    <div style="display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:26px">
+      <h2 style="font-family:var(--font-display);font-size:1.3rem;font-weight:500">Order status</h2>
+      <span style="font-size:14px;color:var(--color-ink-subtle)">Ready around <span style="font-family:var(--font-mono);color:var(--color-ink)">{{ readyAt }}</span></span>
+    </div>
+    <div style="display:grid;gap:0">
+      <sc-for list="{{ steps }}" as="st" hint-placeholder-count="4">
+        <div style="display:grid;grid-template-columns:auto 1fr;gap:16px">
+          <div style="display:grid;justify-items:center;gap:0">
+            <span style="{{ st.dotStyle }}">{{ st.mark }}</span>
+            <sc-if value="{{ st.hasLine }}"><span style="{{ st.lineStyle }}"></span></sc-if>
+          </div>
+          <div style="{{ st.bodyStyle }}">
+            <div style="{{ st.titleStyle }}">{{ st.name }}</div>
+            <div style="font-size:13.5px;color:var(--color-ink-subtle);margin-top:2px">{{ st.note }}</div>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+    <button onClick="{{ advanceStatus }}" style="margin-top:22px;padding:11px 20px;border-radius:var(--radius-pill);border:1px dashed var(--color-border-strong);font-family:var(--font-mono);font-size:12.5px;color:var(--color-ink-subtle)" style-hover="background:var(--color-sunken);color:var(--color-ink)">{{ advanceLabel }}</button>
+  </div>
+
+  <div style="background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-xl);padding:clamp(22px,3.5vw,34px);box-shadow:var(--shadow-xs)">
+    <h2 style="font-family:var(--font-display);font-size:1.3rem;font-weight:500;margin-bottom:18px">Summary</h2>
+    <div style="display:grid;gap:0;margin-bottom:18px">
+      <sc-for list="{{ orderLines }}" as="l" hint-placeholder-count="2">
+        <div style="display:flex;gap:14px;align-items:center;padding:13px 0;border-bottom:1px solid var(--color-border)">
+          <span style="width:46px;height:46px;border-radius:var(--radius-sm);overflow:hidden;background:var(--color-sunken);flex:0 0 auto;display:block"><img src="{{ l.img }}" alt="" style="width:100%;height:100%;object-fit:cover;display:block" /></span>
+          <span style="font-family:var(--font-mono);font-size:13.5px;color:var(--color-ink-subtle);flex:0 0 auto">{{ l.qty }}×</span>
+          <span style="flex:1;min-width:0">
+            <span style="display:block;font-size:15px;font-weight:600">{{ l.name }}</span>
+            <sc-if value="{{ l.hasOpts }}"><span style="display:block;font-size:12.5px;color:var(--color-ink-subtle);margin-top:2px">{{ l.optsText }}</span></sc-if>
+          </span>
+          <span style="font-family:var(--font-mono);font-size:14px">{{ l.lineTotal }}</span>
+        </div>
+      </sc-for>
+    </div>
+    <div style="display:grid;gap:9px">
+      <div style="display:flex;justify-content:space-between;font-size:14.5px;color:var(--color-ink-muted)"><span>Subtotal</span><span style="font-family:var(--font-mono)">{{ orderSubtotal }}</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:14.5px;color:var(--color-ink-muted)"><span>Tax (10%)</span><span style="font-family:var(--font-mono)">{{ orderTax }}</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:17px;font-weight:700;padding-top:10px;border-top:1px solid var(--color-border)"><span>Paid</span><span style="font-family:var(--font-mono)">{{ orderTotal }}</span></div>
+    </div>
+    <div style="margin-top:22px;padding-top:20px;border-top:1px solid var(--color-border);display:grid;gap:8px">
+      <div style="display:flex;justify-content:space-between;gap:12px;font-size:14px"><span style="color:var(--color-ink-subtle)">Pickup</span><span>41 Ashgrove Lane, counter</span></div>
+      <div style="display:flex;justify-content:space-between;gap:12px;font-size:14px"><span style="color:var(--color-ink-subtle)">Paid with</span><span>Visa ending 4417</span></div>
+      <div style="display:flex;justify-content:space-between;gap:12px;font-size:14px"><span style="color:var(--color-ink-subtle)">Points earned</span><span style="{{ pointsEarnedStyle }}">{{ pointsEarnedText }}</span></div>
+    </div>
+  </div>
+
+  <div style="display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin-top:clamp(26px,3.5vw,38px)">
+    <button onClick="{{ goMenu }}" style="padding:14px 28px;border-radius:var(--radius-pill);background:var(--color-gold);color:var(--color-gold-ink);font-size:15.5px;font-weight:700;box-shadow:var(--shadow-md)" style-hover="background:var(--color-gold-hover)">Order something else</button>
+    <button onClick="{{ goHome }}" style="padding:14px 26px;border-radius:var(--radius-pill);border:1px solid var(--color-border-strong);font-size:15.5px;font-weight:600" style-hover="background:var(--color-sunken)">Back home</button>
+  </div>
+</main>
+</sc-if>
+
+<sc-if value="{{ isShop }}" hint-placeholder-val="{{ true }}">
+<footer style="border-top:1px solid var(--color-border);background:var(--color-surface)">
+  <div style="max-width:1240px;margin:0 auto;padding:clamp(44px,5vw,68px) clamp(16px,4vw,40px) 28px;display:grid;gap:clamp(28px,4vw,48px);grid-template-columns:repeat(auto-fit,minmax(min(100%,190px),1fr))">
+    <div style="max-width:280px">
+      <div style="display:flex;align-items:baseline;gap:2px;margin-bottom:14px">
+        <span style="font-family:var(--font-display);font-size:25px;font-weight:600;letter-spacing:-.02em">Nook</span>
+        <span style="width:5px;height:5px;border-radius:var(--radius-pill);background:var(--color-gold);display:block;margin-bottom:4px"></span>
+      </div>
+      <p style="font-size:14px;color:var(--color-ink-subtle);line-height:1.6">41 Ashgrove Lane<br />Carlton North, VIC 3054</p>
+    </div>
+    <div>
+      <div style="font-family:var(--font-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--color-ink-subtle);margin-bottom:16px">Visit</div>
+      <div style="display:grid;gap:9px;font-size:14.5px;color:var(--color-ink-muted)">
+        <div style="display:flex;justify-content:space-between;gap:14px"><span>Mon – Fri</span><span style="font-family:var(--font-mono);font-size:13px">7:00 – 16:00</span></div>
+        <div style="display:flex;justify-content:space-between;gap:14px"><span>Saturday</span><span style="font-family:var(--font-mono);font-size:13px">8:00 – 15:00</span></div>
+        <div style="display:flex;justify-content:space-between;gap:14px"><span>Sunday</span><span style="font-family:var(--font-mono);font-size:13px">8:00 – 14:00</span></div>
+      </div>
+    </div>
+    <div>
+      <div style="font-family:var(--font-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--color-ink-subtle);margin-bottom:16px">Site</div>
+      <div style="display:grid;gap:9px;justify-items:start;font-size:14.5px">
+        <button onClick="{{ goMenu }}" style="color:var(--color-ink-muted)" style-hover="color:var(--color-gold)">Menu</button>
+        <button onClick="{{ goGallery }}" style="color:var(--color-ink-muted)" style-hover="color:var(--color-gold)">Gallery</button>
+        <button onClick="{{ goAbout }}" style="color:var(--color-ink-muted)" style-hover="color:var(--color-gold)">Our story</button>
+        <button onClick="{{ goRewards }}" style="color:var(--color-ink-muted)" style-hover="color:var(--color-gold)">Rewards</button>
+      </div>
+    </div>
+    <div>
+      <div style="font-family:var(--font-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--color-ink-subtle);margin-bottom:16px">Elsewhere</div>
+      <div style="display:grid;gap:9px;justify-items:start;font-size:14.5px">
+        <a href="#" style="color:var(--color-ink-muted)" style-hover="color:var(--color-gold)">Instagram</a>
+        <a href="#" style="color:var(--color-ink-muted)" style-hover="color:var(--color-gold)">Facebook</a>
+        <a href="#" style="color:var(--color-ink-muted)" style-hover="color:var(--color-gold)">hello@nook.cafe</a>
+        <a href="#" style="color:var(--color-ink-muted)" style-hover="color:var(--color-gold)">(03) 9041 8827</a>
+      </div>
+    </div>
+  </div>
+  <div style="max-width:1240px;margin:0 auto;padding:20px clamp(16px,4vw,40px) 34px;border-top:1px solid var(--color-border);display:flex;flex-wrap:wrap;gap:14px;align-items:center;justify-content:space-between">
+    <span style="font-size:12.5px;color:var(--color-ink-subtle)">© 2026 Nook Coffee. Made on Wurundjeri land.</span>
+    <div style="display:flex;flex-wrap:wrap;gap:18px">
+      <button onClick="{{ goTokens }}" style="font-size:12.5px;color:var(--color-ink-subtle)" style-hover="color:var(--color-gold)">Design tokens</button>
+      <button onClick="{{ goAdmin }}" style="font-size:12.5px;color:var(--color-ink-subtle)" style-hover="color:var(--color-gold)">Staff dashboard</button>
+    </div>
+  </div>
+</footer>
+</sc-if>
+
+<sc-if value="{{ cartOpen }}">
+<div style="position:fixed;inset:0;z-index:60;display:flex;justify-content:flex-end">
+  <button onClick="{{ closeCart }}" aria-label="Close cart" style="position:absolute;inset:0;background:var(--color-overlay);animation:nkFade .2s ease;cursor:default"></button>
+  <aside style="position:relative;width:min(430px,100%);height:100%;background:var(--color-bg);border-left:1px solid var(--color-border);box-shadow:var(--shadow-xl);display:flex;flex-direction:column;animation:nkSlideIn .26s cubic-bezier(.22,.8,.3,1)">
+    <div style="padding:22px 24px 18px;border-bottom:1px solid var(--color-border);display:flex;align-items:center;justify-content:space-between;gap:12px">
+      <div>
+        <h2 style="font-family:var(--font-display);font-size:1.5rem;font-weight:500;letter-spacing:-.01em">Your order</h2>
+        <div style="font-size:13px;color:var(--color-ink-subtle);margin-top:2px">{{ cartSummaryLine }}</div>
+      </div>
+      <button onClick="{{ closeCart }}" style="width:34px;height:34px;display:grid;place-items:center;border-radius:var(--radius-pill);border:1px solid var(--color-border);color:var(--color-ink-muted);font-size:15px" style-hover="background:var(--color-sunken)">✕</button>
+    </div>
+
+    <sc-if value="{{ cartEmpty }}">
+    <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px 34px;gap:8px">
+      <div style="width:86px;height:86px;border-radius:var(--radius-pill);background:var(--color-sunken);border:1px solid var(--color-border);display:grid;place-items:center;margin-bottom:8px">
+        <span style="font-family:var(--font-display);font-size:34px;color:var(--color-ink-subtle)">◠</span>
+      </div>
+      <h3 style="font-family:var(--font-display);font-size:1.3rem;font-weight:500">Nothing in here yet</h3>
+      <p style="font-size:14.5px;color:var(--color-ink-subtle);line-height:1.6;max-width:30ch;margin-bottom:18px">The batch brew's on and the buns just came out. Have a look.</p>
+      <button onClick="{{ goMenuFromCart }}" style="padding:13px 26px;border-radius:var(--radius-pill);background:var(--color-gold);color:var(--color-gold-ink);font-size:15px;font-weight:700" style-hover="background:var(--color-gold-hover)">Browse the menu</button>
+    </div>
+    </sc-if>
+
+    <sc-if value="{{ cartHasItems }}">
+    <div style="flex:1;overflow-y:auto;padding:8px 24px 20px">
+      <sc-for list="{{ cart }}" as="l" hint-placeholder-count="2">
+        <div style="display:flex;gap:14px;padding:18px 0;border-bottom:1px solid var(--color-border)">
+          <div style="width:66px;height:66px;flex:0 0 auto;border-radius:var(--radius-md);overflow:hidden;background:var(--color-sunken)">
+            <img src="{{ l.img }}" alt="{{ l.name }}" style="width:100%;height:100%;object-fit:cover;display:block" />
+          </div>
+          <div style="flex:1;min-width:0">
+            <div style="display:flex;justify-content:space-between;gap:10px;align-items:baseline">
+              <div style="font-size:15px;font-weight:600;line-height:1.3">{{ l.name }}</div>
+              <div style="font-family:var(--font-mono);font-size:14px">{{ l.lineTotal }}</div>
+            </div>
+            <sc-if value="{{ l.hasOpts }}">
+              <div style="font-size:12.5px;color:var(--color-ink-subtle);line-height:1.45;margin-top:3px">{{ l.optsText }}</div>
+            </sc-if>
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:11px">
+              <div style="display:flex;align-items:center;gap:2px;border:1px solid var(--color-border);border-radius:var(--radius-pill);padding:2px">
+                <button onClick="{{ l.onDec }}" style="width:28px;height:28px;display:grid;place-items:center;border-radius:var(--radius-pill);color:var(--color-ink-muted);font-size:16px" style-hover="background:var(--color-sunken)">−</button>
+                <span style="min-width:22px;text-align:center;font-family:var(--font-mono);font-size:13.5px">{{ l.qty }}</span>
+                <button onClick="{{ l.onInc }}" style="width:28px;height:28px;display:grid;place-items:center;border-radius:var(--radius-pill);color:var(--color-ink-muted);font-size:16px" style-hover="background:var(--color-sunken)">+</button>
+              </div>
+              <button onClick="{{ l.onRemove }}" style="font-size:12.5px;color:var(--color-ink-subtle);text-decoration:underline;text-underline-offset:3px" style-hover="color:var(--color-clay)">Remove</button>
+            </div>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+    <div style="border-top:1px solid var(--color-border);background:var(--color-surface);padding:20px 24px 24px">
+      <div style="display:grid;gap:9px;margin-bottom:16px">
+        <div style="display:flex;justify-content:space-between;font-size:14.5px;color:var(--color-ink-muted)"><span>Subtotal</span><span style="font-family:var(--font-mono)">{{ subtotal }}</span></div>
+        <div style="display:flex;justify-content:space-between;font-size:14.5px;color:var(--color-ink-muted)"><span>Tax (10%)</span><span style="font-family:var(--font-mono)">{{ tax }}</span></div>
+        <div style="display:flex;justify-content:space-between;font-size:17px;font-weight:700;padding-top:9px;border-top:1px solid var(--color-border)"><span>Total</span><span style="font-family:var(--font-mono)">{{ total }}</span></div>
+      </div>
+      <sc-if value="{{ notSignedIn }}">
+        <div style="display:flex;gap:10px;align-items:flex-start;padding:11px 14px;border-radius:var(--radius-md);background:var(--color-gold-soft);margin-bottom:14px">
+          <span style="font-family:var(--font-mono);font-size:12px;color:var(--color-gold);margin-top:1px">+{{ pointsPreview }}</span>
+          <p style="font-size:12.5px;color:var(--color-ink-muted);line-height:1.45">points if you <button onClick="{{ goAuth }}" style="font-weight:700;color:var(--color-gold);text-decoration:underline;text-underline-offset:2px">sign in first</button>. Guest orders don't collect.</p>
+        </div>
+      </sc-if>
+      <button onClick="{{ checkout }}" style="width:100%;padding:16px;border-radius:var(--radius-pill);background:var(--color-gold);color:var(--color-gold-ink);font-size:16px;font-weight:700;box-shadow:var(--shadow-md)" style-hover="background:var(--color-gold-hover)">Checkout · {{ total }}</button>
+    </div>
+    </sc-if>
+  </aside>
+</div>
+</sc-if>
+
+<sc-if value="{{ modalOpen }}">
+<div style="position:fixed;inset:0;z-index:70;display:flex;align-items:flex-end;justify-content:center;padding:0">
+  <button onClick="{{ closeModal }}" aria-label="Close" style="position:absolute;inset:0;background:var(--color-overlay);animation:nkFade .2s ease;cursor:default"></button>
+  <div style="{{ modalShellStyle }}">
+    <div style="position:relative;flex:0 0 auto">
+      <div style="height:clamp(140px,22vh,200px);background:var(--color-sunken);overflow:hidden">
+        <img src="{{ modal.img }}" alt="{{ modal.name }}" style="width:100%;height:100%;object-fit:cover;display:block" />
+      </div>
+      <button onClick="{{ closeModal }}" style="position:absolute;top:14px;right:14px;width:34px;height:34px;display:grid;place-items:center;border-radius:var(--radius-pill);background:var(--color-surface);border:1px solid var(--color-border);box-shadow:var(--shadow-sm);font-size:15px">✕</button>
+    </div>
+    <div style="flex:1;overflow-y:auto;padding:22px clamp(20px,4vw,28px) 8px">
+      <h2 style="font-family:var(--font-display);font-size:clamp(1.5rem,3.4vw,1.9rem);font-weight:500;letter-spacing:-.015em;line-height:1.15">{{ modal.name }}</h2>
+      <p style="font-size:14.5px;color:var(--color-ink-subtle);line-height:1.55;margin-top:8px">{{ modal.desc }}</p>
+      <div style="display:flex;align-items:center;gap:10px;margin-top:14px;padding-bottom:6px">
+        <span style="font-family:var(--font-mono);font-size:15px;color:var(--color-ink-muted)">Base {{ modal.baseText }}</span>
+      </div>
+
+      <sc-for list="{{ groups }}" as="g" hint-placeholder-count="2">
+        <section style="margin-top:24px;padding-top:20px;border-top:1px solid var(--color-border)">
+          <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:4px">
+            <h3 style="font-family:var(--font-display);font-size:1.15rem;font-weight:500">{{ g.name }}</h3>
+            <span style="{{ g.tagStyle }}">{{ g.tagLabel }}</span>
+          </div>
+          <p style="font-size:12.5px;color:var(--color-ink-subtle);margin-bottom:12px">{{ g.hint }}</p>
+          <div style="display:grid;gap:8px">
+            <sc-for list="{{ g.options }}" as="o" hint-placeholder-count="3">
+              <button onClick="{{ o.onPick }}" style="{{ o.style }}">
+                <span style="{{ o.markStyle }}"><sc-if value="{{ o.picked }}"><span style="{{ o.dotStyle }}"></span></sc-if></span>
+                <span style="flex:1;text-align:left;font-size:15px;font-weight:500">{{ o.name }}</span>
+                <span style="font-family:var(--font-mono);font-size:13px;color:var(--color-ink-subtle)">{{ o.deltaText }}</span>
+              </button>
+            </sc-for>
+          </div>
+        </section>
+      </sc-for>
+    </div>
+    <div style="flex:0 0 auto;border-top:1px solid var(--color-border);background:var(--color-surface);padding:16px clamp(20px,4vw,28px) 20px">
+      <div style="display:flex;align-items:center;gap:12px">
+        <div style="display:flex;align-items:center;gap:2px;border:1px solid var(--color-border);border-radius:var(--radius-pill);padding:3px;flex:0 0 auto">
+          <button onClick="{{ modalQtyDec }}" style="width:34px;height:34px;display:grid;place-items:center;border-radius:var(--radius-pill);font-size:17px;color:var(--color-ink-muted)" style-hover="background:var(--color-sunken)">−</button>
+          <span style="min-width:26px;text-align:center;font-family:var(--font-mono);font-size:14px">{{ modalQty }}</span>
+          <button onClick="{{ modalQtyInc }}" style="width:34px;height:34px;display:grid;place-items:center;border-radius:var(--radius-pill);font-size:17px;color:var(--color-ink-muted)" style-hover="background:var(--color-sunken)">+</button>
+        </div>
+        <button onClick="{{ addFromModal }}" disabled="{{ addDisabled }}" style="{{ addBtnStyle }}">{{ addBtnLabel }}</button>
+      </div>
+      <sc-if value="{{ addDisabled }}">
+        <p style="font-size:12.5px;color:var(--color-clay);margin-top:10px;text-align:center">{{ missingText }}</p>
+      </sc-if>
+    </div>
+  </div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isAdmin }}">
+<div style="min-height:100vh;background:var(--color-admin-bg);display:grid;grid-template-columns:{{ adminCols }}">
+  <sc-if value="{{ wideNav }}" hint-placeholder-val="{{ true }}">
+  <aside style="background:var(--color-admin-panel);border-right:1px solid var(--color-border);padding:22px 16px;display:flex;flex-direction:column;gap:26px;position:sticky;top:0;height:100vh">
+    <div style="display:flex;align-items:center;gap:9px;padding:0 8px">
+      <span style="width:30px;height:30px;border-radius:var(--radius-sm);background:var(--color-ink);color:var(--color-bg);display:grid;place-items:center;font-family:var(--font-display);font-size:16px;font-weight:600">N</span>
+      <div>
+        <div style="font-size:14px;font-weight:700;line-height:1.1">Nook</div>
+        <div style="font-family:var(--font-mono);font-size:10.5px;color:var(--color-ink-subtle);letter-spacing:.06em">STAFF</div>
+      </div>
+    </div>
+    <nav style="display:grid;gap:3px">
+      <sc-for list="{{ adminNav }}" as="n" hint-placeholder-count="3">
+        <button onClick="{{ n.onGo }}" style="{{ n.style }}">
+          <span>{{ n.name }}</span>
+          <sc-if value="{{ n.badge }}"><span style="font-family:var(--font-mono);font-size:11px;padding:1px 7px;border-radius:var(--radius-pill);background:var(--color-clay);color:#fff">{{ n.badge }}</span></sc-if>
+        </button>
+      </sc-for>
+    </nav>
+    <div style="margin-top:auto;display:grid;gap:3px">
+      <button onClick="{{ toggleTheme }}" style="display:flex;align-items:center;gap:9px;padding:10px 12px;border-radius:var(--radius-md);font-size:13.5px;font-weight:500;color:var(--color-ink-subtle);text-align:left" style-hover="background:var(--color-admin-row);color:var(--color-ink)"><span>{{ themeGlyph }}</span>{{ themeLabel }}</button>
+      <button onClick="{{ goHome }}" style="display:flex;align-items:center;gap:9px;padding:10px 12px;border-radius:var(--radius-md);font-size:13.5px;font-weight:500;color:var(--color-ink-subtle);text-align:left" style-hover="background:var(--color-admin-row);color:var(--color-ink)">← Back to site</button>
+    </div>
+  </aside>
+  </sc-if>
+
+  <div style="min-width:0">
+    <header style="background:var(--color-admin-panel);border-bottom:1px solid var(--color-border);padding:16px clamp(16px,3vw,28px);display:flex;flex-wrap:wrap;align-items:center;gap:14px;justify-content:space-between;position:sticky;top:0;z-index:10">
+      <div>
+        <h1 style="font-size:19px;font-weight:700;letter-spacing:-.01em">{{ adminTitle }}</h1>
+        <p style="font-size:13px;color:var(--color-ink-subtle);margin-top:1px">{{ adminSub }}</p>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px">
+        <span style="display:inline-flex;align-items:center;gap:7px;padding:7px 13px;border-radius:var(--radius-pill);background:color-mix(in srgb,var(--color-leaf) 15%,transparent);color:var(--color-leaf);font-size:12.5px;font-weight:600"><span style="width:6px;height:6px;border-radius:var(--radius-pill);background:currentColor;display:block"></span>Store open</span>
+        <sc-if value="{{ narrowNav }}"><button onClick="{{ goHome }}" style="padding:8px 14px;border-radius:var(--radius-pill);border:1px solid var(--color-border);font-size:13px;font-weight:600">Exit</button></sc-if>
+      </div>
+    </header>
+
+    <sc-if value="{{ narrowNav }}">
+    <div style="display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding:12px clamp(16px,3vw,28px);border-bottom:1px solid var(--color-border);background:var(--color-admin-panel)">
+      <sc-for list="{{ adminNav }}" as="n" hint-placeholder-count="3">
+        <button onClick="{{ n.onGo }}" style="{{ n.pillStyle }}">{{ n.name }}</button>
+      </sc-for>
+    </div>
+    </sc-if>
+
+    <main style="padding:clamp(16px,3vw,28px);display:grid;gap:clamp(16px,2.4vw,22px)">
+
+      <sc-if value="{{ isAdminOrders }}">
+      <div style="display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(min(100%,150px),1fr))">
+        <sc-for list="{{ adminStats }}" as="k" hint-placeholder-count="4">
+          <div style="background:var(--color-admin-panel);border:1px solid var(--color-border);border-radius:var(--radius-md);padding:15px 17px">
+            <div style="font-family:var(--font-mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--color-ink-subtle);margin-bottom:8px">{{ k.label }}</div>
+            <div style="font-family:var(--font-mono);font-size:26px;font-weight:500;line-height:1">{{ k.value }}</div>
+          </div>
+        </sc-for>
+      </div>
+
+      <div style="background:var(--color-admin-panel);border:1px solid var(--color-border);border-radius:var(--radius-md);overflow-x:auto">
+        <div style="display:grid;grid-template-columns:{{ queueCols }};gap:14px;padding:11px 17px;border-bottom:1px solid var(--color-border);background:var(--color-admin-row);font-family:var(--font-mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--color-ink-subtle)">
+          <span>Order</span><span>Items</span><span>Total</span><span>Status</span>
+        </div>
+        <sc-for list="{{ queue }}" as="q" hint-placeholder-count="5">
+          <div style="{{ q.rowStyle }}">
+            <div style="min-width:0">
+              <div style="font-family:var(--font-mono);font-size:13.5px;font-weight:500">{{ q.no }}</div>
+              <div style="font-size:12.5px;color:var(--color-ink-subtle);margin-top:2px">{{ q.who }} · {{ q.time }}</div>
+            </div>
+            <div style="font-size:13.5px;color:var(--color-ink-muted);line-height:1.45;min-width:0">{{ q.items }}</div>
+            <div style="font-family:var(--font-mono);font-size:13.5px">{{ q.total }}</div>
+            <div style="display:flex;flex-wrap:wrap;gap:6px;align-items:center">
+              <sc-for list="{{ q.actions }}" as="a" hint-placeholder-count="2">
+                <button onClick="{{ a.onClick }}" style="{{ a.style }}">{{ a.label }}</button>
+              </sc-for>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+      </sc-if>
+
+      <sc-if value="{{ isAdminMenu }}">
+      <div style="display:flex;gap:7px;flex-wrap:wrap">
+        <sc-for list="{{ adminMenuTabs }}" as="t" hint-placeholder-count="3">
+          <button onClick="{{ t.onGo }}" style="{{ t.style }}">{{ t.name }}</button>
+        </sc-for>
+      </div>
+
+      <sc-if value="{{ admItems }}">
+      <div style="background:var(--color-admin-panel);border:1px solid var(--color-border);border-radius:var(--radius-md);overflow-x:auto">
+        <div style="display:grid;grid-template-columns:{{ itemCols }};gap:14px;padding:11px 17px;border-bottom:1px solid var(--color-border);background:var(--color-admin-row);font-family:var(--font-mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--color-ink-subtle)">
+          <span>Item</span><span>Category</span><span>Price</span><span>Options</span><span>Available</span>
+        </div>
+        <sc-for list="{{ adminItems }}" as="i" hint-placeholder-count="8">
+          <div style="{{ i.rowStyle }}">
+            <div style="display:flex;align-items:center;gap:11px;min-width:0">
+              <span style="width:34px;height:34px;border-radius:var(--radius-sm);overflow:hidden;background:var(--color-sunken);flex:0 0 auto;display:block"><img src="{{ i.img }}" alt="" style="{{ i.imgStyle }}" /></span>
+              <span style="min-width:0">
+                <span style="display:block;font-size:13.5px;font-weight:600;line-height:1.3">{{ i.name }}</span>
+                <span style="display:block;font-family:var(--font-mono);font-size:10.5px;color:var(--color-ink-subtle)">{{ i.id }}</span>
+              </span>
+            </div>
+            <div style="font-size:13px;color:var(--color-ink-muted)">{{ i.cat }}</div>
+            <div style="font-family:var(--font-mono);font-size:13px">{{ i.price }}</div>
+            <div style="font-size:12.5px;color:var(--color-ink-subtle);line-height:1.4">{{ i.groups }}</div>
+            <div style="display:flex;align-items:center;gap:10px">
+              <button onClick="{{ i.onToggle }}" title="{{ i.toggleTitle }}" style="{{ i.switchStyle }}"><span style="{{ i.knobStyle }}"></span></button>
+              <span style="{{ i.stateStyle }}">{{ i.stateLabel }}</span>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+      <p style="font-size:12.5px;color:var(--color-ink-subtle)">Switching an item off 86s it immediately — it stays visible on the customer menu, greyed out and marked sold out, and can't be added.</p>
+      </sc-if>
+
+      <sc-if value="{{ admCats }}">
+      <div style="background:var(--color-admin-panel);border:1px solid var(--color-border);border-radius:var(--radius-md);overflow-x:auto">
+        <div style="display:grid;grid-template-columns:{{ catCols }};gap:14px;padding:11px 17px;border-bottom:1px solid var(--color-border);background:var(--color-admin-row);font-family:var(--font-mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--color-ink-subtle)">
+          <span>Order</span><span>Category</span><span>Items</span><span>Visibility</span>
+        </div>
+        <sc-for list="{{ adminCats }}" as="c" hint-placeholder-count="6">
+          <div style="{{ c.rowStyle }}">
+            <div style="display:flex;align-items:center;gap:8px;color:var(--color-ink-subtle)">
+              <span style="font-family:var(--font-mono);font-size:12px">{{ c.pos }}</span>
+              <span style="font-size:13px;cursor:grab">⠿</span>
+            </div>
+            <div style="font-size:13.5px;font-weight:600">{{ c.name }}</div>
+            <div style="font-family:var(--font-mono);font-size:13px;color:var(--color-ink-muted)">{{ c.count }}</div>
+            <div><span style="{{ c.chipStyle }}">{{ c.chip }}</span></div>
+          </div>
+        </sc-for>
+      </div>
+      <p style="font-size:12.5px;color:var(--color-ink-subtle)">A category with nothing in it is hidden from the customer menu automatically — the tab row just closes up around it.</p>
+      </sc-if>
+
+      <sc-if value="{{ admGroups }}">
+      <div style="display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(min(100%,290px),1fr))">
+        <sc-for list="{{ optionGroups }}" as="g" hint-placeholder-count="4">
+          <div style="background:var(--color-admin-panel);border:1px solid var(--color-border);border-radius:var(--radius-md);padding:17px">
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:4px">
+              <span style="font-size:14.5px;font-weight:700">{{ g.name }}</span>
+              <span style="{{ g.tagStyle }}">{{ g.tag }}</span>
+            </div>
+            <div style="font-family:var(--font-mono);font-size:10.5px;color:var(--color-ink-subtle);margin-bottom:14px">{{ g.meta }}</div>
+            <div style="display:grid;gap:1px;background:var(--color-border);border:1px solid var(--color-border);border-radius:var(--radius-sm);overflow:hidden">
+              <sc-for list="{{ g.rows }}" as="r" hint-placeholder-count="3">
+                <div style="display:flex;justify-content:space-between;gap:12px;padding:9px 12px;background:var(--color-admin-panel);font-size:13px">
+                  <span>{{ r.name }}</span>
+                  <span style="font-family:var(--font-mono);color:var(--color-ink-subtle)">{{ r.delta }}</span>
+                </div>
+              </sc-for>
+            </div>
+            <div style="font-size:12px;color:var(--color-ink-subtle);margin-top:12px">Used by {{ g.usedBy }}</div>
+          </div>
+        </sc-for>
+      </div>
+      </sc-if>
+      </sc-if>
+
+      <sc-if value="{{ isAdminLoyalty }}">
+      <div style="display:grid;gap:clamp(16px,2.4vw,22px);grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));align-items:start">
+        <div style="background:var(--color-admin-panel);border:1px solid var(--color-border);border-radius:var(--radius-md);padding:20px">
+          <h2 style="font-size:15px;font-weight:700;margin-bottom:3px">Point rules</h2>
+          <p style="font-size:12.5px;color:var(--color-ink-subtle);margin-bottom:20px">Applies to every order marked complete.</p>
+          <div style="display:grid;gap:16px">
+            <label style="display:grid;gap:6px">
+              <span style="font-size:12.5px;font-weight:600;color:var(--color-ink-muted)">Points earned per $1 spent</span>
+              <input type="text" value="1.0" style="width:100%;padding:11px 13px;border-radius:var(--radius-sm);border:1px solid var(--color-border-strong);background:var(--color-admin-bg);font-family:var(--font-mono);font-size:14px" />
+            </label>
+            <label style="display:grid;gap:6px">
+              <span style="font-size:12.5px;font-weight:600;color:var(--color-ink-muted)">Minimum spend to earn</span>
+              <input type="text" value="$3.00" style="width:100%;padding:11px 13px;border-radius:var(--radius-sm);border:1px solid var(--color-border-strong);background:var(--color-admin-bg);font-family:var(--font-mono);font-size:14px" />
+            </label>
+            <label style="display:grid;gap:6px">
+              <span style="font-size:12.5px;font-weight:600;color:var(--color-ink-muted)">Points expire after</span>
+              <select style="width:100%;padding:11px 13px;border-radius:var(--radius-sm);border:1px solid var(--color-border-strong);background:var(--color-admin-bg);font-size:14px">
+                <option>12 months of inactivity</option>
+                <option>24 months of inactivity</option>
+                <option>Never</option>
+              </select>
+            </label>
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:14px;padding:13px;border-radius:var(--radius-sm);background:var(--color-admin-row);border:1px solid var(--color-border)">
+              <div><div style="font-size:13.5px;font-weight:600">Guest orders earn points</div><div style="font-size:12px;color:var(--color-ink-subtle);margin-top:1px">Off — guests are prompted to sign in at cart</div></div>
+              <span style="width:40px;height:23px;border-radius:var(--radius-pill);background:var(--color-border-strong);display:flex;align-items:center;padding:3px;flex:0 0 auto"><span style="width:17px;height:17px;border-radius:var(--radius-pill);background:var(--color-admin-panel);display:block"></span></span>
+            </div>
+            <button style="justify-self:start;padding:11px 20px;border-radius:var(--radius-pill);background:var(--color-ink);color:var(--color-bg);font-size:13.5px;font-weight:700">Save rules</button>
+          </div>
+        </div>
+
+        <div style="background:var(--color-admin-panel);border:1px solid var(--color-border);border-radius:var(--radius-md);overflow-x:auto">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:18px 20px 16px">
+            <div>
+              <h2 style="font-size:15px;font-weight:700;margin-bottom:3px">Rewards catalog</h2>
+              <p style="font-size:12.5px;color:var(--color-ink-subtle)">Four active rewards</p>
+            </div>
+            <button style="padding:9px 16px;border-radius:var(--radius-pill);background:var(--color-ink);color:var(--color-bg);font-size:13px;font-weight:700;white-space:nowrap">+ New</button>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr auto auto;gap:14px;padding:10px 20px;border-top:1px solid var(--color-border);border-bottom:1px solid var(--color-border);background:var(--color-admin-row);font-family:var(--font-mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--color-ink-subtle)">
+            <span>Reward</span><span>Cost</span><span>Redeemed</span>
+          </div>
+          <sc-for list="{{ adminRewards }}" as="r" hint-placeholder-count="4">
+            <div style="display:grid;grid-template-columns:1fr auto auto;gap:14px;align-items:center;padding:13px 20px;border-bottom:1px solid var(--color-border)">
+              <div style="min-width:0">
+                <div style="font-size:13.5px;font-weight:600">{{ r.name }}</div>
+                <div style="font-size:12px;color:var(--color-ink-subtle);margin-top:1px">{{ r.desc }}</div>
+              </div>
+              <div style="font-family:var(--font-mono);font-size:13px">{{ r.cost }}</div>
+              <div style="font-family:var(--font-mono);font-size:13px;color:var(--color-ink-subtle);text-align:right">{{ r.redeemed }}</div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+      </sc-if>
+
+    </main>
+  </div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isTokens }}">
+<main style="max-width:1100px;margin:0 auto;padding:clamp(24px,4vw,48px) clamp(16px,4vw,40px) clamp(56px,7vw,90px)">
+  <div style="display:flex;flex-wrap:wrap;gap:14px;align-items:center;justify-content:space-between;margin-bottom:clamp(28px,4vw,44px)">
+    <div style="max-width:640px">
+      <div style="font-family:var(--font-mono);font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--color-gold);margin-bottom:14px">Nook design tokens</div>
+      <h1 style="font-family:var(--font-display);font-weight:500;font-size:clamp(2rem,4.6vw,2.9rem);letter-spacing:-.025em;line-height:1.06;margin-bottom:12px">One set of values, two themes</h1>
+      <p style="color:var(--color-ink-muted);font-size:16px;line-height:1.6">Every colour below is a CSS custom property that swaps under <span style="font-family:var(--font-mono);font-size:14px">[data-theme="dark"]</span>. The block at the bottom drops straight into a Tailwind v4 <span style="font-family:var(--font-mono);font-size:14px">@theme</span>.</p>
+    </div>
+    <div style="display:flex;gap:10px">
+      <button onClick="{{ toggleTheme }}" style="padding:11px 20px;border-radius:var(--radius-pill);border:1px solid var(--color-border-strong);font-size:14px;font-weight:600" style-hover="background:var(--color-sunken)">{{ themeLabel }}</button>
+      <button onClick="{{ goHome }}" style="padding:11px 20px;border-radius:var(--radius-pill);border:1px solid var(--color-border);font-size:14px;font-weight:600;color:var(--color-ink-muted)" style-hover="color:var(--color-ink)">← Site</button>
+    </div>
+  </div>
+
+  <section style="margin-bottom:clamp(40px,5vw,64px)">
+    <h2 style="font-family:var(--font-display);font-size:1.5rem;font-weight:500;margin-bottom:6px">Colour</h2>
+    <p style="font-size:14px;color:var(--color-ink-subtle);margin-bottom:22px">Light value on the left of each pair, dark on the right.</p>
+    <div style="display:grid;gap:14px;grid-template-columns:repeat(auto-fill,minmax(min(100%,215px),1fr))">
+      <sc-for list="{{ swatches }}" as="s" hint-placeholder-count="12">
+        <div style="border:1px solid var(--color-border);border-radius:var(--radius-md);overflow:hidden;background:var(--color-surface)">
+          <div style="height:62px;display:grid;grid-template-columns:1fr 1fr">
+            <span style="{{ s.lightStyle }}"></span>
+            <span style="{{ s.darkStyle }}"></span>
+          </div>
+          <div style="padding:11px 13px;border-top:1px solid var(--color-border)">
+            <div style="font-family:var(--font-mono);font-size:11.5px;font-weight:500;margin-bottom:5px">{{ s.name }}</div>
+            <div style="display:flex;justify-content:space-between;gap:8px;font-family:var(--font-mono);font-size:10.5px;color:var(--color-ink-subtle)">
+              <span>{{ s.light }}</span><span>{{ s.dark }}</span>
+            </div>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+  </section>
+
+  <section style="margin-bottom:clamp(40px,5vw,64px)">
+    <h2 style="font-family:var(--font-display);font-size:1.5rem;font-weight:500;margin-bottom:6px">Type</h2>
+    <p style="font-size:14px;color:var(--color-ink-subtle);margin-bottom:22px">Newsreader for display, Karla for everything you interact with, IBM Plex Mono for prices and codes.</p>
+    <div style="border:1px solid var(--color-border);border-radius:var(--radius-lg);overflow:hidden;background:var(--color-surface)">
+      <sc-for list="{{ typeScale }}" as="t" hint-placeholder-count="8">
+        <div style="display:grid;grid-template-columns:minmax(120px,150px) 1fr;gap:20px;align-items:baseline;padding:16px 20px;border-bottom:1px solid var(--color-border)">
+          <div>
+            <div style="font-family:var(--font-mono);font-size:11.5px;font-weight:500">{{ t.token }}</div>
+            <div style="font-family:var(--font-mono);font-size:10.5px;color:var(--color-ink-subtle);margin-top:3px">{{ t.spec }}</div>
+          </div>
+          <div style="{{ t.style }}">{{ t.sample }}</div>
+        </div>
+      </sc-for>
+    </div>
+  </section>
+
+  <section style="margin-bottom:clamp(40px,5vw,64px);display:grid;gap:clamp(24px,3vw,36px);grid-template-columns:repeat(auto-fit,minmax(min(100%,270px),1fr))">
+    <div>
+      <h2 style="font-family:var(--font-display);font-size:1.5rem;font-weight:500;margin-bottom:6px">Spacing</h2>
+      <p style="font-size:14px;color:var(--color-ink-subtle);margin-bottom:20px">4px base. Layout gaps use 16–40; section padding uses clamp between 44 and 96.</p>
+      <div style="display:grid;gap:9px">
+        <sc-for list="{{ spacing }}" as="sp" hint-placeholder-count="8">
+          <div style="display:flex;align-items:center;gap:14px">
+            <span style="font-family:var(--font-mono);font-size:11.5px;width:46px;flex:0 0 auto;color:var(--color-ink-subtle)">{{ sp.token }}</span>
+            <span style="{{ sp.barStyle }}"></span>
+            <span style="font-family:var(--font-mono);font-size:11.5px;color:var(--color-ink-subtle)">{{ sp.px }}</span>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+    <div>
+      <h2 style="font-family:var(--font-display);font-size:1.5rem;font-weight:500;margin-bottom:6px">Radius</h2>
+      <p style="font-size:14px;color:var(--color-ink-subtle);margin-bottom:20px">Cards sit at xl, controls and pills at full round, admin tables at md.</p>
+      <div style="display:grid;gap:12px;grid-template-columns:repeat(auto-fill,minmax(96px,1fr))">
+        <sc-for list="{{ radii }}" as="r" hint-placeholder-count="6">
+          <div style="display:grid;gap:8px;justify-items:center">
+            <span style="{{ r.boxStyle }}"></span>
+            <span style="font-family:var(--font-mono);font-size:10.5px;color:var(--color-ink-subtle);text-align:center">{{ r.label }}</span>
+          </div>
+        </sc-for>
+      </div>
+      <h2 style="font-family:var(--font-display);font-size:1.5rem;font-weight:500;margin:32px 0 6px">Shadow</h2>
+      <p style="font-size:14px;color:var(--color-ink-subtle);margin-bottom:20px">Warm-tinted in light, near-black in dark.</p>
+      <div style="display:grid;gap:16px;grid-template-columns:repeat(auto-fill,minmax(84px,1fr))">
+        <sc-for list="{{ shadows }}" as="sh" hint-placeholder-count="5">
+          <div style="display:grid;gap:10px;justify-items:center">
+            <span style="{{ sh.boxStyle }}"></span>
+            <span style="font-family:var(--font-mono);font-size:10.5px;color:var(--color-ink-subtle)">{{ sh.label }}</span>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2 style="font-family:var(--font-display);font-size:1.5rem;font-weight:500;margin-bottom:6px">The @theme block</h2>
+    <p style="font-size:14px;color:var(--color-ink-subtle);margin-bottom:20px">Paste into <span style="font-family:var(--font-mono);font-size:13px">globals.css</span> under <span style="font-family:var(--font-mono);font-size:13px">@import "tailwindcss"</span>. Dark values live in a plain override block below it.</p>
+    <pre style="margin:0;padding:clamp(18px,2.5vw,26px);border-radius:var(--radius-lg);background:var(--color-ink);color:#E9DFD2;font-family:var(--font-mono);font-size:12.5px;line-height:1.75;overflow-x:auto;box-shadow:var(--shadow-md)">@import "tailwindcss";
+
+@theme {
+  --color-bg:            #FBF7F0;
+  --color-surface:       #FFFCF6;
+  --color-sunken:        #F3EADB;
+  --color-border:        #E7DBC9;
+  --color-border-strong: #D6C4AC;
+  --color-ink:           #2A1D14;
+  --color-ink-muted:     #594636;
+  --color-ink-subtle:    #8A7563;
+  --color-gold:          #B07C35;
+  --color-gold-hover:    #96682A;
+  --color-gold-ink:      #FFF9EE;
+  --color-gold-soft:     #F6E8CF;
+  --color-leaf:          #5B7A4E;
+  --color-clay:          #A6462C;
+
+  --font-display: "Newsreader", Georgia, serif;
+  --font-sans:    "Karla", "Helvetica Neue", Arial, sans-serif;
+  --font-mono:    "IBM Plex Mono", ui-monospace, monospace;
+
+  --text-xs:      0.75rem;
+  --text-sm:      0.875rem;
+  --text-base:    1rem;
+  --text-lg:      1.125rem;
+  --text-xl:      1.25rem;
+  --text-2xl:     1.5rem;
+  --text-3xl:     1.9rem;
+  --text-4xl:     2.4rem;
+  --text-display: clamp(2.6rem, 6.4vw, 4.3rem);
+
+  --spacing: 0.25rem;
+
+  --radius-sm:   8px;
+  --radius-md:   12px;
+  --radius-lg:   18px;
+  --radius-xl:   28px;
+  --radius-2xl:  40px;
+  --radius-pill: 999px;
+
+  --shadow-xs: 0 1px 2px rgb(42 29 20 / 0.06);
+  --shadow-sm: 0 2px 6px rgb(42 29 20 / 0.07);
+  --shadow-md: 0 8px 20px -6px rgb(42 29 20 / 0.14);
+  --shadow-lg: 0 20px 44px -14px rgb(42 29 20 / 0.22);
+  --shadow-xl: 0 36px 76px -24px rgb(42 29 20 / 0.30);
+}
+
+[data-theme="dark"] {
+  --color-bg:            #161210;
+  --color-surface:       #201A16;
+  --color-sunken:        #2A221C;
+  --color-border:        #382D25;
+  --color-border-strong: #4C3D31;
+  --color-ink:           #F4ECE1;
+  --color-ink-muted:     #D3C3B2;
+  --color-ink-subtle:    #A08D7B;
+  --color-gold:          #DDA857;
+  --color-gold-hover:    #EBBB6E;
+  --color-gold-ink:      #241804;
+  --color-gold-soft:     #36281A;
+  --color-leaf:          #8FAE7F;
+  --color-clay:          #D9765A;
+  color-scheme: dark;
+}</pre>
+  </section>
+</main>
+</sc-if>
+
+<sc-if value="{{ toast }}">
+<div style="position:fixed;left:50%;bottom:28px;transform:translateX(-50%);z-index:90;display:flex;align-items:center;gap:11px;padding:13px 20px 13px 15px;border-radius:var(--radius-pill);background:var(--color-ink);color:var(--color-bg);box-shadow:var(--shadow-xl);animation:nkToast 1.9s ease forwards;max-width:calc(100vw - 32px)">
+  <span style="width:24px;height:24px;flex:0 0 auto;border-radius:var(--radius-pill);background:var(--color-gold);color:var(--color-gold-ink);display:grid;place-items:center;font-family:var(--font-mono);font-size:12px;font-weight:500">+1</span>
+  <span style="font-size:14.5px;font-weight:500">{{ toast }}</span>
+</div>
+</sc-if>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;accent&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Amber&quot;,&quot;Terracotta&quot;,&quot;Olive&quot;],&quot;default&quot;:&quot;Amber&quot;,&quot;tsType&quot;:&quot;\&quot;Amber\&quot; | \&quot;Terracotta\&quot; | \&quot;Olive\&quot;&quot;,&quot;section&quot;:&quot;Brand&quot;},&quot;initialTheme&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;light&quot;,&quot;dark&quot;],&quot;default&quot;:&quot;light&quot;,&quot;tsType&quot;:&quot;\&quot;light\&quot; | \&quot;dark\&quot;&quot;,&quot;section&quot;:&quot;Brand&quot;},&quot;showBadges&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Menu&quot;}}">
+const CATS = [
+  { id: "coffee", name: "Coffee" },
+  { id: "cold", name: "Tea & Cold" },
+  { id: "breakfast", name: "Breakfast" },
+  { id: "lunch", name: "Toasties & Lunch" },
+  { id: "bakery", name: "Bakery" },
+  { id: "sweets", name: "Sweets" },
+  { id: "specials", name: "Specials" }
+];
+
+const SIZE = {
+  id: "size", name: "Size", required: true, multi: false,
+  options: [
+    { id: "s", name: "Small · 8oz", delta: 0 },
+    { id: "m", name: "Regular · 12oz", delta: 0.6 },
+    { id: "l", name: "Large · 16oz", delta: 1.1 }
+  ]
+};
+const MILK = {
+  id: "milk", name: "Milk", required: true, multi: false,
+  options: [
+    { id: "whole", name: "Whole", delta: 0 },
+    { id: "skim", name: "Skim", delta: 0 },
+    { id: "oat", name: "Oat", delta: 0.7 },
+    { id: "almond", name: "Almond", delta: 0.7 },
+    { id: "none", name: "No milk", delta: 0 }
+  ]
+};
+const SHOTS = {
+  id: "extras", name: "Add-ons", required: false, multi: true,
+  options: [
+    { id: "shot", name: "Extra shot", delta: 0.8 },
+    { id: "decaf", name: "Make it decaf", delta: 0 },
+    { id: "syrup", name: "Vanilla or hazelnut syrup", delta: 0.6 },
+    { id: "honey", name: "Local honey", delta: 0.5 }
+  ]
+};
+const PLATE_EXTRAS = {
+  id: "plate", name: "Add-ons", required: false, multi: true,
+  options: [
+    { id: "egg", name: "Extra poached egg", delta: 3 },
+    { id: "avo", name: "Smashed avocado", delta: 4 },
+    { id: "bacon", name: "Streaky bacon", delta: 4.5 },
+    { id: "cream", name: "Double cream", delta: 2 }
+  ]
+};
+const BREAD = {
+  id: "bread", name: "Bread", required: true, multi: false,
+  options: [
+    { id: "sour", name: "Sourdough", delta: 0 },
+    { id: "rye", name: "Dark rye", delta: 0 },
+    { id: "gf", name: "Gluten-free loaf", delta: 1.5 }
+  ]
+};
+
+const ITEMS = [
+  { id: "flat-white", cat: "coffee", name: "Flat White", desc: "Two ristretto shots, silky milk, no foam moustache.", base: 4.2, img: "img/hero-latte-art.jpeg", badges: [], groups: [SIZE, MILK, SHOTS] },
+  { id: "batch", cat: "coffee", name: "Batch Brew", desc: "Whatever's in the grinder today. Bottomless before 9am.", base: 3.6, img: "img/espresso-shadow.jpeg", badges: ["VE", "DF"], groups: [] },
+  { id: "cortado", cat: "coffee", name: "Cortado", desc: "Equal parts espresso and warm milk in a 5oz glass.", base: 4.0, img: "img/brownie-lattes.png", badges: [], groups: [MILK, SHOTS] },
+  { id: "mocha", cat: "coffee", name: "Dark Mocha", desc: "70% single-origin chocolate melted into the shot.", base: 5.1, img: "img/table-outdoor.jpeg", badges: [], groups: [SIZE, MILK, SHOTS] },
+  { id: "espresso", cat: "coffee", name: "Espresso", desc: "Short, sweet, served with a thimble of soda water.", base: 3.2, img: "img/machine-pour.jpeg", badges: ["VE", "DF", "GF"], groups: [] },
+  { id: "cold-brew", cat: "cold", name: "18-Hour Cold Brew", desc: "Steeped overnight, poured over one big cube.", base: 4.8, img: "img/iced-matcha-buns.jpeg", badges: ["VE", "DF"], groups: [SIZE], soldOut: true },
+  { id: "matcha", cat: "cold", name: "Iced Matcha Latte", desc: "Ceremonial grade from Uji, lightly sweetened.", base: 5.4, img: "img/iced-matcha-buns.jpeg", badges: ["GF"], groups: [SIZE, MILK] },
+  { id: "chai", cat: "cold", name: "House Chai", desc: "Steeped, not syrup. Cardamom-forward and gently hot.", base: 4.4, img: "img/cappuccino-marble.jpeg", badges: ["GF"], groups: [SIZE, MILK] },
+  { id: "soda", cat: "cold", name: "Rhubarb Soda", desc: "Housemade cordial, soda, a slice of blood orange.", base: 4.0, img: "img/souffle-pancakes.png", badges: ["VE", "GF", "DF"], groups: [] },
+  { id: "muffin", cat: "breakfast", name: "Egg & Gruyère Muffin", desc: "Folded egg, aged gruyère, chilli jam on a house bun.", base: 8.5, img: "img/breakfast-sandwich.jpeg", badges: [], groups: [PLATE_EXTRAS] },
+  { id: "souffle", cat: "breakfast", name: "Soufflé Pancakes", desc: "Three tall ones, macerated strawberries, cream.", base: 14.0, img: "img/souffle-pancakes.png", badges: ["NUT"], groups: [PLATE_EXTRAS] },
+  { id: "french-toast", cat: "breakfast", name: "Caramel French Toast", desc: "Brioche, burnt caramel, vanilla ice cream, berries.", base: 15.5, img: "img/french-toast.png", badges: ["NUT"], groups: [] },
+  { id: "toastie", cat: "lunch", name: "Three-Cheese Toastie", desc: "Gruyère, cheddar, taleggio. Pressed until it sighs.", base: 11.0, img: "img/toasties-tray.jpeg", badges: [], groups: [BREAD] },
+  { id: "rigatoni", cat: "lunch", name: "Tomato & Basil Rigatoni", desc: "Slow tomatoes, torn basil, too much parmesan.", base: 16.5, img: "img/pasta-lunch.png", badges: [], groups: [] },
+  { id: "soup", cat: "lunch", name: "Soup of the Day", desc: "Today: roast pumpkin and sage, with rye toast.", base: 9.0, img: "img/interior-night.png", badges: ["VE"], groups: [], soldOut: true },
+  { id: "morning-bun", cat: "bakery", name: "Morning Bun", desc: "Croissant dough rolled in orange and cinnamon sugar.", base: 4.8, img: "img/table-outdoor.jpeg", badges: [], groups: [] },
+  { id: "croissant", cat: "bakery", name: "Almond Croissant", desc: "Twice-baked, frangipane inside, flaked almonds on top.", base: 5.4, img: "img/toasties-tray.jpeg", badges: ["NUT"], groups: [] },
+  { id: "brownie", cat: "sweets", name: "Fudge Brownie", desc: "Dense, salted, made with almond flour.", base: 6.0, img: "img/brownie-lattes.png", badges: ["GF", "NUT"], groups: [] },
+  { id: "waffle", cat: "sweets", name: "Berry Cream Waffle Stack", desc: "Buttermilk waffles, whipped mascarpone, berries.", base: 9.5, img: "img/loaded-dessert.png", badges: [], groups: [SIZE] }
+];
+
+const PHOTOS = [
+  { src: "img/interior-night.png", caption: "The front room, six o'clock", span: 20 },
+  { src: "img/hero-latte-art.jpeg", caption: "Flat white, standard issue", span: 28 },
+  { src: "img/toasties-tray.jpeg", caption: "Toastie service, Thursday", span: 22 },
+  { src: "img/souffle-pancakes.png", caption: "Soufflé pancakes and an iced latte", span: 30 },
+  { src: "img/cappuccino-marble.jpeg", caption: "Corner table, north window", span: 26 },
+  { src: "img/machine-pour.jpeg", caption: "Dan pulling the six-fifteen", span: 24 },
+  { src: "img/exterior-green.png", caption: "The green door in spring", span: 30 },
+  { src: "img/brownie-lattes.png", caption: "Brownie, two lattes, no plan", span: 22 },
+  { src: "img/pasta-lunch.png", caption: "Rigatoni on the terrace", span: 26 },
+  { src: "img/french-toast.png", caption: "Caramel french toast", span: 28 },
+  { src: "img/iced-matcha-buns.jpeg", caption: "Matcha and morning buns", span: 24 },
+  { src: "img/breakfast-sandwich.jpeg", caption: "Egg and gruyère, to go", span: 20 }
+];
+
+const HISTORY = [
+  { no: "NK-4817", date: "Yesterday, 8:12am", status: "Completed", total: 14.3, points: "+14 pts",
+    summary: "Flat White · Almond Croissant", thumbs: ["img/hero-latte-art.jpeg", "img/toasties-tray.jpeg"],
+    reorder: [["flat-white", ["m", "oat"]], ["croissant", []]] },
+  { no: "NK-4790", date: "Sat 23 Aug, 9:40am", status: "Completed", total: 31.5, points: "+31 pts",
+    summary: "2× Soufflé Pancakes · Batch Brew · Cortado", thumbs: ["img/souffle-pancakes.png", "img/espresso-shadow.jpeg"],
+    reorder: [["souffle", []], ["batch", []]] },
+  { no: "NK-4772", date: "Thu 21 Aug, 7:58am", status: "Completed", total: 9.2, points: "+9 pts",
+    summary: "Espresso · Morning Bun", thumbs: ["img/machine-pour.jpeg", "img/table-outdoor.jpeg"],
+    reorder: [["espresso", []], ["morning-bun", []]] },
+  { no: "NK-4744", date: "Mon 18 Aug, 1:20pm", status: "Refunded", total: 16.5, points: "—",
+    summary: "Tomato & Basil Rigatoni", thumbs: ["img/pasta-lunch.png"],
+    reorder: [["rigatoni", []]] }
+];
+
+const REWARDS = [
+  { name: "Any size coffee", desc: "House blend or single-origin filter, whichever's on.", cost: 500, tag: "Popular" },
+  { name: "Pastry of your choice", desc: "Anything in the case before it sells out at eleven.", cost: 300, tag: "" },
+  { name: "Coffee and a bun", desc: "Regular coffee plus a morning bun, any weekday.", cost: 650, tag: "" },
+  { name: "250g retail bag", desc: "Whole bean or ground to order, take it home.", cost: 1200, tag: "Big one" }
+];
+
+const STEPS = [
+  { name: "Received", note: "Payment confirmed, ticket printed" },
+  { name: "Preparing", note: "On the bar and in the kitchen" },
+  { name: "Ready", note: "Waiting at the pickup end of the counter" },
+  { name: "Completed", note: "Collected — points added to your balance" }
+];
+
+const ACCENTS = {
+  Amber: { light: ["#B07C35", "#96682A", "#F6E8CF", "#FFF9EE"], dark: ["#DDA857", "#EBBB6E", "#36281A", "#241804"] },
+  Terracotta: { light: ["#A85A38", "#8E482A", "#F7E4DA", "#FFF7F3"], dark: ["#DB8B65", "#EA9E79", "#38251C", "#231009"] },
+  Olive: { light: ["#6C7A3C", "#59662F", "#EBEEDA", "#FBFCF4"], dark: ["#A9BC72", "#BACE85", "#282D1B", "#141806"] }
+};
+
+const BADGE_TITLES = { VE: "Vegan", GF: "Gluten free", DF: "Dairy free", NUT: "Contains nuts" };
+const money = n => "$" + n.toFixed(2);
+
+class Component extends DCLogic {
+  state = {
+    theme: "light", view: "home", cat: "coffee",
+    cart: [], cartOpen: false,
+    modalId: null, sel: {}, modalQty: 1,
+    toast: null, signedIn: false,
+    navPanelOpen: false, vw: 1280,
+    unavailable: { "cold-brew": true, soup: true },
+    lastOrder: null, orderStatus: 0, lightbox: null, authMode: "signin",
+    admMenuTab: "items",
+    queue: [
+      { no: "NK-4823", who: "Rosa F.", time: "8:04am", items: "1× Flat White (Reg, Oat) · 1× Morning Bun", total: 9.7, st: 1 },
+      { no: "NK-4822", who: "Guest", time: "8:02am", items: "2× Batch Brew · 1× Almond Croissant", total: 12.6, st: 1 },
+      { no: "NK-4821", who: "Marcus T.", time: "7:58am", items: "1× Egg & Gruyère Muffin (+bacon) · 1× Cortado", total: 17.0, st: 2 },
+      { no: "NK-4820", who: "Priya N.", time: "7:51am", items: "1× Iced Matcha Latte (Lg, Almond) · 1× Fudge Brownie", total: 12.6, st: 2 },
+      { no: "NK-4819", who: "Guest", time: "7:44am", items: "1× Espresso", total: 3.2, st: 3 },
+      { no: "NK-4818", who: "Dan K.", time: "7:39am", items: "2× Three-Cheese Toastie (Rye) · 2× Flat White", total: 30.4, st: 3 }
+    ]
+  };
+
+  componentDidMount() {
+    if (this.props.initialTheme === "dark") this.setState({ theme: "dark" });
+    this.applyTheme();
+    this.onResize();
+    window.addEventListener("resize", this.onResize);
+  }
+  componentWillUnmount() {
+    window.removeEventListener("resize", this.onResize);
+    clearTimeout(this._t);
+  }
+  onResize = () => this.setState({ vw: window.innerWidth });
+  applyTheme() {
+    try {
+      const el = document.documentElement;
+      el.dataset.theme = this.state.theme;
+      const a = ACCENTS[this.props.accent] || ACCENTS.Amber;
+      const v = a[this.state.theme];
+      el.style.setProperty("--color-gold", v[0]);
+      el.style.setProperty("--color-gold-hover", v[1]);
+      el.style.setProperty("--color-gold-soft", v[2]);
+      el.style.setProperty("--color-gold-ink", v[3]);
+    } catch (e) {}
+  }
+  componentDidUpdate(prev) {
+    if (prev.accent !== this.props.accent) this.applyTheme();
+  }
+  toggleTheme = () => this.setState(s => ({ theme: s.theme === "light" ? "dark" : "light" }), () => this.applyTheme());
+
+  go = v => this.setState({ view: v, navPanelOpen: false, cartOpen: false }, () => { try { window.scrollTo(0, 0); } catch (e) {} });
+  flash = msg => {
+    clearTimeout(this._t);
+    this.setState({ toast: msg });
+    this._t = setTimeout(() => this.setState({ toast: null }), 1850);
+  };
+
+  isOut = it => !!this.state.unavailable[it.id];
+
+  openItem = it => {
+    if (this.isOut(it)) return;
+    if (!it.groups.length) {
+      this.addLine(it, [], 1);
+      this.flash(it.name + " added");
+      return;
+    }
+    this.setState({ modalId: it.id, sel: {}, modalQty: 1 });
+  };
+
+  addLine(item, opts, qty) {
+    const key = item.id + "|" + opts.map(o => o.id).sort().join(",");
+    const unit = item.base + opts.reduce((a, o) => a + o.delta, 0);
+    this.setState(s => {
+      const cart = s.cart.slice();
+      const i = cart.findIndex(l => l.key === key);
+      if (i > -1) cart[i] = Object.assign({}, cart[i], { qty: cart[i].qty + qty });
+      else cart.push({ key, id: item.id, name: item.name, img: item.img, unit, qty, opts: opts.map(o => o.name) });
+      return { cart };
+    });
+  }
+
+  addFromModal = () => {
+    const item = ITEMS.find(i => i.id === this.state.modalId);
+    if (!item) return;
+    const picked = [];
+    item.groups.forEach(g => {
+      const v = this.state.sel[g.id];
+      if (!v) return;
+      if (g.multi) g.options.forEach(o => { if (v.indexOf(o.id) > -1) picked.push(o); });
+      else { const o = g.options.find(x => x.id === v); if (o) picked.push(o); }
+    });
+    this.addLine(item, picked, this.state.modalQty);
+    this.setState({ modalId: null, sel: {}, modalQty: 1, cartOpen: true });
+  };
+
+  pick = (g, o) => this.setState(s => {
+    const sel = Object.assign({}, s.sel);
+    if (g.multi) {
+      const cur = (sel[g.id] || []).slice();
+      const i = cur.indexOf(o.id);
+      if (i > -1) cur.splice(i, 1); else cur.push(o.id);
+      sel[g.id] = cur;
+    } else sel[g.id] = o.id;
+    return { sel };
+  });
+
+  setQty = (key, d) => this.setState(s => ({
+    cart: s.cart.map(l => l.key === key ? Object.assign({}, l, { qty: Math.max(1, l.qty + d) }) : l)
+  }));
+  removeLine = key => this.setState(s => ({ cart: s.cart.filter(l => l.key !== key) }));
+
+  subtotalNum() { return this.state.cart.reduce((a, l) => a + l.unit * l.qty, 0); }
+
+  checkout = () => {
+    const sub = this.subtotalNum();
+    this.setState({
+      lastOrder: { lines: this.state.cart, subtotal: sub, tax: sub * 0.1, total: sub * 1.1, no: "NK-" + (4200 + Math.floor(Math.random() * 799)) },
+      cart: [], cartOpen: false, orderStatus: 0, view: "confirm"
+    }, () => { try { window.scrollTo(0, 0); } catch (e) {} });
+  };
+
+  visibleCats() {
+    return CATS.filter(c => ITEMS.some(i => i.cat === c.id));
+  }
+
+  renderVals() {
+    const s = this.state;
+    const view = s.view;
+    const shop = ["home", "menu", "gallery", "about", "contact", "auth", "account", "orders", "rewards", "confirm"].indexOf(view) > -1;
+    const wide = s.vw >= 900;
+    const sub = this.subtotalNum();
+    const count = s.cart.reduce((a, l) => a + l.qty, 0);
+
+    const catBtn = active => "display:inline-flex;align-items:center;gap:7px;flex:0 0 auto;padding:9px 17px;border-radius:var(--radius-pill);font-size:14.5px;font-weight:600;white-space:nowrap;border:1px solid " +
+      (active ? "var(--color-gold);background:var(--color-gold);color:var(--color-gold-ink);box-shadow:var(--shadow-sm)" : "var(--color-border);background:var(--color-surface);color:var(--color-ink-muted)");
+
+    const cats = this.visibleCats().map(c => ({
+      name: c.name,
+      count: String(ITEMS.filter(i => i.cat === c.id).length),
+      style: catBtn(c.id === s.cat),
+      onSelect: () => this.setState({ cat: c.id })
+    }));
+
+    const mapItem = it => {
+      const out = this.isOut(it);
+      const hasReq = it.groups.some(g => g.required);
+      const minDelta = it.groups.filter(g => g.required && !g.multi)
+        .reduce((a, g) => a + Math.min.apply(null, g.options.map(o => o.delta)), 0);
+      const from = hasReq && it.groups.some(g => g.required && !g.multi && g.options.some(o => o.delta > 0));
+      return {
+        name: it.name, desc: it.desc, img: it.img, soldOut: out,
+        isFrom: from, priceText: money(it.base + minDelta),
+        priceLabel: (from ? "From " : "") + money(it.base + minDelta),
+        hasBadges: it.badges.length > 0 && this.props.showBadges !== false,
+        badges: it.badges.map(b => ({ label: b, title: BADGE_TITLES[b] })),
+        cardStyle: "display:flex;flex-direction:column;background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-xl);overflow:hidden;box-shadow:var(--shadow-xs);height:100%;transition:box-shadow .2s ease;" + (out ? "opacity:.55" : ""),
+        imgStyle: "width:100%;height:100%;object-fit:cover;display:block;" + (out ? "filter:grayscale(1) contrast(.92)" : ""),
+        addLabel: out ? "Unavailable" : (it.groups.length ? "Choose" : "+ Add"),
+        addTitle: out ? it.name + " is sold out today" : "Add " + it.name,
+        addStyle: "flex:0 0 auto;padding:10px 18px;border-radius:var(--radius-pill);font-size:13.5px;font-weight:700;white-space:nowrap;" + (out
+          ? "background:var(--color-sunken);border:1px solid var(--color-border);color:var(--color-ink-subtle);cursor:not-allowed"
+          : "background:var(--color-gold);color:var(--color-gold-ink);box-shadow:var(--shadow-xs)"),
+        onAdd: out ? undefined : () => this.openItem(it),
+        onOpen: () => { this.setState({ view: "menu", cat: it.cat }); this.openItem(it); }
+      };
+    };
+
+    const modal = ITEMS.find(i => i.id === s.modalId) || null;
+    let groups = [], missing = [], addDisabled = false, addTotal = 0;
+    if (modal) {
+      addTotal = modal.base;
+      groups = modal.groups.map(g => {
+        const v = s.sel[g.id];
+        const ok = g.multi ? true : !!v;
+        if (g.required && !ok) missing.push(g.name);
+        (g.multi ? (v || []) : (v ? [v] : [])).forEach(id => {
+          const o = g.options.find(x => x.id === id);
+          if (o) addTotal += o.delta;
+        });
+        return {
+          name: g.name,
+          hint: g.multi ? "Choose as many as you like" : "Choose one",
+          tagLabel: g.required ? "Required" : "Optional",
+          tagStyle: "font-family:var(--font-mono);font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;padding:3px 9px;border-radius:var(--radius-pill);" + (g.required
+            ? (ok ? "background:var(--color-gold-soft);color:var(--color-gold)" : "background:var(--color-clay);color:var(--color-bg)")
+            : "background:var(--color-sunken);color:var(--color-ink-subtle);border:1px solid var(--color-border)"),
+          options: g.options.map(o => {
+            const picked = g.multi ? (v || []).indexOf(o.id) > -1 : v === o.id;
+            return {
+              name: o.name, picked,
+              deltaText: o.delta > 0 ? "+" + money(o.delta) : "—",
+              style: "display:flex;align-items:center;gap:12px;width:100%;padding:13px 15px;border-radius:var(--radius-md);text-align:left;border:1px solid " +
+                (picked ? "var(--color-gold);background:var(--color-gold-soft)" : "var(--color-border);background:var(--color-surface)"),
+              markStyle: "width:19px;height:19px;flex:0 0 auto;display:grid;place-items:center;border:1.5px solid " +
+                (picked ? "var(--color-gold)" : "var(--color-border-strong)") + ";border-radius:" + (g.multi ? "5px" : "var(--radius-pill)"),
+              dotStyle: g.multi
+                ? "width:9px;height:9px;background:var(--color-gold);border-radius:2px;display:block"
+                : "width:9px;height:9px;background:var(--color-gold);border-radius:var(--radius-pill);display:block",
+              onPick: () => this.pick(g, o)
+            };
+          })
+        };
+      });
+      addDisabled = missing.length > 0;
+    }
+
+    return {
+      isShop: shop, isHome: view === "home", isMenu: view === "menu",
+      isGallery: view === "gallery", isAbout: view === "about", isContact: view === "contact",
+      gallery: PHOTOS.map((p, i) => ({
+        src: p.src, caption: p.caption,
+        style: "position:relative;display:block;overflow:hidden;border-radius:var(--radius-lg);background:var(--color-sunken);box-shadow:var(--shadow-xs);grid-row:span " + p.span,
+        onOpen: () => this.setState({ lightbox: i })
+      })),
+      lightboxOpen: s.lightbox !== null,
+      lightboxSrc: s.lightbox !== null ? PHOTOS[s.lightbox].src : "",
+      lightboxCaption: s.lightbox !== null ? PHOTOS[s.lightbox].caption : "",
+      lightboxIndex: s.lightbox !== null ? (s.lightbox + 1) + " / " + PHOTOS.length : "",
+      closeLightbox: () => this.setState({ lightbox: null }),
+      prevPhoto: () => this.setState(p => ({ lightbox: (p.lightbox + PHOTOS.length - 1) % PHOTOS.length })),
+      nextPhoto: () => this.setState(p => ({ lightbox: (p.lightbox + 1) % PHOTOS.length })),
+
+      atHome: view === "home", atMenu: view === "menu", atGallery: view === "gallery", atAbout: view === "about",
+      wideNav: wide, narrowNav: !wide, navPanelOpen: s.navPanelOpen && !wide,
+      toggleNavPanel: () => this.setState(p => ({ navPanelOpen: !p.navPanelOpen })),
+      toggleTheme: this.toggleTheme,
+      themeGlyph: s.theme === "light" ? "☾" : "☀",
+      themeLabel: s.theme === "light" ? "Switch to dark" : "Switch to light",
+      accountLabel: s.signedIn ? "Rosa" : "Sign in",
+      goHome: () => this.go("home"), goMenu: () => this.go("menu"),
+      goGallery: () => this.go("gallery"), goAbout: () => this.go("about"),
+      goContact: () => this.go("contact"), goAuth: () => this.go("auth"),
+      goRewards: () => this.go(s.signedIn ? "rewards" : "auth"),
+      goTokens: () => this.go("tokens"), goAdmin: () => this.go("admin-orders"),
+      goAccountArea: () => this.go(s.signedIn ? "account" : "auth"),
+      goMenuFromCart: () => this.go("menu"),
+
+      cats, items: ITEMS.filter(i => i.cat === s.cat).map(mapItem),
+      featured: ["flat-white", "morning-bun", "souffle", "toastie"].map(id => mapItem(ITEMS.find(i => i.id === id))),
+
+      cartCount: String(count),
+      cartOpen: s.cartOpen, openCart: () => this.setState({ cartOpen: true, navPanelOpen: false }),
+      closeCart: () => this.setState({ cartOpen: false }),
+      cartEmpty: s.cart.length === 0, cartHasItems: s.cart.length > 0,
+      cartSummaryLine: count === 0 ? "Pickup at 41 Ashgrove Lane" : count + (count === 1 ? " item" : " items") + " · pickup in 10–15 min",
+      cart: s.cart.map(l => ({
+        name: l.name, img: l.img, qty: String(l.qty),
+        hasOpts: l.opts.length > 0, optsText: l.opts.join(" · "),
+        lineTotal: money(l.unit * l.qty),
+        onInc: () => this.setQty(l.key, 1), onDec: () => this.setQty(l.key, -1),
+        onRemove: () => this.removeLine(l.key)
+      })),
+      subtotal: money(sub), tax: money(sub * 0.1), total: money(sub * 1.1),
+      notSignedIn: !s.signedIn && s.cart.length > 0, pointsPreview: String(Math.round(sub)),
+      checkout: this.checkout,
+
+      modalOpen: !!modal, modal: modal ? { name: modal.name, desc: modal.desc, img: modal.img, baseText: money(modal.base) } : {},
+      modalShellStyle: "position:relative;display:flex;flex-direction:column;background:var(--color-bg);width:min(520px,100%);max-height:" +
+        (wide ? "88vh;border-radius:var(--radius-xl);margin-bottom:5vh" : "94vh;border-radius:var(--radius-xl) var(--radius-xl) 0 0") +
+        ";overflow:hidden;box-shadow:var(--shadow-xl);animation:nkPop .26s cubic-bezier(.22,.8,.3,1)",
+      groups, closeModal: () => this.setState({ modalId: null, sel: {}, modalQty: 1 }),
+      modalQty: String(s.modalQty),
+      modalQtyInc: () => this.setState(p => ({ modalQty: p.modalQty + 1 })),
+      modalQtyDec: () => this.setState(p => ({ modalQty: Math.max(1, p.modalQty - 1) })),
+      addDisabled, addFromModal: addDisabled ? undefined : this.addFromModal,
+      addBtnLabel: addDisabled ? "Add to cart" : "Add to cart · " + money(addTotal * s.modalQty),
+      addBtnStyle: "flex:1;padding:16px;border-radius:var(--radius-pill);font-size:15.5px;font-weight:700;" + (addDisabled
+        ? "background:var(--color-sunken);border:1px solid var(--color-border);color:var(--color-ink-subtle);cursor:not-allowed"
+        : "background:var(--color-gold);color:var(--color-gold-ink);box-shadow:var(--shadow-md)"),
+      missingText: missing.length ? "Choose a " + missing.join(" and a ").toLowerCase() + " to continue" : "",
+
+      isAuth: view === "auth",
+      isAccountArea: ["account", "orders", "rewards"].indexOf(view) > -1,
+      isAccount: view === "account", isOrders: view === "orders", isRewards: view === "rewards",
+      isSignup: s.authMode === "signup",
+      authTitle: s.authMode === "signup" ? "Start collecting" : "Welcome back",
+      authBlurb: s.authMode === "signup"
+        ? "Takes about twenty seconds. Your usual order gets saved for next time."
+        : "Sign in to see past orders, reorder in two taps, and keep your points ticking.",
+      authCta: s.authMode === "signup" ? "Create account" : "Sign in",
+      authSwitchText: s.authMode === "signup" ? "Already have an account?" : "New here?",
+      authSwitchCta: s.authMode === "signup" ? "Sign in" : "Create one",
+      toggleAuthMode: () => this.setState(p => ({ authMode: p.authMode === "signup" ? "signin" : "signup" })),
+      signIn: () => this.setState({ signedIn: true }, () => this.go("account")),
+      signOut: () => this.setState({ signedIn: false }, () => this.go("home")),
+
+      accountTabs: [
+        { id: "account", name: "Profile" },
+        { id: "orders", name: "Order history" },
+        { id: "rewards", name: "Rewards" }
+      ].map(t => ({
+        name: t.name,
+        onGo: () => this.go(t.id),
+        style: "flex:0 0 auto;padding:12px 18px;font-size:15px;font-weight:600;white-space:nowrap;border-bottom:2px solid " +
+          (view === t.id ? "var(--color-gold);color:var(--color-ink)" : "transparent;color:var(--color-ink-subtle)")
+      })),
+
+      history: HISTORY.map(o => ({
+        no: o.no, date: o.date, status: o.status, summary: o.summary, thumbs: o.thumbs,
+        total: money(o.total), points: o.points,
+        chipStyle: "padding:4px 11px;border-radius:var(--radius-pill);font-size:12px;font-weight:600;" + (o.status === "Completed"
+          ? "background:color-mix(in srgb,var(--color-leaf) 16%,transparent);color:var(--color-leaf)"
+          : "background:color-mix(in srgb,var(--color-clay) 14%,transparent);color:var(--color-clay)"),
+        onReorder: () => {
+          o.reorder.forEach(([id, optIds]) => {
+            const it = ITEMS.find(x => x.id === id);
+            if (!it) return;
+            const opts = [];
+            it.groups.forEach(g => g.options.forEach(op => { if (optIds.indexOf(op.id) > -1) opts.push(op); }));
+            this.addLine(it, opts, 1);
+          });
+          this.setState({ cartOpen: true });
+        }
+      })),
+
+      rewards: REWARDS.map(r => {
+        const locked = r.cost > 340;
+        return {
+          name: r.name, desc: r.desc, cost: r.cost.toLocaleString() + " pts", locked,
+          tag: r.tag || (locked ? "" : "Ready"),
+          tagStyle: (r.tag || !locked)
+            ? "padding:3px 10px;border-radius:var(--radius-pill);font-size:11.5px;font-weight:600;background:var(--color-gold-soft);color:var(--color-gold)"
+            : "display:none",
+          cardStyle: "background:var(--color-surface);border:1px solid " + (locked ? "var(--color-border)" : "var(--color-gold)") +
+            ";border-radius:var(--radius-xl);padding:20px;box-shadow:var(--shadow-xs);display:flex;flex-direction:column;height:100%",
+          btnLabel: locked ? (r.cost - 340) + " points to go" : "Redeem",
+          btnStyle: "margin-top:auto;width:100%;padding:12px;border-radius:var(--radius-pill);font-size:14px;font-weight:700;" + (locked
+            ? "background:var(--color-sunken);border:1px solid var(--color-border);color:var(--color-ink-subtle);cursor:not-allowed"
+            : "background:var(--color-gold);color:var(--color-gold-ink)")
+        };
+      }),
+
+      isConfirm: view === "confirm",
+      orderNo: s.lastOrder ? s.lastOrder.no : "NK-0000",
+      readyAt: s.lastOrder ? "8:24am" : "—",
+      orderLines: (s.lastOrder ? s.lastOrder.lines : []).map(l => ({
+        name: l.name, img: l.img, qty: String(l.qty),
+        hasOpts: l.opts.length > 0, optsText: l.opts.join(" · "),
+        lineTotal: money(l.unit * l.qty)
+      })),
+      orderSubtotal: money(s.lastOrder ? s.lastOrder.subtotal : 0),
+      orderTax: money(s.lastOrder ? s.lastOrder.tax : 0),
+      orderTotal: money(s.lastOrder ? s.lastOrder.total : 0),
+      pointsEarnedText: s.signedIn
+        ? "+" + Math.round(s.lastOrder ? s.lastOrder.subtotal : 0) + " pts"
+        : "None — guest order",
+      pointsEarnedStyle: s.signedIn ? "color:var(--color-gold);font-weight:600" : "color:var(--color-ink-subtle)",
+      steps: STEPS.map((st, i) => {
+        const done = i < s.orderStatus, now = i === s.orderStatus;
+        return {
+          name: st.name, note: st.note, hasLine: i < STEPS.length - 1,
+          mark: done ? "✓" : (now ? "●" : ""),
+          dotStyle: "width:26px;height:26px;flex:0 0 auto;border-radius:var(--radius-pill);display:grid;place-items:center;font-size:12px;" + (done
+            ? "background:var(--color-gold);color:var(--color-gold-ink)"
+            : now ? "background:var(--color-gold-soft);color:var(--color-gold);box-shadow:0 0 0 4px color-mix(in srgb,var(--color-gold) 16%,transparent)"
+              : "background:var(--color-sunken);border:1px solid var(--color-border);color:transparent"),
+          lineStyle: "width:2px;flex:1;min-height:26px;background:" + (done ? "var(--color-gold)" : "var(--color-border)"),
+          bodyStyle: "padding-bottom:22px",
+          titleStyle: "font-size:15.5px;font-weight:" + (now ? "700" : "600") + ";color:" + (i <= s.orderStatus ? "var(--color-ink)" : "var(--color-ink-subtle)")
+        };
+      }),
+      advanceLabel: s.orderStatus >= STEPS.length - 1 ? "Reset demo status" : "Advance status (demo)",
+      advanceStatus: () => this.setState(p => ({ orderStatus: p.orderStatus >= STEPS.length - 1 ? 0 : p.orderStatus + 1 })),
+      reorderUsual: () => {
+        const it = ITEMS.find(x => x.id === "flat-white");
+        const opts = [];
+        it.groups.forEach(g => g.options.forEach(o => { if (["m", "oat", "shot"].indexOf(o.id) > -1) opts.push(o); }));
+        this.addLine(it, opts, 1);
+        this.setState({ cartOpen: true });
+      },
+
+      isAdmin: view.indexOf("admin") === 0,
+      isAdminOrders: view === "admin-orders", isAdminMenu: view === "admin-menu", isAdminLoyalty: view === "admin-loyalty",
+      adminCols: wide ? "230px 1fr" : "1fr",
+      adminTitle: view === "admin-menu" ? "Menu management" : view === "admin-loyalty" ? "Loyalty" : "Order queue",
+      adminSub: view === "admin-menu" ? "19 items across 6 live categories"
+        : view === "admin-loyalty" ? "Earning rules and the rewards customers can spend on"
+          : "Thursday 3 September · live",
+      adminNav: [
+        { id: "admin-orders", name: "Order queue", badge: String(s.queue.filter(q => q.st < 2).length) },
+        { id: "admin-menu", name: "Menu", badge: "" },
+        { id: "admin-loyalty", name: "Loyalty", badge: "" }
+      ].map(n => ({
+        name: n.name, badge: n.badge,
+        onGo: () => this.go(n.id),
+        style: "display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px 12px;border-radius:var(--radius-md);font-size:13.5px;font-weight:600;text-align:left;" +
+          (view === n.id ? "background:var(--color-ink);color:var(--color-bg)" : "color:var(--color-ink-muted)"),
+        pillStyle: "flex:0 0 auto;padding:8px 15px;border-radius:var(--radius-pill);font-size:13px;font-weight:600;white-space:nowrap;border:1px solid " +
+          (view === n.id ? "var(--color-ink);background:var(--color-ink);color:var(--color-bg)" : "var(--color-border);color:var(--color-ink-muted)")
+      })),
+      adminStats: [
+        { label: "In queue", value: String(s.queue.filter(q => q.st < 2).length) },
+        { label: "Ready for pickup", value: String(s.queue.filter(q => q.st === 2).length) },
+        { label: "Done today", value: "48" },
+        { label: "Takings", value: "$714" }
+      ],
+      queueCols: "1.1fr 1.9fr .6fr 1.5fr;min-width:660px",
+      queue: s.queue.map((q, i) => {
+        const label = ["Received", "Preparing", "Ready", "Completed"][q.st];
+        const tone = ["var(--color-clay)", "var(--color-gold)", "var(--color-leaf)", "var(--color-ink-subtle)"][q.st];
+        const actions = [{
+          label: label,
+          style: "padding:5px 12px;border-radius:var(--radius-pill);font-size:11.5px;font-weight:700;cursor:default;background:color-mix(in srgb," + tone + " 15%,transparent);color:" + tone
+        }];
+        if (q.st < 3) actions.push({
+          label: "→ " + ["Preparing", "Ready", "Completed"][q.st],
+          onClick: () => this.setState(p => {
+            const queue = p.queue.slice();
+            queue[i] = Object.assign({}, queue[i], { st: queue[i].st + 1 });
+            return { queue };
+          }),
+          style: "padding:5px 12px;border-radius:var(--radius-pill);border:1px solid var(--color-border-strong);font-size:11.5px;font-weight:600;color:var(--color-ink-muted)"
+        });
+        return {
+          no: q.no, who: q.who, time: q.time, items: q.items, total: money(q.total), actions,
+          rowStyle: "display:grid;grid-template-columns:1.1fr 1.9fr .6fr 1.5fr;min-width:660px;gap:14px;align-items:center;padding:13px 17px;border-bottom:1px solid var(--color-border);" +
+            (q.st === 3 ? "opacity:.6" : "")
+        };
+      }),
+
+      adminMenuTabs: [
+        { id: "items", name: "Items" }, { id: "cats", name: "Categories" }, { id: "groups", name: "Option groups" }
+      ].map(t => ({
+        name: t.name,
+        onGo: () => this.setState({ admMenuTab: t.id }),
+        style: "padding:8px 16px;border-radius:var(--radius-pill);font-size:13px;font-weight:600;border:1px solid " +
+          (s.admMenuTab === t.id ? "var(--color-ink);background:var(--color-ink);color:var(--color-bg)" : "var(--color-border);background:var(--color-admin-panel);color:var(--color-ink-muted)")
+      })),
+      admItems: s.admMenuTab === "items", admCats: s.admMenuTab === "cats", admGroups: s.admMenuTab === "groups",
+      itemCols: "2fr 1fr .6fr 1.4fr 1.2fr;min-width:840px",
+      catCols: ".6fr 1.6fr .6fr 1fr;min-width:560px",
+      adminItems: ITEMS.map(it => {
+        const out = this.isOut(it);
+        return {
+          id: it.id, name: it.name, img: it.img, price: money(it.base),
+          cat: (CATS.find(c => c.id === it.cat) || {}).name,
+          groups: it.groups.length ? it.groups.map(g => g.name).join(", ") : "—",
+          imgStyle: "width:100%;height:100%;object-fit:cover;display:block;" + (out ? "filter:grayscale(1)" : ""),
+          onToggle: () => this.setState(p => {
+            const u = Object.assign({}, p.unavailable);
+            if (u[it.id]) delete u[it.id]; else u[it.id] = true;
+            return { unavailable: u };
+          }),
+          toggleTitle: out ? "Put " + it.name + " back on" : "86 " + it.name,
+          switchStyle: "width:40px;height:23px;flex:0 0 auto;border-radius:var(--radius-pill);display:flex;align-items:center;padding:3px;transition:background .18s ease;" +
+            (out ? "background:var(--color-border-strong);justify-content:flex-start" : "background:var(--color-leaf);justify-content:flex-end"),
+          knobStyle: "width:17px;height:17px;border-radius:var(--radius-pill);background:var(--color-admin-panel);display:block",
+          stateLabel: out ? "86'd" : "On",
+          stateStyle: "font-family:var(--font-mono);font-size:11.5px;color:" + (out ? "var(--color-clay)" : "var(--color-ink-subtle)"),
+          rowStyle: "display:grid;grid-template-columns:2fr 1fr .6fr 1.4fr 1.2fr;min-width:840px;gap:14px;align-items:center;padding:11px 17px;border-bottom:1px solid var(--color-border);" +
+            (out ? "background:color-mix(in srgb,var(--color-clay) 5%,transparent)" : "")
+        };
+      }),
+      adminCats: CATS.map((c, i) => {
+        const n = ITEMS.filter(x => x.cat === c.id).length;
+        return {
+          pos: String(i + 1).padStart(2, "0"), name: c.name, count: String(n),
+          chip: n ? "Live" : "Hidden — empty",
+          chipStyle: "padding:3px 10px;border-radius:var(--radius-pill);font-size:11.5px;font-weight:600;white-space:nowrap;" + (n
+            ? "background:color-mix(in srgb,var(--color-leaf) 15%,transparent);color:var(--color-leaf)"
+            : "background:var(--color-sunken);color:var(--color-ink-subtle);border:1px solid var(--color-border)"),
+          rowStyle: "display:grid;grid-template-columns:.6fr 1.6fr .6fr 1fr;min-width:560px;gap:14px;align-items:center;padding:12px 17px;border-bottom:1px solid var(--color-border);" +
+            (n ? "" : "opacity:.6")
+        };
+      }),
+      optionGroups: [SIZE, MILK, SHOTS, PLATE_EXTRAS, BREAD].map(g => ({
+        name: g.name,
+        tag: g.required ? "Required" : "Optional",
+        tagStyle: "padding:3px 9px;border-radius:var(--radius-pill);font-family:var(--font-mono);font-size:10px;letter-spacing:.05em;text-transform:uppercase;" + (g.required
+          ? "background:var(--color-gold-soft);color:var(--color-gold)"
+          : "background:var(--color-sunken);color:var(--color-ink-subtle)"),
+        meta: (g.multi ? "Multi select" : "Single select") + " · " + g.options.length + " options",
+        rows: g.options.map(o => ({ name: o.name, delta: o.delta > 0 ? "+" + money(o.delta) : "—" })),
+        usedBy: ITEMS.filter(i => i.groups.indexOf(g) > -1).length + " items"
+      })),
+      adminRewards: [
+        { name: "Any size coffee", desc: "House blend or filter", cost: "500 pts", redeemed: "212" },
+        { name: "Pastry of your choice", desc: "Anything in the case", cost: "300 pts", redeemed: "186" },
+        { name: "Coffee and a bun", desc: "Weekdays only", cost: "650 pts", redeemed: "74" },
+        { name: "250g retail bag", desc: "Whole bean or ground", cost: "1,200 pts", redeemed: "31" }
+      ],
+
+      isTokens: view === "tokens",
+      swatches: [
+        ["bg", "#FBF7F0", "#161210"], ["surface", "#FFFCF6", "#201A16"], ["sunken", "#F3EADB", "#2A221C"],
+        ["border", "#E7DBC9", "#382D25"], ["border-strong", "#D6C4AC", "#4C3D31"],
+        ["ink", "#2A1D14", "#F4ECE1"], ["ink-muted", "#594636", "#D3C3B2"], ["ink-subtle", "#8A7563", "#A08D7B"],
+        ["gold", "#B07C35", "#DDA857"], ["gold-soft", "#F6E8CF", "#36281A"], ["gold-ink", "#FFF9EE", "#241804"],
+        ["leaf", "#5B7A4E", "#8FAE7F"], ["clay", "#A6462C", "#D9765A"]
+      ].map(([n, l, d]) => ({
+        name: "--color-" + n, light: l, dark: d,
+        lightStyle: "display:block;background:" + l, darkStyle: "display:block;background:" + d
+      })),
+      typeScale: [
+        { token: "--text-display", spec: "Newsreader 500 · clamp 42–69px", style: "font-family:var(--font-display);font-weight:500;font-size:clamp(2rem,4.4vw,3.1rem);letter-spacing:-.025em;line-height:1.05", sample: "A quiet corner" },
+        { token: "--text-4xl", spec: "Newsreader 500 · 38px", style: "font-family:var(--font-display);font-weight:500;font-size:2.4rem;letter-spacing:-.02em;line-height:1.1", sample: "Menu" },
+        { token: "--text-3xl", spec: "Newsreader 500 · 30px", style: "font-family:var(--font-display);font-weight:500;font-size:1.9rem;line-height:1.2", sample: "Popular this week" },
+        { token: "--text-2xl", spec: "Newsreader 500 · 24px", style: "font-family:var(--font-display);font-weight:500;font-size:1.5rem", sample: "Flat White" },
+        { token: "--text-lg", spec: "Karla 400 · 18px", style: "font-size:1.125rem;line-height:1.6;color:var(--color-ink-muted)", sample: "Two ristretto shots, silky milk." },
+        { token: "--text-base", spec: "Karla 400 · 16px", style: "font-size:1rem;line-height:1.6", sample: "Everything's made to order between 7am and 3:30pm." },
+        { token: "--text-sm", spec: "Karla 500 · 14px", style: "font-size:.875rem;font-weight:500;color:var(--color-ink-subtle)", sample: "Choose one · required" },
+        { token: "--text-xs", spec: "IBM Plex Mono 400 · 12px", style: "font-family:var(--font-mono);font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--color-ink-subtle)", sample: "From $4.80" }
+      ],
+      spacing: [1, 2, 3, 4, 6, 8, 12, 16, 24].map(n => ({
+        token: "spacing-" + n, px: (n * 4) + "px",
+        barStyle: "height:14px;border-radius:3px;background:var(--color-gold-soft);border:1px solid var(--color-gold);display:block;width:" + (n * 4) + "px;flex:0 0 auto"
+      })),
+      radii: [["sm", "8px"], ["md", "12px"], ["lg", "18px"], ["xl", "28px"], ["2xl", "40px"], ["pill", "999px"]].map(([n, v]) => ({
+        label: "--radius-" + n,
+        boxStyle: "width:100%;aspect-ratio:1;background:var(--color-sunken);border:1px solid var(--color-border-strong);display:block;border-radius:" + v
+      })),
+      shadows: ["xs", "sm", "md", "lg", "xl"].map(n => ({
+        label: n,
+        boxStyle: "width:100%;aspect-ratio:1;border-radius:var(--radius-md);background:var(--color-surface);display:block;box-shadow:var(--shadow-" + n + ")"
+      })),
+
+      toast: s.toast
+    };
+  }
+}
+</script>
+</body>
+</html>

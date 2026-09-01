@@ -1,0 +1,32 @@
+{
+  "permissions": {
+    "defaultMode": "default",
+    "allow": [
+      "Bash(git status)",
+      "Bash(git status *)",
+      "Bash(git diff)",
+      "Bash(git diff *)",
+      "Bash(git log *)",
+      "Bash(bun run lint)",
+      "Bash(bun run lint *)"
+    ],
+    "ask": [
+      "Bash(bun add *)",
+      "Bash(bun remove *)",
+      "Bash(bun install *)",
+      "Bash(npm install *)",
+      "Bash(npm i *)",
+      "Bash(git commit *)",
+      "Bash(git push *)"
+    ],
+    "deny": [
+      "Bash(rm -rf *)",
+      "Bash(git push --force*)",
+      "Bash(git push -f *)",
+      "Read(./.env)",
+      "Read(./.env.*)",
+      "Read(./**/*.pem)",
+      "Bash(cat .env*)"
+    ]
+  }
+}
