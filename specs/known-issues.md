@@ -60,6 +60,42 @@ real guarded API routes to exercise instead. Action: delete both files
 (and their directories) once Phase 5/6 land. Status: open, scheduled for
 Phase 5/6 cleanup.
 
+**Cart may not clear if the confirmation page never loads after a
+successful payment.** Area: cart/checkout. Issue: cart-clearing is
+client-side only (`OrderConfirmationScreen` calling `useCart().clear()`
+once it observes `paymentStatus: "Paid"`), so if the user closes the tab
+or loses connectivity between Stripe's redirect firing and the
+confirmation page mounting, the webhook still marks the order `Paid`
+server-side but the local cart is never cleared. Impact: the customer
+sees stale (already-purchased) items still in their cart on next visit;
+re-ordering them would create a *second* charge, not a duplicate of the
+first. Action: none planned at MVP — cart is client-only by design (see
+CLAUDE.md's Cart section); revisit only if a server-side cart mirror is
+ever built. Status: open, accepted risk.
+
+**Guest orders are only recoverable via their exact post-checkout URL.**
+Area: checkout/orders. Issue: `authorizeOrderAccess` grants a guest
+(`order.userId === null`) access only when the `session_id` query param
+matches `order.stripeSessionId` — there is no other identity to check a
+guest against. If a guest closes the confirmation tab or loses that exact
+URL (with `?session_id=...`), they permanently lose access to that order;
+there's no magic-link/email-based recovery flow. Impact: acceptable for
+guest checkout at MVP (no account, no order history to fall back to
+either — that's Phase 5, account-only). Action: none planned; revisit only
+if guest order recovery becomes a real support burden. Status: open,
+accepted risk.
+
+**Non-`checkout.session.completed` Stripe webhook events are acknowledged
+but not handled.** Area: checkout/webhook. Issue:
+`src/app/api/webhooks/stripe/route.ts` returns `200` for every event type
+so Stripe doesn't retry indefinitely, but only actually processes
+`checkout.session.completed`. Events like `checkout.session.expired` or
+`payment_intent.payment_failed` are currently no-ops. Impact: an order
+whose Checkout Session expires unused stays `Pending` forever rather than
+being marked `Cancelled`/`Failed`. Action: handle `checkout.session.expired`
+(and related events) if/when stale `Pending` orders become a real problem.
+Status: open, deferred.
+
 ## Resolved
 
 **Placeholder imagery was Pinterest-sourced.** ~~`assets/img` and

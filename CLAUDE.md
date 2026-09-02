@@ -104,6 +104,18 @@ exported reference screens from Claude Design).
 - `git stash -u` is the standard way to confirm whether a build/lint issue
   is pre-existing vs. newly introduced.
 
+### Local Stripe testing
+
+- `stripe login` once, then `stripe listen --forward-to
+  localhost:3000/api/webhooks/stripe` — prints a `whsec_...` value for
+  `STRIPE_WEBHOOK_SECRET` (this differs from the dashboard's production
+  webhook secret; keep it updated in `.env.local` per dev session).
+- Prefer driving a real Checkout Session through `/api/checkout` with test
+  card `4242 4242 4242 4242` over `stripe trigger` — a `trigger`-synthesized
+  event won't carry a real `metadata.orderId`, so the webhook handler has
+  nothing real to update.
+- Declined-card testing: `4000 0000 0000 0002`.
+
 ## Session hygiene
 
 - New Claude Code sessions start at phase/task boundaries — explicitly

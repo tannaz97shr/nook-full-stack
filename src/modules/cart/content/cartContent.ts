@@ -1,4 +1,7 @@
 import { formatMoney } from "@/shared/utils/format-money";
+import { TAX_RATE } from "@/modules/order/lib/pricingConstants";
+
+export { TAX_RATE };
 
 export const CART_HEADER_TITLE = "Your order";
 export const CART_PICKUP_LOCATION = "Pickup at 41 Ashgrove Lane";
@@ -12,12 +15,11 @@ export const CART_EMPTY_HEADING = "Nothing in here yet";
 export const CART_EMPTY_COPY = "Add something from the menu to get started.";
 export const CART_EMPTY_CTA = "Browse the menu";
 
-export const TAX_RATE = 0.1;
-
 export const REMOVE_LABEL = "Remove";
-export const CHECKOUT_COMING_SOON_TITLE = "Checkout is coming soon";
+export const CHECKOUT_ERROR_MESSAGE = "Something went wrong starting checkout. Please try again.";
 
-export function checkoutButtonLabel(total: number): string {
+export function checkoutButtonLabel(total: number, isSubmitting: boolean): string {
+  if (isSubmitting) return "Redirecting to checkout…";
   return `Checkout · ${formatMoney(total)}`;
 }
 

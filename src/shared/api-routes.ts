@@ -20,4 +20,14 @@ export const API_ROUTES = {
     base: `${API_BASE}/auth`,
     register: `${API_BASE}/auth/register`,
   },
+  checkout: `${API_BASE}/checkout`,
+  orders: {
+    byId: (orderId: string) => `${API_BASE}/orders/${orderId}`,
+  },
+  webhooks: {
+    // Server-to-server only (Stripe calls this directly) — never fetched
+    // from client code, but kept here anyway so the literal path string
+    // exists in exactly one place.
+    stripe: `${API_BASE}/webhooks/stripe`,
+  },
 } as const;
