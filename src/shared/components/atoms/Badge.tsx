@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 
 export interface BadgeProps {
   children: ReactNode;
-  variant?: "neutral" | "gold" | "clay";
+  variant?: "neutral" | "gold" | "clay" | "leaf";
   title?: string;
   className?: string;
 }
@@ -11,6 +11,7 @@ const VARIANT_CLASSES: Record<NonNullable<BadgeProps["variant"]>, string> = {
   neutral: "border border-border bg-sunken text-ink-muted",
   gold: "bg-gold-soft text-gold",
   clay: "bg-clay text-bg",
+  leaf: "bg-leaf text-bg",
 };
 
 export function Badge({ children, variant = "neutral", title, className = "" }: BadgeProps) {

@@ -21,7 +21,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
   return (
     <button
       ref={ref}
-      className={`inline-flex items-center justify-center gap-[11px] rounded-pill transition-colors disabled:cursor-not-allowed disabled:opacity-60 ${VARIANT_CLASSES[variant]} ${fullWidth ? "w-full" : ""} ${className}`}
+      className={`inline-flex items-center justify-center gap-[11px] rounded-pill transition-colors disabled:cursor-not-allowed disabled:opacity-40 disabled:grayscale disabled:shadow-none ${VARIANT_CLASSES[variant]} ${fullWidth ? "w-full" : ""} ${className}`}
       {...props}
     >
       {icon}
