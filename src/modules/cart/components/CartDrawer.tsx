@@ -1,12 +1,18 @@
 "use client";
 
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button, Drawer } from "@/shared/components";
 import { ROUTES } from "@/shared/routes";
+import { API_ROUTES } from "@/shared/api-routes";
+import { api } from "@/shared/lib/axios";
+import { useToast } from "@/shared/hooks/useToast";
 import { formatMoney } from "@/shared/utils/format-money";
+import { logError } from "@/shared/utils/log-error";
+import type { CheckoutRequestBody } from "@/modules/order/types";
 import {
   CART_HEADER_TITLE,
-  CHECKOUT_COMING_SOON_TITLE,
+  CHECKOUT_ERROR_MESSAGE,
   cartSummaryLine,
   checkoutButtonLabel,
 } from "../content/cartContent";
@@ -16,6 +22,8 @@ import { CartLineItemRow } from "./CartLineItemRow";
 
 export function CartDrawer() {
   const router = useRouter();
+  const { showToast } = useToast();
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const {
     items,
     isOpen,
@@ -33,6 +41,27 @@ export function CartDrawer() {
   function handleBrowseMenu() {
     close();
     router.push(ROUTES.menu);
+  }
+
+  async function handleCheckout() {
+    setIsSubmitting(true);
+    try {
+      const body: CheckoutRequestBody = {
+        lines: items.map((line) => ({
+          menuItemId: line.menuItemId,
+          quantity: line.quantity,
+          selectedOptionIds: line.selections.flatMap((group) =>
+            group.options.map((option) => option.optionId),
+          ),
+        })),
+      };
+      const { data } = await api.post<{ url: string }>(API_ROUTES.checkout, body);
+      window.location.href = data.url;
+    } catch (error) {
+      logError(error, "CartDrawer.handleCheckout", { level: "error" });
+      showToast(CHECKOUT_ERROR_MESSAGE, "error");
+      setIsSubmitting(false);
+    }
   }
 
   return (
@@ -85,8 +114,8 @@ export function CartDrawer() {
                 <span className="font-mono">{formatMoney(total)}</span>
               </div>
             </div>
-            <Button variant="primary" fullWidth disabled title={CHECKOUT_COMING_SOON_TITLE}>
-              {checkoutButtonLabel(total)}
+            <Button variant="primary" fullWidth disabled={isSubmitting} onClick={handleCheckout}>
+              {checkoutButtonLabel(total, isSubmitting)}
             </Button>
           </div>
         </>

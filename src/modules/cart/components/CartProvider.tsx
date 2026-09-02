@@ -42,6 +42,8 @@ export interface CartContextValue {
     menuItemsById: Record<string, MenuItem>,
     optionsById: Record<string, Option>,
   ) => { removedNames: string[] };
+  /** Empties the cart — only called once an order is confirmed Paid (see order module's confirmation screen). */
+  clear: () => void;
   subtotal: number;
   tax: number;
   total: number;
@@ -142,6 +144,10 @@ export function CartProvider({
     setItems((current) => current.filter((line) => line.key !== key));
   }
 
+  function clear() {
+    setItems([]);
+  }
+
   function reconcile(
     menuItemsById: Record<string, MenuItem>,
     optionsById: Record<string, Option>,
@@ -172,6 +178,7 @@ export function CartProvider({
         decrementQty,
         removeItem,
         reconcile,
+        clear,
         subtotal,
         tax,
         total,
