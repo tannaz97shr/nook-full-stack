@@ -56,9 +56,73 @@ Each file's own header comment says to delete it once one does, but that
 wasn't tracked anywhere outside code comments. Impact: none currently —
 they're QA-only, gated by the same guards as any real route — but they're
 dead weight once Phase 5 (`/account/*`) and Phase 6 (`/admin/*`) build
-real guarded API routes to exercise instead. Action: delete both files
-(and their directories) once Phase 5/6 land. Status: open, scheduled for
-Phase 5/6 cleanup.
+real guarded routes/pages to exercise instead. Action: `session-check` was
+deleted in Phase 5a — `/account/*`'s `layout.tsx` and pages now exercise
+`requireSession()` for real. `admin-check` stays until Phase 6 builds
+`/admin/*`. Status: open, `admin-check` only, scheduled for Phase 6.
+
+**Order history has no pagination.** Area: account/orders. Issue:
+`getOrdersByUserId` (`src/modules/order/api/getOrdersByUserId.ts`) fetches
+a user's entire order history with no `limit()`/cursor — no pagination
+pattern exists anywhere else in the codebase yet either. Impact: none at
+realistic portfolio-piece order volume per customer. Action: add
+cursor-based pagination if a test account (or real usage) ever
+accumulates enough orders to make the unpaginated list slow or unwieldy.
+Status: open, deferred.
+
+**"Order again" is a disabled placeholder on the order-history page.**
+Area: account/orders, cart. Issue:
+`src/modules/account/components/OrderHistoryCard.tsx` renders a
+genuinely-`disabled` "Order again" button rather than a working reorder
+flow. `OrderLineItem` (order module) has no `image` field and isn't a
+`MenuItem`, so re-adding a past order's lines to the cart needs each
+`menuItemId` re-resolved against *current* menu/option data (an item can
+be discontinued or repriced since the order was placed) — real
+cross-module work touching cart, menu, and order together, not a button
+wire-up. Impact: none — the button is inert, not broken. Action: build
+the reorder resolution path (menu-item availability re-check, current
+pricing, cart re-hydration) in a future phase. Status: open, deferred.
+
+**Saved details are read-only; two design-mock widgets were omitted.**
+Area: account. Issue: Phase 5a's `/account` page shows name/email/phone
+as static display only — no edit form, no update API route, no Zod
+schema. The design mock's "The usual" one-tap-reorder widget and
+SMS/email "Preferences" toggles were both left out entirely, since
+neither has backing data (`User` has no notification-preference fields,
+and a "usual order" concept doesn't exist in the data model) and adding
+new `User` fields wasn't in Phase 5a's scope. Impact: none — this is
+read-only display of real data, nothing broken. Action: scope
+saved-details editing as its own small follow-up if/when needed; only add
+preference fields to `User` if that feature is actually prioritized.
+Status: open, deferred.
+
+**`orders` collection needs a composite Firestore index for order
+history.** Area: account/orders, infra. Issue:
+`getOrdersByUserId`'s `where("userId","==",...).orderBy("createdAt","desc")`
+compound query requires a composite index (`orders`: `userId` ASC,
+`createdAt` DESC). No `firestore.indexes.json` (or equivalent
+infra-as-code) exists anywhere in this repo yet, so one wasn't added
+speculatively here. Impact: `/account/orders` will throw
+`FAILED_PRECONDITION` the first time this query runs in any environment
+without the index. Firestore's error includes a direct console link to
+auto-create it. Action: click that link (or otherwise create the index)
+the first time this is deployed/run against a fresh Firestore instance;
+revisit adding an `firestore.indexes.json` convention if more composite
+queries show up. Status: open, undeployed infra step.
+
+**Rewards page (`/account/rewards`) is a static shell — Phase 5b
+boundary.** Area: account/rewards, loyalty. Issue:
+`src/modules/account/components/RewardsShell.tsx` and its content file
+(`src/modules/account/content/rewardsContent.ts`) render entirely static
+placeholder data — a points balance, progress bar, stats row, and a
+reward catalog with uniformly-disabled Redeem buttons. Neither `User` nor
+`Order` has any loyalty/points fields yet, and no `loyalty` module exists.
+Impact: none — this is by design, explicitly out of scope for Phase 5a.
+Action: Phase 5b must add loyalty fields to `User`/`Order` (or a new
+`loyalty` module), build real accrual/redemption logic, and replace every
+value sourced from `rewardsContent.ts` — both files carry a boundary
+comment marking exactly this handoff. Status: open, scheduled for Phase
+5b.
 
 **Cart may not clear if the confirmation page never loads after a
 successful payment.** Area: cart/checkout. Issue: cart-clearing is
