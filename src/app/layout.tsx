@@ -1,6 +1,10 @@
 import type { Metadata } from "next";
 import { IBM_Plex_Mono, Karla, Newsreader } from "next/font/google";
+import { auth } from "@/auth";
+import { Header } from "@/shared/components";
 import { THEME_INIT_SCRIPT } from "@/shared/utils/theme";
+import { CartDrawer } from "@/modules/cart/components/CartDrawer";
+import { Providers } from "./providers";
 import "./globals.css";
 
 const newsreader = Newsreader({
@@ -37,11 +41,14 @@ export const metadata: Metadata = {
   description: "A quiet neighborhood cafe — menu, ordering, and a warm corner to sit in.",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const session = await auth();
+  const userId = session?.user?.id ?? null;
+
   return (
     <html
       lang="en"
@@ -54,7 +61,17 @@ export default function RootLayout({
             Router. See src/shared/utils/theme.ts for what it does. */}
         <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
       </head>
-      <body className="font-sans">{children}</body>
+      <body className="font-sans">
+        {/* userId is a server-derived prop, not client session state — see
+            CartProvider/cartId.ts. Sign-in/out already does a full page
+            reload (useAuthForm.ts), so there's no case where a client
+            component needs this to change without a fresh render here. */}
+        <Providers userId={userId}>
+          <Header userId={userId} />
+          {children}
+          <CartDrawer />
+        </Providers>
+      </body>
     </html>
   );
 }
