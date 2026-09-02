@@ -47,6 +47,19 @@ hasn't been built yet since the data layer doesn't exist until Phase 2.
 Action: build the Storage upload/serve pipeline as part of the admin menu
 management feature. Status: open, scheduled for a later phase.
 
+**Phase 3 debug routes need deletion once real protected routes exist.**
+Area: auth. Issue: `src/app/api/debug/session-check/route.ts` and
+`src/app/api/debug/admin-check/route.ts` were added purely to exercise
+`requireSession()`/`requireAdminSession()` live, since Phase 3 built the
+guards but no real protected API route exists yet to test them against.
+Each file's own header comment says to delete it once one does, but that
+wasn't tracked anywhere outside code comments. Impact: none currently —
+they're QA-only, gated by the same guards as any real route — but they're
+dead weight once Phase 5 (`/account/*`) and Phase 6 (`/admin/*`) build
+real guarded API routes to exercise instead. Action: delete both files
+(and their directories) once Phase 5/6 land. Status: open, scheduled for
+Phase 5/6 cleanup.
+
 ## Resolved
 
 **Placeholder imagery was Pinterest-sourced.** ~~`assets/img` and

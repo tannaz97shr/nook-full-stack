@@ -15,6 +15,9 @@ export const API_BASE = "/api";
 
 export const API_ROUTES = {
   base: API_BASE,
-  // Auth.js catch-all: src/app/api/auth/[...nextauth]/route.ts
-  auth: `${API_BASE}/auth`,
+  auth: {
+    // Auth.js catch-all: src/app/api/auth/[...nextauth]/route.ts
+    base: `${API_BASE}/auth`,
+    register: `${API_BASE}/auth/register`,
+  },
 } as const;
