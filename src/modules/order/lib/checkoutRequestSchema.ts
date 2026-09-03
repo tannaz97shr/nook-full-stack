@@ -8,6 +8,7 @@ const checkoutRequestLineSchema = z.object({
 
 export const checkoutRequestSchema = z.object({
   lines: z.array(checkoutRequestLineSchema).min(1, "Cart is empty"),
+  rewardId: z.string().min(1).nullable(),
 });
 
 export type CheckoutRequestInput = z.infer<typeof checkoutRequestSchema>;

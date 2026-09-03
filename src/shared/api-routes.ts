@@ -24,6 +24,9 @@ export const API_ROUTES = {
   orders: {
     byId: (orderId: string) => `${API_BASE}/orders/${orderId}`,
   },
+  loyalty: {
+    balance: `${API_BASE}/loyalty/balance`,
+  },
   webhooks: {
     // Server-to-server only (Stripe calls this directly) — never fetched
     // from client code, but kept here anyway so the literal path string

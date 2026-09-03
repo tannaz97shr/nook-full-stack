@@ -14,4 +14,6 @@ export interface CheckoutRequestLine {
 
 export interface CheckoutRequestBody {
   lines: CheckoutRequestLine[];
+  /** Required-but-nullable so every caller is explicit about redeeming nothing vs. omitting the field. */
+  rewardId: string | null;
 }

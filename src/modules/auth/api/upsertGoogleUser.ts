@@ -32,6 +32,8 @@ export async function upsertGoogleUser({ email, name }: UpsertGoogleUserInput): 
       phone: null,
       role: "customer",
       authProvider: "google",
+      pointsBalance: 0,
+      activeRedemptionOrderId: null,
       createdAt: now,
       updatedAt: now,
     });
@@ -43,6 +45,8 @@ export async function upsertGoogleUser({ email, name }: UpsertGoogleUserInput): 
       phone: null,
       role: "customer",
       authProvider: "google",
+      pointsBalance: 0,
+      activeRedemptionOrderId: null,
       createdAt: Date.now(),
       updatedAt: Date.now(),
     };

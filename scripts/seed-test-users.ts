@@ -71,6 +71,8 @@ async function main() {
       phone: null,
       role: account.role,
       authProvider: "credentials",
+      pointsBalance: 0,
+      activeRedemptionOrderId: null,
       createdAt: now,
       updatedAt: now,
     });

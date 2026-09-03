@@ -19,6 +19,9 @@ export function toOrder(doc: DocumentSnapshot): Order {
     fulfillmentStatus: data.fulfillmentStatus,
     stripeSessionId: data.stripeSessionId,
     processedStripeEventIds: data.processedStripeEventIds,
+    redemption: data.redemption ?? null,
+    pointsAwardedAt: data.pointsAwardedAt?.toMillis() ?? null,
+    pointsEarned: data.pointsEarned ?? null,
     createdAt: data.createdAt.toMillis(),
     updatedAt: data.updatedAt.toMillis(),
   };

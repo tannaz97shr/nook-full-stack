@@ -14,6 +14,8 @@ export function toUser(doc: DocumentSnapshot): User {
     phone: data.phone ?? null,
     role: data.role,
     authProvider: data.authProvider,
+    pointsBalance: data.pointsBalance ?? 0,
+    activeRedemptionOrderId: data.activeRedemptionOrderId ?? null,
     createdAt: data.createdAt?.toMillis() ?? 0,
     updatedAt: data.updatedAt?.toMillis() ?? 0,
   };

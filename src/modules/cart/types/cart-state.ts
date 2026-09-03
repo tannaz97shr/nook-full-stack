@@ -1,6 +1,7 @@
 import type { CartLineItem } from "./cart-line-item";
 
 export interface CartState {
-  version: 1;
+  version: 2;
   items: CartLineItem[];
+  selectedRewardId: string | null;
 }

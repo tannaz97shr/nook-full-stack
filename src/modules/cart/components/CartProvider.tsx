@@ -12,6 +12,7 @@ import { readCart, writeCart } from "../lib/storage";
 import type { CartLineItem, CartSelectedGroup, CartState } from "../types";
 
 export interface CartContextValue {
+  userId: string | null;
   items: CartLineItem[];
   /**
    * True once `items` reflects this userId's actual stored cart (or the
@@ -42,8 +43,11 @@ export interface CartContextValue {
     menuItemsById: Record<string, MenuItem>,
     optionsById: Record<string, Option>,
   ) => { removedNames: string[] };
-  /** Empties the cart — only called once an order is confirmed Paid (see order module's confirmation screen). */
+  /** Empties the cart — only called once an order is confirmed Paid (see order module's confirmation screen). Also clears any selected reward. */
   clear: () => void;
+  selectedRewardId: string | null;
+  selectReward: (rewardId: string) => void;
+  clearReward: () => void;
   subtotal: number;
   tax: number;
   total: number;
@@ -61,6 +65,7 @@ export function CartProvider({
   children: ReactNode;
 }) {
   const [items, setItems] = useState<CartLineItem[]>([]);
+  const [selectedRewardId, setSelectedRewardId] = useState<string | null>(null);
   const [isOpen, setIsOpen] = useState(false);
   // Which userId's data `items` currently reflects — undefined until the
   // hydration effect below has run at least once. This MUST be React
@@ -85,14 +90,15 @@ export function CartProvider({
   useEffect(() => {
     const state = readCart(cartStorageKey(userId));
     setItems(state.items);
+    setSelectedRewardId(state.selectedRewardId);
     setHydratedForUserId(userId);
   }, [userId]);
 
   useEffect(() => {
     if (hydratedForUserId !== userId) return;
-    const state: CartState = { version: 1, items };
+    const state: CartState = { version: 2, items, selectedRewardId };
     writeCart(cartStorageKey(userId), state);
-  }, [items, hydratedForUserId, userId]);
+  }, [items, selectedRewardId, hydratedForUserId, userId]);
 
   function addItem(
     item: MenuItem,
@@ -146,6 +152,15 @@ export function CartProvider({
 
   function clear() {
     setItems([]);
+    setSelectedRewardId(null);
+  }
+
+  function selectReward(rewardId: string) {
+    setSelectedRewardId(rewardId);
+  }
+
+  function clearReward() {
+    setSelectedRewardId(null);
   }
 
   function reconcile(
@@ -167,6 +182,7 @@ export function CartProvider({
   return (
     <CartContext.Provider
       value={{
+        userId,
         items,
         isHydrated: hydratedForUserId === userId,
         isOpen,
@@ -179,6 +195,9 @@ export function CartProvider({
         removeItem,
         reconcile,
         clear,
+        selectedRewardId,
+        selectReward,
+        clearReward,
         subtotal,
         tax,
         total,

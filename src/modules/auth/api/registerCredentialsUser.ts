@@ -38,6 +38,8 @@ export async function registerCredentialsUser({
       phone: null,
       role: "customer",
       authProvider: "credentials",
+      pointsBalance: 0,
+      activeRedemptionOrderId: null,
       createdAt: now,
       updatedAt: now,
     });
@@ -54,6 +56,8 @@ export async function registerCredentialsUser({
       phone: null,
       role: "customer",
       authProvider: "credentials",
+      pointsBalance: 0,
+      activeRedemptionOrderId: null,
       createdAt: Date.now(),
       updatedAt: Date.now(),
     };
