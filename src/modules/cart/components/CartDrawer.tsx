@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import axios from "axios";
 import { Button, Drawer } from "@/shared/components";
 import { ROUTES } from "@/shared/routes";
 import { API_ROUTES } from "@/shared/api-routes";
@@ -9,6 +10,8 @@ import { api } from "@/shared/lib/axios";
 import { useToast } from "@/shared/hooks/useToast";
 import { formatMoney } from "@/shared/utils/format-money";
 import { logError } from "@/shared/utils/log-error";
+import { REWARDS_CATALOG } from "@/modules/loyalty/content/rewardsCatalog";
+import { useLoyaltyBalance } from "@/modules/loyalty/hooks/useLoyaltyBalance";
 import type { CheckoutRequestBody } from "@/modules/order/types";
 import {
   CART_HEADER_TITLE,
@@ -25,18 +28,26 @@ export function CartDrawer() {
   const { showToast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const {
+    userId,
     items,
     isOpen,
     close,
     incrementQty,
     decrementQty,
     removeItem,
+    selectedRewardId,
+    selectReward,
+    clearReward,
     subtotal,
     tax,
     total,
     count,
     isEmpty,
   } = useCart();
+
+  const { data: pointsBalance } = useLoyaltyBalance(userId !== null && isOpen);
+  const selectedReward = REWARDS_CATALOG.find((reward) => reward.id === selectedRewardId) ?? null;
+  const discountPreview = selectedReward ? Math.min(selectedReward.discountValue, subtotal + tax) : 0;
 
   function handleBrowseMenu() {
     close();
@@ -54,12 +65,14 @@ export function CartDrawer() {
             group.options.map((option) => option.optionId),
           ),
         })),
+        rewardId: selectedRewardId,
       };
       const { data } = await api.post<{ url: string }>(API_ROUTES.checkout, body);
       window.location.href = data.url;
     } catch (error) {
       logError(error, "CartDrawer.handleCheckout", { level: "error" });
-      showToast(CHECKOUT_ERROR_MESSAGE, "error");
+      const serverMessage = axios.isAxiosError(error) ? (error.response?.data as { error?: string } | undefined)?.error : undefined;
+      showToast(serverMessage ?? CHECKOUT_ERROR_MESSAGE, "error");
       setIsSubmitting(false);
     }
   }
@@ -97,6 +110,32 @@ export function CartDrawer() {
                 onRemove={() => removeItem(line.key)}
               />
             ))}
+
+            {userId !== null && (
+              <div className="border-t border-border py-5">
+                <h3 className="font-mono text-xs uppercase tracking-wide text-ink-subtle">Redeem a reward</h3>
+                <div className="mt-3 grid gap-2">
+                  {REWARDS_CATALOG.map((reward) => {
+                    const affordable = pointsBalance !== undefined && pointsBalance >= reward.pointsCost;
+                    const isSelected = selectedRewardId === reward.id;
+                    return (
+                      <button
+                        key={reward.id}
+                        type="button"
+                        disabled={!affordable}
+                        onClick={() => (isSelected ? clearReward() : selectReward(reward.id))}
+                        className={`flex items-center justify-between gap-3 rounded-xl border px-4 py-3 text-left text-[14px] transition-colors disabled:cursor-not-allowed disabled:opacity-40 ${
+                          isSelected ? "border-gold bg-sunken" : "border-border hover:bg-sunken"
+                        }`}
+                      >
+                        <span className="text-ink">{reward.name}</span>
+                        <span className="font-mono text-ink-subtle">{reward.pointsCost} pts</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
           </div>
 
           <div className="flex-none border-t border-border bg-surface px-6 py-5">
@@ -109,13 +148,19 @@ export function CartDrawer() {
                 <span>Tax (10%)</span>
                 <span className="font-mono">{formatMoney(tax)}</span>
               </div>
+              {selectedReward && (
+                <div className="flex justify-between text-[14.5px] text-gold">
+                  <span>{selectedReward.name}</span>
+                  <span className="font-mono">−{formatMoney(discountPreview)}</span>
+                </div>
+              )}
               <div className="flex justify-between border-t border-border pt-2 text-[17px] font-bold text-ink">
                 <span>Total</span>
-                <span className="font-mono">{formatMoney(total)}</span>
+                <span className="font-mono">{formatMoney(Math.max(0, total - discountPreview))}</span>
               </div>
             </div>
             <Button variant="primary" fullWidth disabled={isSubmitting} onClick={handleCheckout}>
-              {checkoutButtonLabel(total, isSubmitting)}
+              {checkoutButtonLabel(Math.max(0, total - discountPreview), isSubmitting)}
             </Button>
           </div>
         </>

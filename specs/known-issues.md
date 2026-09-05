@@ -47,19 +47,25 @@ hasn't been built yet since the data layer doesn't exist until Phase 2.
 Action: build the Storage upload/serve pipeline as part of the admin menu
 management feature. Status: open, scheduled for a later phase.
 
-**Phase 3 debug routes need deletion once real protected routes exist.**
-Area: auth. Issue: `src/app/api/debug/session-check/route.ts` and
+**Phase 3/5b debug routes need deletion once real protected routes exist.**
+Area: auth, loyalty. Issue: `src/app/api/debug/session-check/route.ts` and
 `src/app/api/debug/admin-check/route.ts` were added purely to exercise
 `requireSession()`/`requireAdminSession()` live, since Phase 3 built the
 guards but no real protected API route exists yet to test them against.
 Each file's own header comment says to delete it once one does, but that
-wasn't tracked anywhere outside code comments. Impact: none currently —
-they're QA-only, gated by the same guards as any real route — but they're
-dead weight once Phase 5 (`/account/*`) and Phase 6 (`/admin/*`) build
-real guarded routes/pages to exercise instead. Action: `session-check` was
-deleted in Phase 5a — `/account/*`'s `layout.tsx` and pages now exercise
-`requireSession()` for real. `admin-check` stays until Phase 6 builds
-`/admin/*`. Status: open, `admin-check` only, scheduled for Phase 6.
+wasn't tracked anywhere outside code comments. Phase 5b added a third,
+`src/app/api/debug/mark-order-completed/route.ts`, for the same reason —
+it exercises the new `awardPointsIfCompleted` points-award transaction
+since no admin fulfillment UI exists yet to transition an order to
+`Completed` for real. Impact: none currently — all three are QA-only,
+gated by the same guards as any real route — but they're dead weight once
+Phase 5 (`/account/*`) and Phase 6 (`/admin/*`) build real guarded
+routes/pages to exercise instead. Action: `session-check` was deleted in
+Phase 5a — `/account/*`'s `layout.tsx` and pages now exercise
+`requireSession()` for real. `admin-check` and `mark-order-completed` both
+stay until Phase 6 builds `/admin/*` (real fulfillment controls give
+`mark-order-completed` a real route to be replaced by). Status: open,
+`admin-check` and `mark-order-completed`, scheduled for Phase 6.
 
 **Order history has no pagination.** Area: account/orders. Issue:
 `getOrdersByUserId` (`src/modules/order/api/getOrdersByUserId.ts`) fetches
@@ -110,19 +116,18 @@ the first time this is deployed/run against a fresh Firestore instance;
 revisit adding an `firestore.indexes.json` convention if more composite
 queries show up. Status: open, undeployed infra step.
 
-**Rewards page (`/account/rewards`) is a static shell — Phase 5b
-boundary.** Area: account/rewards, loyalty. Issue:
-`src/modules/account/components/RewardsShell.tsx` and its content file
-(`src/modules/account/content/rewardsContent.ts`) render entirely static
-placeholder data — a points balance, progress bar, stats row, and a
-reward catalog with uniformly-disabled Redeem buttons. Neither `User` nor
-`Order` has any loyalty/points fields yet, and no `loyalty` module exists.
-Impact: none — this is by design, explicitly out of scope for Phase 5a.
-Action: Phase 5b must add loyalty fields to `User`/`Order` (or a new
-`loyalty` module), build real accrual/redemption logic, and replace every
-value sourced from `rewardsContent.ts` — both files carry a boundary
-comment marking exactly this handoff. Status: open, scheduled for Phase
-5b.
+**Ephemeral per-redemption Stripe Coupons accumulate in the dashboard.**
+Area: checkout/Stripe, loyalty. Issue: `/api/checkout` creates a fresh
+one-time-use (`duration: "once"`) Stripe Coupon per redeemed reward
+(`src/app/api/checkout/route.ts`) rather than reusing or deleting them, so
+the Stripe dashboard's Coupons list grows over time. A negative line item
+isn't supported by Stripe, and one persistent multi-use coupon per reward
+couldn't be capped correctly for small orders, so an ephemeral capped
+coupon per checkout was the simplest way to keep Firestore's own
+`redemption.discountAmount` authoritative. Impact: none functionally —
+Coupons have no billing cost — but adds dashboard clutter. Action: revisit
+only if this becomes a genuine usability nuisance (e.g. a periodic cleanup
+job deleting old "once" coupons). Status: open, deferred.
 
 **Cart may not clear if the confirmation page never loads after a
 successful payment.** Area: cart/checkout. Issue: cart-clearing is
@@ -167,3 +172,17 @@ Status: open, deferred.
 and were unlicensed.~~ Resolved 2026-09-01: those folders were deleted and
 replaced with the 6 AI-generated images now in `public/images/marketing/`
 (see the new open item above for their own caveats).
+
+**Rewards page (`/account/rewards`) was a static shell.** ~~`RewardsShell.tsx`
+and its content file rendered entirely static placeholder data — a points
+balance, progress bar, stats row, and a reward catalog with
+uniformly-disabled Redeem buttons. Neither `User` nor `Order` had any
+loyalty/points fields, and no `loyalty` module existed.~~ Resolved
+2026-09-03 (Phase 5b): added `pointsBalance`/`activeRedemptionOrderId` to
+`User`; `redemption`/`pointsAwardedAt`/`pointsEarned` to `Order`; built
+`src/modules/loyalty/` (static catalog, `awardPointsIfCompleted`
+earning transaction, `reserveRedemptionOrder`/`deductRedeemedPoints`
+checkout-time redemption with a single-flight balance lock). `RewardsShell`
+and the new `RewardCatalogGrid` render live balance/stats/catalog with
+real enable/disable state; redemption selection happens in the cart
+drawer (the app's de facto checkout UI).

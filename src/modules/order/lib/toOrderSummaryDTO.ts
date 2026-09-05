@@ -11,6 +11,7 @@ export function toOrderSummaryDTO(order: Order): OrderSummaryDTO {
     total: order.total,
     paymentStatus: order.paymentStatus,
     fulfillmentStatus: order.fulfillmentStatus,
+    redemption: order.redemption,
     createdAt: order.createdAt,
   };
 }

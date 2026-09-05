@@ -17,6 +17,12 @@ export interface CreatePendingOrderInput {
  * Stripe Checkout Session exists (order id can't be the session id — see
  * authorizeOrderAccess.ts). Returns the new order id so the caller can
  * create the Stripe session and then attachStripeSessionId.
+ *
+ * Only for the no-redemption path — an order that redeems a reward is
+ * created via loyalty/api/reserveRedemptionOrder.ts instead, which needs
+ * the same field shape inside an atomic transaction with the user's
+ * points lock. redemption/pointsAwardedAt/pointsEarned are always present
+ * on every order doc (this path just sets the first to null).
  */
 export async function createPendingOrder(input: CreatePendingOrderInput): Promise<string> {
   const ref = adminDb.collection(ORDER_COLLECTIONS.orders).doc();
@@ -32,6 +38,9 @@ export async function createPendingOrder(input: CreatePendingOrderInput): Promis
     fulfillmentStatus: null,
     stripeSessionId: null,
     processedStripeEventIds: [],
+    redemption: null,
+    pointsAwardedAt: null,
+    pointsEarned: null,
     createdAt: FieldValue.serverTimestamp(),
     updatedAt: FieldValue.serverTimestamp(),
   });
