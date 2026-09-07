@@ -44,6 +44,9 @@ export const API_ROUTES = {
       },
       images: `${API_BASE}/admin/menu/images`,
     },
+    orders: {
+      status: (orderId: string) => `${API_BASE}/admin/orders/${orderId}/status`,
+    },
   },
   webhooks: {
     // Server-to-server only (Stripe calls this directly) — never fetched

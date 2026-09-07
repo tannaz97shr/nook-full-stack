@@ -57,25 +57,18 @@ reorder categories/items from the admin UI; new ones always land last.
 Action: revisit if manual reordering becomes a real need. Status: open,
 deferred.
 
-**Phase 3/5b debug routes need deletion once real protected routes exist.**
-Area: auth, loyalty. Issue: `src/app/api/debug/session-check/route.ts` and
-`src/app/api/debug/admin-check/route.ts` were added purely to exercise
-`requireSession()`/`requireAdminSession()` live, since Phase 3 built the
-guards but no real protected API route exists yet to test them against.
-Each file's own header comment says to delete it once one does, but that
-wasn't tracked anywhere outside code comments. Phase 5b added a third,
-`src/app/api/debug/mark-order-completed/route.ts`, for the same reason —
-it exercises the new `awardPointsIfCompleted` points-award transaction
-since no admin fulfillment UI exists yet to transition an order to
-`Completed` for real. Impact: none currently — all three are QA-only,
-gated by the same guards as any real route — but they're dead weight once
-Phase 5 (`/account/*`) and Phase 6 (`/admin/*`) build real guarded
-routes/pages to exercise instead. Action: `session-check` was deleted in
-Phase 5a — `/account/*`'s `layout.tsx` and pages now exercise
-`requireSession()` for real. `admin-check` and `mark-order-completed` both
-stay until Phase 6 builds `/admin/*` (real fulfillment controls give
-`mark-order-completed` a real route to be replaced by). Status: open,
-`admin-check` and `mark-order-completed`, scheduled for Phase 6.
+**Phase 3 debug route needs deletion once a real protected route exists.**
+Area: auth. Issue: `src/app/api/debug/admin-check/route.ts` was added purely
+to exercise `requireAdminSession()` live, since Phase 3 built the guard but
+no real admin-only API route existed yet to test it against. Its own
+header comment says to delete it once one does, but that wasn't tracked
+anywhere outside code comments. Impact: none currently — it's QA-only,
+gated by the same guard as any real route — but it's dead weight now that
+Phase 6a/6b have built real admin-only routes it could be replaced by
+exercising instead (`session-check` and `mark-order-completed`, its
+siblings from the same original combined item, were already resolved in
+Phase 5a and 6b respectively — see Resolved, below). Status: open,
+`admin-check`, scheduled for a future admin-route phase.
 
 **Order history has no pagination.** Area: account/orders. Issue:
 `getOrdersByUserId` (`src/modules/order/api/getOrdersByUserId.ts`) fetches
@@ -218,3 +211,18 @@ resulting URL into `MenuItem.images` on submit. Existing seeded items
 (`scripts/seed-menu.ts`) still use `public/` paths — both are valid
 string values in `MenuItem.images`; only admin-added images go through
 this pipeline.
+
+**Phase 5b's `mark-order-completed` debug route stood in for real admin
+fulfillment controls.** ~~`src/app/api/debug/mark-order-completed/route.ts`
+and `scripts/debug-award-loyalty-points.ts` both called
+`awardPointsIfCompleted` directly (over HTTP and in-process respectively)
+since Phase 5b built the points-award transaction but no admin fulfillment
+UI existed yet to trigger a real Completed transition.~~ Resolved
+2026-09-07 (Phase 6b): built `/admin/orders` (order queue, RSC-fetched,
+client-side status-tab filtering, stat tiles) and its guarded
+`PATCH /api/admin/orders/[orderId]/status` route, which calls
+`awardPointsIfCompleted` directly for the Completed transition (reusing
+it unchanged) and a new `advanceFulfillmentStatus` transaction for
+Received→Preparing/Preparing→Ready. Both debug files deleted — the real
+route now exercises `awardPointsIfCompleted` for real, and staff have an
+actual queue to work from instead of a QA-only endpoint.

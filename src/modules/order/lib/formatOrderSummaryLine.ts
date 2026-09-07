@@ -1,4 +1,4 @@
-import type { OrderLineItem } from "@/modules/order/types";
+import type { OrderLineItem } from "../types/order";
 
 /** [{name:"Latte",quantity:2}, {name:"Croissant",quantity:1}] -> "2× Latte, 1× Croissant". */
 export function formatOrderSummaryLine(lineItems: OrderLineItem[]): string {
