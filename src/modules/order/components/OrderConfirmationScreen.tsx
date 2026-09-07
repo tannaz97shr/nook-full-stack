@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { useCart } from "@/modules/cart/hooks/useCart";
+import { REWARDS_CATALOG } from "@/modules/loyalty/content/rewardsCatalog";
 import { formatMoney } from "@/shared/utils/format-money";
 import {
   FULFILLMENT_STATUS_STEPS,
@@ -27,6 +28,9 @@ export function OrderConfirmationScreen({
   const cart = useCart();
   const { data } = useOrderStatusPoll(orderId, sessionId ?? "", shouldPoll);
   const order = data ?? initialOrder;
+  const redeemedReward = order.redemption
+    ? (REWARDS_CATALOG.find((reward) => reward.id === order.redemption?.rewardId) ?? null)
+    : null;
 
   // Fires off whatever paymentStatus currently IS, not "a poll just
   // completed" — this is what correctly handles both orderings of the
@@ -96,6 +100,12 @@ export function OrderConfirmationScreen({
             <span>Tax</span>
             <span className="font-mono">{formatMoney(order.tax)}</span>
           </div>
+          {order.redemption && (
+            <div className="flex justify-between text-[14.5px] text-gold">
+              <span>{redeemedReward?.name ?? "Reward applied"}</span>
+              <span className="font-mono">−{formatMoney(order.redemption.discountAmount)}</span>
+            </div>
+          )}
           <div className="flex justify-between border-t border-border pt-2 text-[17px] font-bold text-ink">
             <span>Total</span>
             <span className="font-mono">{formatMoney(order.total)}</span>

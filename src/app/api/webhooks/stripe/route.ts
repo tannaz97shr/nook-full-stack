@@ -39,11 +39,23 @@ export async function POST(req: Request) {
       return Response.json({ received: true });
     }
 
-    const result = await markOrderPaidIfUnprocessed(orderId, event.id);
-    if (result === "not-found") {
-      logError(new Error(`Order ${orderId} not found for event ${event.id}`), "webhooks.stripe", {
-        level: "warn",
-      });
+    try {
+      const result = await markOrderPaidIfUnprocessed(orderId, event.id);
+      if (result === "not-found") {
+        logError(new Error(`Order ${orderId} not found for event ${event.id}`), "webhooks.stripe", {
+          level: "warn",
+        });
+      }
+    } catch (error) {
+      // Surface the failure instead of letting it propagate uncaught —
+      // an uncaught throw here still returns a non-200 today, but
+      // silently, with no logged cause and no distinction from any
+      // other failure. Returning a real error status is what makes
+      // Stripe's own automatic retry a deliberate safety net for
+      // transient failures (e.g. transaction contention) rather than
+      // stranding the order in "Pending" forever.
+      logError(error, "webhooks.stripe.markPaid", { level: "error" });
+      return Response.json({ error: "Failed to process order" }, { status: 500 });
     }
   }
 
