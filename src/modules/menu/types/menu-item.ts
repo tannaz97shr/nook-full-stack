@@ -9,9 +9,9 @@ export interface MenuItem {
   description: string;
   basePrice: number;
   /**
-   * public/ paths for now. Real per-item photography goes through
-   * Firebase Storage with token-gated URLs once the admin upload
-   * pipeline exists (tracked in specs/known-issues.md).
+   * Two valid shapes coexist: seeded items (scripts/seed-menu.ts) use
+   * public/ paths; admin-added/replaced photos are token-gated Firebase
+   * Storage download URLs (src/modules/menu/api/uploadMenuItemImage.ts).
    */
   images: string[];
   dietaryTags: DietaryTag[];

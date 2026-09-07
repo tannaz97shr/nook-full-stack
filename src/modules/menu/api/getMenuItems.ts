@@ -19,3 +19,9 @@ export async function getMenuItemById(id: string): Promise<MenuItem | null> {
   const doc = await adminDb.collection(MENU_COLLECTIONS.menuItems).doc(id).get();
   return doc.exists ? toMenuItem(doc) : null;
 }
+
+/** Server-only, admin use. Every MenuItem across every category, including inactive categories. */
+export async function getAllMenuItems(): Promise<MenuItem[]> {
+  const snapshot = await adminDb.collection(MENU_COLLECTIONS.menuItems).orderBy("displayOrder").get();
+  return snapshot.docs.map(toMenuItem);
+}

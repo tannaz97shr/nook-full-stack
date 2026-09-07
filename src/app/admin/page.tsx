@@ -1,11 +1,12 @@
+import { redirect } from "next/navigation";
+import { ROUTES } from "@/shared/routes";
+
 /**
- * Placeholder so middleware's page-level redirect has something concrete
- * to protect for QA — real admin content lands in Phase 6.
+ * No admin dashboard exists yet. Long-term this should redirect to
+ * /admin/orders (see ROUTES.admin's comment) once Phase 6b builds the
+ * order queue. For now /admin/menu is the only real section, so redirect
+ * there instead.
  */
 export default function AdminPage() {
-  return (
-    <main className="mx-auto max-w-[1240px] px-4 py-16 text-center sm:px-8">
-      <h1 className="font-display text-3xl text-ink">Admin — coming soon</h1>
-    </main>
-  );
+  redirect(ROUTES.admin.menu);
 }

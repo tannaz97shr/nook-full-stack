@@ -27,6 +27,24 @@ export const API_ROUTES = {
   loyalty: {
     balance: `${API_BASE}/loyalty/balance`,
   },
+  admin: {
+    menu: {
+      categories: {
+        base: `${API_BASE}/admin/menu/categories`,
+        byId: (categoryId: string) => `${API_BASE}/admin/menu/categories/${categoryId}`,
+      },
+      items: {
+        base: `${API_BASE}/admin/menu/items`,
+        byId: (itemId: string) => `${API_BASE}/admin/menu/items/${itemId}`,
+        availability: (itemId: string) => `${API_BASE}/admin/menu/items/${itemId}/availability`,
+      },
+      optionGroups: {
+        base: `${API_BASE}/admin/menu/option-groups`,
+        byId: (groupId: string) => `${API_BASE}/admin/menu/option-groups/${groupId}`,
+      },
+      images: `${API_BASE}/admin/menu/images`,
+    },
+  },
   webhooks: {
     // Server-to-server only (Stripe calls this directly) — never fetched
     // from client code, but kept here anyway so the literal path string

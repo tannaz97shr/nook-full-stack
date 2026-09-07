@@ -21,3 +21,9 @@ export async function getOptionGroupById(id: string): Promise<OptionGroup | null
   const doc = await adminDb.collection(MENU_COLLECTIONS.optionGroups).doc(id).get();
   return doc.exists ? toOptionGroup(doc) : null;
 }
+
+/** Server-only, admin use. Every OptionGroup, including ones not currently referenced by any MenuItem. */
+export async function getAllOptionGroups(): Promise<OptionGroup[]> {
+  const snapshot = await adminDb.collection(MENU_COLLECTIONS.optionGroups).get();
+  return snapshot.docs.map(toOptionGroup);
+}

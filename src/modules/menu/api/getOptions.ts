@@ -16,3 +16,9 @@ export async function getOptionsByIds(ids: string[]): Promise<Option[]> {
 
   return docs.filter((doc) => doc.exists).map(toOption);
 }
+
+/** Server-only, admin use. Every Option across every group. */
+export async function getAllOptions(): Promise<Option[]> {
+  const snapshot = await adminDb.collection(MENU_COLLECTIONS.options).get();
+  return snapshot.docs.map(toOption);
+}
