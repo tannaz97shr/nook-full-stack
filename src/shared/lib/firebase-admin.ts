@@ -1,13 +1,10 @@
 import { cert, getApps, initializeApp } from "firebase-admin/app";
 import { getFirestore } from "firebase-admin/firestore";
+import { getStorage } from "firebase-admin/storage";
 
 /**
  * Server-only. Never import from a Client Component — firebase-admin's
  * node-only APIs will fail to bundle if you try.
- *
- * FIREBASE_STORAGE_BUCKET is intentionally unread here: nothing in this
- * module touches Storage yet (that's the admin image-upload feature,
- * tracked in specs/known-issues.md). Wire it up there when it's needed.
  */
 
 function getRequiredEnv(name: string): string {
@@ -30,3 +27,4 @@ const app =
   });
 
 export const adminDb = getFirestore(app);
+export const adminStorage = getStorage(app).bucket(getRequiredEnv("FIREBASE_STORAGE_BUCKET"));

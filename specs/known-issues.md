@@ -37,15 +37,25 @@ real cafe photography once available, and/or generate per-item menu
 photos before a proper public launch. Status: open, non-blocking for
 continued development.
 
-**Menu item photos still need a real storage decision.**
-Area: architecture. Issue: the 6 marketing images above live in `public/`
-(static, bundled at build time) because they're fixed design assets, not
-admin-editable data. Actual per-`MenuItem` photos (added/replaced by an
-admin) are a different case and should go through Firebase Storage with
-token-gated download URLs, per CLAUDE.md's Images convention — this
-hasn't been built yet since the data layer doesn't exist until Phase 2.
-Action: build the Storage upload/serve pipeline as part of the admin menu
-management feature. Status: open, scheduled for a later phase.
+**Uploaded-but-unattached admin images orphan in Storage.** Area:
+admin/menu, Storage. Issue: `AdminItemForm` uploads an image to
+`/api/admin/menu/images` immediately on file-select (before the rest of
+the form is valid/submitted), so an admin who picks a file and then
+abandons the form leaves an orphaned object under `menu-items/` in the
+bucket with no Firestore doc ever referencing it. Impact: none
+functionally, minor storage cost accumulation. Action: revisit with a
+periodic cleanup job (e.g. delete `menu-items/*` objects older than N
+hours with no referencing `MenuItem.images` entry) if this becomes a real
+cost/clutter concern. Status: open, deferred.
+
+**Category/item drag-and-drop reordering was scoped out of Phase 6a.**
+Area: admin/menu. Issue: the design mock shows drag-handle reordering for
+categories, but Phase 6a's `createCategory`/`createMenuItem` only append
+at the end (`displayOrder` = current max + 1) — there's no
+`reorderCategories` write function or drag UI. Impact: staff can't
+reorder categories/items from the admin UI; new ones always land last.
+Action: revisit if manual reordering becomes a real need. Status: open,
+deferred.
 
 **Phase 3/5b debug routes need deletion once real protected routes exist.**
 Area: auth, loyalty. Issue: `src/app/api/debug/session-check/route.ts` and
@@ -186,3 +196,25 @@ checkout-time redemption with a single-flight balance lock). `RewardsShell`
 and the new `RewardCatalogGrid` render live balance/stats/catalog with
 real enable/disable state; redemption selection happens in the cart
 drawer (the app's de facto checkout UI).
+
+**Menu item photos still needed a real storage decision.** ~~The 6
+marketing images above live in `public/` (static, bundled at build time)
+because they're fixed design assets, not admin-editable data. Actual
+per-`MenuItem` photos (added/replaced by an admin) are a different case
+and should go through Firebase Storage with token-gated download URLs,
+per CLAUDE.md's Images convention — this hadn't been built yet since the
+data layer didn't exist until Phase 2.~~ Resolved 2026-09-07 (Phase 6a):
+added `adminStorage` (Firebase Storage bucket) to
+`src/shared/lib/firebase-admin.ts`; built
+`src/app/api/admin/menu/images/route.ts` (multipart upload,
+`requireAdminSession`-guarded, `file-type` magic-byte validation before
+any Storage write); `src/modules/menu/api/uploadMenuItemImage.ts` writes
+to `menu-items/{uuid}.{ext}` and returns a token-gated download URL via
+the new `src/shared/lib/storageDownloadUrl.ts` helper
+(`firebaseStorageDownloadTokens` custom metadata, per the Admin SDK's
+actual mechanism — there's no client-SDK-style `getDownloadURL()`
+server-side). `AdminItemForm` uploads on file-select and attaches the
+resulting URL into `MenuItem.images` on submit. Existing seeded items
+(`scripts/seed-menu.ts`) still use `public/` paths — both are valid
+string values in `MenuItem.images`; only admin-added images go through
+this pipeline.

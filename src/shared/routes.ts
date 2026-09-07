@@ -32,8 +32,11 @@ export const ROUTES = {
   orderConfirmation: (orderId: string) => `/order-confirmation/${orderId}`,
 
   admin: {
-    // No admin dashboard screen exists in the design — `/admin` should
-    // redirect to `/admin/orders`.
+    // No admin dashboard screen exists in the design — long-term `/admin`
+    // should redirect to `/admin/orders` once Phase 6b builds the order
+    // queue (the page staff actually want to land on each shift). Until
+    // then, `/admin/page.tsx` redirects to `/admin/menu` instead, since
+    // menu management is the only real admin section built so far.
     root: "/admin",
     orders: "/admin/orders",
     menu: "/admin/menu",
