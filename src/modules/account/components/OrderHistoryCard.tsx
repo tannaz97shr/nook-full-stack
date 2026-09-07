@@ -2,7 +2,7 @@ import { Badge, Button } from "@/shared/components";
 import { formatMoney } from "@/shared/utils/format-money";
 import { orderHistoryChipLabel } from "@/modules/order/content/orderStatusContent";
 import type { OrderSummaryDTO } from "@/modules/order/types";
-import { formatOrderSummaryLine } from "../lib/formatOrderSummaryLine";
+import { formatOrderSummaryLine } from "@/modules/order/lib/formatOrderSummaryLine";
 import { REORDER_CTA, REORDER_DEFERRED_TITLE } from "../content/orderHistoryContent";
 
 const ORDER_DATE_FORMATTER = new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", year: "numeric" });
