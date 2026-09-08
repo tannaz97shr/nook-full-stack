@@ -6,6 +6,29 @@ migration scripts, known UX gaps.
 
 ## Open
 
+**Add-to-cart toast overlaps the cart drawer's Checkout button on mobile.**
+Area: cart, shared components. Issue: `ToastProvider` positions toasts with
+`fixed inset-x-0 bottom-6 z-[70]` (full viewport width, centered, above the
+drawer's `z-[60]`) so a toast stays visible even while a drawer/modal is
+open. On desktop the `CartDrawer` is a right-aligned side panel, so a
+centered full-width toast lands in the page area to its left and never
+overlaps it — but on mobile the drawer is a full-width bottom sheet, so the
+toast renders directly on top of the drawer's sticky footer, visually
+covering the "Checkout · $X.XX" button text for the ~3s the toast is
+visible (`animation: "toast 3s ease-in-out forwards"` in
+`tailwind.config.ts`). Reproduced by adding an item from `/menu` at a
+mobile viewport, then opening the cart drawer while the toast is still
+showing. Not theme-specific (happens in both light and dark). Impact: the
+button is very likely still clickable underneath (toast has no visible
+pointer-events guard either way), but its label is unreadable while
+covered, which reads as broken. Action: needs a real fix in shared
+Toast/Drawer layering (e.g. suppressing/repositioning toasts while a
+drawer is open on narrow viewports, or giving the drawer's sticky footer a
+higher stacking context) — out of scope to patch during a presentation-
+layer polish pass since it touches shared component behavior used
+app-wide, not just cart. Status: open, found during the Phase 7 full-app
+mobile/dark-mode QA sweep.
+
 **ESLint config doesn't fully match CLAUDE.md's stated convention.**
 Area: linting. Issue: CLAUDE.md says "core-web-vitals + typescript," but
 this Next 14.2.4 / `eslint-config-next` setup has no `next/typescript`
@@ -22,20 +45,6 @@ repo runs Tailwind v3.4.1 with a classic `tailwind.config.ts`. Impact:
 none currently — tokens are wired via CSS variables + `theme.extend`,
 which is the correct v3 pattern. Action: revisit only if a v4-only
 feature is actually needed. Status: open, informational.
-
-**Marketing images are AI-generated placeholders, not real cafe photography.**
-Area: assets. Issue: `public/images/marketing/` (hero-latte-art.jpg,
-interior-warm.jpg, storefront-exterior.jpg, coffee-closeup.jpg,
-table-outdoor.jpg, pastry-closeup.jpg) were generated via ChatGPT to
-replace the earlier Pinterest-sourced set (see Resolved, below). They are
-a small, deliberately reusable set (6 images covering hero/interior/
-exterior/drink/food/outdoor) rather than one photo per menu item — fine
-for development, screenshots, and an initial soft-launch, but should be
-disclosed as AI-generated (not real photography of an actual location) if
-this project comes up in a portfolio/client conversation. Action: swap in
-real cafe photography once available, and/or generate per-item menu
-photos before a proper public launch. Status: open, non-blocking for
-continued development.
 
 **Uploaded-but-unattached admin images orphan in Storage.** Area:
 admin/menu, Storage. Issue: `AdminItemForm` uploads an image to
@@ -169,6 +178,56 @@ being marked `Cancelled`/`Failed`. Action: handle `checkout.session.expired`
 Status: open, deferred.
 
 ## Resolved
+
+**Marketing images were AI-generated placeholders, not real cafe
+photography.** ~~`public/images/marketing/` (hero-latte-art.jpg,
+interior-warm.jpg, storefront-exterior.jpg, coffee-closeup.jpg,
+outdoor-table.jpg, pastry-closeup.jpg) were generated via ChatGPT to
+replace the earlier Pinterest-sourced set — fine for development but
+should be disclosed as AI-generated if this project comes up in a
+portfolio/client conversation.~~ Resolved 2026-09-08 (Phase 7): replaced
+all six with real, licensed photography from Unsplash (Unsplash License —
+free for commercial use, no attribution required):
+`interior-bookshelf.jpg`, `interior-warm-light.jpg`, `interior-tables.jpg`,
+`interior-garden-view.jpg`, `coffee-latte-hands.jpg`,
+`coffee-latte-saucer.jpg`, `pastry-croissant-honey.jpg` — seven images,
+covering the new `/gallery` grid, `/about`'s hero/first-year/CTA photos,
+`/contact`'s photo slot, and `AuthScreen`'s sign-in background (previously
+`coffee-closeup.jpg`, now `coffee-latte-hands.jpg`). An eighth sourced photo
+(Unsplash id `1550005399-c95f859c0fc7`, page-titled "croissant breads near
+basket full of pastry on table") was downloaded but not used: the actual
+image behind that URL is an unrelated colorful food-market scene, not
+croissants — Unsplash's own alt text for it is simply wrong — and it read
+as a jarring style mismatch against the site's muted, minimalist palette.
+No exterior/storefront shot was available in the sourced set either;
+`/contact` uses an interior photo in that slot instead rather than
+misrepresenting one as the shopfront.
+
+**Deleting the old placeholder marketing images broke 9 seeded menu item
+photos.** ~~`scripts/seed-menu.ts` reused three of the six old
+`public/images/marketing/*` placeholder files as stand-in photos for 9
+menu items (`hero-latte-art.jpg` for Flat White, `coffee-closeup.jpg` for
+4 coffee/cold items, `pastry-closeup.jpg` for 4 breakfast/bakery items) —
+a reuse this repo's own `MenuItem.images` convention treats as normal
+(seeded items intentionally share a small set of stock photos rather than
+getting one photo each). The same Phase 7 image-swap above deleted those
+files, but the grep sweep done at the time only checked `src/` and
+`specs/`, missing `scripts/seed-menu.ts` and the live Firestore data it
+had already written. The break was invisible in casual QA because Next's
+on-disk image-optimizer cache (`.next/cache/images/`) already had 640px
+variants of the deleted files cached from earlier phases and kept serving
+those stale bytes; it only surfaced as a genuine broken image (`400` from
+`/_next/image`) at an uncached width — specifically the item-customization
+modal's larger desktop-width request — found during the Phase 7 full-app
+QA sweep.~~ Resolved 2026-09-08 (Phase 7): remapped all 9 references in
+`scripts/seed-menu.ts` to real photos (`coffee-latte-saucer.jpg` for Flat
+White, `coffee-latte-hands.jpg` for the other coffee/cold items,
+`pastry-croissant-honey.jpg` for breakfast/bakery items — mirroring the
+exact same reuse pattern the old seed data used) and re-ran
+`bun run scripts/seed-menu.ts --apply` to upsert the live Firestore
+documents (safe/idempotent per the script's own deterministic doc-id
+design). Confirms the sweep-and-grep step for any future asset removal
+needs to cover `scripts/` (and ideally live data), not just `src/`/`specs/`.
 
 **Rewards catalog was a hardcoded array, and OrderRedemption didn't snapshot
 reward name.** ~~`src/modules/loyalty/content/rewardsCatalog.ts` held the 4

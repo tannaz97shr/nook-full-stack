@@ -1,4 +1,5 @@
 export * from "./organisms/ErrorState";
+export * from "./organisms/Footer";
 export * from "./organisms/Header";
 export * from "./organisms/ToastProvider";
 export * from "./atoms/Badge";

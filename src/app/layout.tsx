@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { IBM_Plex_Mono, Karla, Newsreader } from "next/font/google";
 import { auth } from "@/auth";
-import { Header } from "@/shared/components";
+import { Footer, Header } from "@/shared/components";
 import { THEME_INIT_SCRIPT } from "@/shared/utils/theme";
 import { CartDrawer } from "@/modules/cart/components/CartDrawer";
 import { Providers } from "./providers";
@@ -69,6 +69,7 @@ export default async function RootLayout({
         <Providers userId={userId}>
           <Header userId={userId} />
           {children}
+          <Footer />
           <CartDrawer />
         </Providers>
       </body>
