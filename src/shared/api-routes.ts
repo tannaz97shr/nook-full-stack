@@ -26,6 +26,7 @@ export const API_ROUTES = {
   },
   loyalty: {
     balance: `${API_BASE}/loyalty/balance`,
+    catalog: `${API_BASE}/loyalty/catalog`,
   },
   admin: {
     menu: {
@@ -46,6 +47,13 @@ export const API_ROUTES = {
     },
     orders: {
       status: (orderId: string) => `${API_BASE}/admin/orders/${orderId}/status`,
+    },
+    loyalty: {
+      rewards: {
+        base: `${API_BASE}/admin/loyalty/rewards`,
+        byId: (rewardId: string) => `${API_BASE}/admin/loyalty/rewards/${rewardId}`,
+        active: (rewardId: string) => `${API_BASE}/admin/loyalty/rewards/${rewardId}/active`,
+      },
     },
   },
   webhooks: {

@@ -40,6 +40,8 @@ export interface OrderLineItem {
  */
 export interface OrderRedemption {
   rewardId: string;
+  /** Snapshotted server-side at order-creation time — a later catalog edit never changes how an already-placed order displays. */
+  name: string;
   pointsCost: number;
   /** Dollars, same unit as subtotal/tax/total — already capped to <= the pre-discount total. */
   discountAmount: number;

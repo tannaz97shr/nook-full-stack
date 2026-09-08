@@ -1,6 +1,6 @@
-import { REWARDS_CATALOG } from "@/modules/loyalty/content/rewardsCatalog";
 import { getNextRewardGoal } from "@/modules/loyalty/lib/getNextRewardGoal";
 import type { RewardsStats } from "@/modules/loyalty/lib/computeRewardsStats";
+import type { RewardCatalogItem } from "@/modules/loyalty/types/reward";
 import {
   REWARDS_CATALOG_HEADING,
   REWARDS_FOOTNOTE,
@@ -12,13 +12,15 @@ import {
 import { RewardCatalogGrid } from "./RewardCatalogGrid";
 
 export function RewardsShell({
+  rewards,
   pointsBalance,
   stats,
 }: {
+  rewards: RewardCatalogItem[];
   pointsBalance: number;
   stats: RewardsStats;
 }) {
-  const nextGoal = getNextRewardGoal(pointsBalance, REWARDS_CATALOG);
+  const nextGoal = getNextRewardGoal(pointsBalance, rewards);
   const progressPercent = nextGoal === null ? 100 : Math.min(100, Math.round((pointsBalance / nextGoal) * 100));
 
   return (
@@ -58,7 +60,7 @@ export function RewardsShell({
 
       <div>
         <h2 className="font-display text-xl text-ink">{REWARDS_CATALOG_HEADING}</h2>
-        <RewardCatalogGrid pointsBalance={pointsBalance} />
+        <RewardCatalogGrid rewards={rewards} pointsBalance={pointsBalance} />
       </div>
 
       <p className="max-w-2xl text-[13.5px] text-ink-subtle">{REWARDS_FOOTNOTE}</p>

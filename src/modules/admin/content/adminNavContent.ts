@@ -6,10 +6,10 @@ export interface AdminNavItem {
   href: string;
 }
 
-/** Loyalty lands in 6c — append its entry here once that phase builds its route. */
 export const ADMIN_NAV_ITEMS: AdminNavItem[] = [
   { id: "orders", label: "Orders", href: ROUTES.admin.orders },
   { id: "menu", label: "Menu", href: ROUTES.admin.menu },
+  { id: "loyalty", label: "Loyalty", href: ROUTES.admin.loyalty },
 ];
 
 export const ADMIN_BACK_TO_SITE_LABEL = "← Back to site";

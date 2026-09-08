@@ -5,4 +5,5 @@ export interface RewardCatalogItem {
   pointsCost: number;
   /** Dollars — matches subtotal/tax/total/unitPrice's existing convention; cents conversion happens only at the Stripe API boundary. */
   discountValue: number;
+  isActive: boolean;
 }

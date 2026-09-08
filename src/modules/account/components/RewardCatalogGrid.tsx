@@ -2,7 +2,7 @@
 
 import { Button } from "@/shared/components";
 import { useCart } from "@/modules/cart/hooks/useCart";
-import { REWARDS_CATALOG } from "@/modules/loyalty/content/rewardsCatalog";
+import type { RewardCatalogItem } from "@/modules/loyalty/types/reward";
 import { REWARDS_REDEEM_LABEL, rewardInsufficientPointsTitle } from "../content/rewardsContent";
 
 /**
@@ -11,7 +11,13 @@ import { REWARDS_REDEEM_LABEL, rewardInsufficientPointsTitle } from "../content/
  * opens the drawer — the drawer is where the discount is actually applied
  * and where the real checkout request fires.
  */
-export function RewardCatalogGrid({ pointsBalance }: { pointsBalance: number }) {
+export function RewardCatalogGrid({
+  rewards,
+  pointsBalance,
+}: {
+  rewards: RewardCatalogItem[];
+  pointsBalance: number;
+}) {
   const { selectedRewardId, selectReward, clearReward, open } = useCart();
 
   function handleClick(rewardId: string) {
@@ -25,7 +31,7 @@ export function RewardCatalogGrid({ pointsBalance }: { pointsBalance: number }) 
 
   return (
     <div className="mt-4 grid gap-4 [grid-template-columns:repeat(auto-fill,minmax(min(100%,250px),1fr))]">
-      {REWARDS_CATALOG.map((reward) => {
+      {rewards.map((reward) => {
         const affordable = pointsBalance >= reward.pointsCost;
         const isSelected = selectedRewardId === reward.id;
         return (
