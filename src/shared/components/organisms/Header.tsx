@@ -7,8 +7,6 @@ export interface HeaderProps {
   userId: string | null;
 }
 
-// Deliberately minimal — only Home/Menu are real routes this phase.
-// Gallery/About/Contact land in Phase 7 and get added here then.
 export function Header({ userId }: HeaderProps) {
   const accountHref = userId ? ROUTES.account.root : ROUTES.signIn;
   const accountLabel = userId ? "Account" : "Sign in";
@@ -26,6 +24,15 @@ export function Header({ userId }: HeaderProps) {
           </Link>
           <Link href={ROUTES.menu} className="hover:text-ink">
             Menu
+          </Link>
+          <Link href={ROUTES.gallery} className="hover:text-ink">
+            Gallery
+          </Link>
+          <Link href={ROUTES.about} className="hover:text-ink">
+            About
+          </Link>
+          <Link href={ROUTES.contact} className="hover:text-ink">
+            Contact
           </Link>
         </nav>
         <div className="flex items-center gap-3">

@@ -15,8 +15,8 @@ export function AuthScreen({ mode, callbackUrl, errorMessage }: AuthScreenProps)
       <div className="grid items-center gap-6 sm:grid-cols-2 md:gap-12">
         <div className="relative aspect-[4/5] overflow-hidden rounded-2xl bg-sunken shadow-lg">
           <Image
-            src="/images/marketing/coffee-closeup.jpg"
-            alt="Coffee on a marble table"
+            src="/images/marketing/coffee-latte-hands.jpg"
+            alt="Hands holding a cup of latte art coffee"
             fill
             sizes="(min-width: 640px) 50vw, 100vw"
             className="object-cover"
