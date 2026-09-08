@@ -170,6 +170,26 @@ Status: open, deferred.
 
 ## Resolved
 
+**Rewards catalog was a hardcoded array, and OrderRedemption didn't snapshot
+reward name.** ~~`src/modules/loyalty/content/rewardsCatalog.ts` held the 4
+rewards as a static `REWARDS_CATALOG` array with no admin editing, and
+`OrderRedemption` stored only `{ rewardId, pointsCost, discountAmount }` — no
+`name` — so a future catalog edit/deactivation would have silently broken
+`OrderConfirmationScreen`'s live lookup for past orders.~~ Resolved
+2026-09-08 (Phase 6c): migrated the catalog to a `rewards` Firestore
+collection (`isActive` soft-delete, mirroring the menu-item 86 pattern) with
+full admin CRUD at `/admin/loyalty`, following Phase 6a/6b's patterns
+exactly (`requireAdminSession`-guarded routes, RHF+Zod form, optimistic
+toggle). Added `OrderRedemption.name` as a checkout-time snapshot (mirroring
+`OrderLineItem.name`) so `OrderConfirmationScreen` no longer needs any
+catalog lookup, and past orders stay correct after a reward is edited or
+deactivated. `getRewardById` (used by `verifyRedemption`'s server-side
+re-verification) became async and now also rejects a deactivated reward,
+closing a gap where an inactive reward could previously still be redeemed
+by id. `RewardCatalogGrid`/`RewardsShell` (RSC-fed) and `CartDrawer` (new
+`useRewardsCatalog` hook, mirroring `useLoyaltyBalance`) both read the live
+Firestore catalog now instead of the static array.
+
 **Placeholder imagery was Pinterest-sourced.** ~~`assets/img` and
 `assets/img-web` contained images collected from Pinterest during design
 and were unlicensed.~~ Resolved 2026-09-01: those folders were deleted and

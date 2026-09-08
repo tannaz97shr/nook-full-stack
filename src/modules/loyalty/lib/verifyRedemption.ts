@@ -29,8 +29,8 @@ export async function verifyRedemption(
     return { ok: false, reason: "Sign in to redeem a reward" };
   }
 
-  const reward = getRewardById(rewardId);
-  if (!reward) {
+  const reward = await getRewardById(rewardId);
+  if (!reward || !reward.isActive) {
     return { ok: false, reason: "That reward is no longer available" };
   }
 
@@ -40,5 +40,8 @@ export async function verifyRedemption(
   }
 
   const discountAmount = roundToCents(Math.min(reward.discountValue, preDiscountTotal));
-  return { ok: true, redemption: { rewardId: reward.id, pointsCost: reward.pointsCost, discountAmount } };
+  return {
+    ok: true,
+    redemption: { rewardId: reward.id, name: reward.name, pointsCost: reward.pointsCost, discountAmount },
+  };
 }

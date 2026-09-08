@@ -10,8 +10,8 @@ import { api } from "@/shared/lib/axios";
 import { useToast } from "@/shared/hooks/useToast";
 import { formatMoney } from "@/shared/utils/format-money";
 import { logError } from "@/shared/utils/log-error";
-import { REWARDS_CATALOG } from "@/modules/loyalty/content/rewardsCatalog";
 import { useLoyaltyBalance } from "@/modules/loyalty/hooks/useLoyaltyBalance";
+import { useRewardsCatalog } from "@/modules/loyalty/hooks/useRewardsCatalog";
 import type { CheckoutRequestBody } from "@/modules/order/types";
 import {
   CART_HEADER_TITLE,
@@ -46,7 +46,8 @@ export function CartDrawer() {
   } = useCart();
 
   const { data: pointsBalance } = useLoyaltyBalance(userId !== null && isOpen);
-  const selectedReward = REWARDS_CATALOG.find((reward) => reward.id === selectedRewardId) ?? null;
+  const { data: rewards = [] } = useRewardsCatalog();
+  const selectedReward = rewards.find((reward) => reward.id === selectedRewardId) ?? null;
   const discountPreview = selectedReward ? Math.min(selectedReward.discountValue, subtotal + tax) : 0;
 
   function handleBrowseMenu() {
@@ -115,7 +116,7 @@ export function CartDrawer() {
               <div className="border-t border-border py-5">
                 <h3 className="font-mono text-xs uppercase tracking-wide text-ink-subtle">Redeem a reward</h3>
                 <div className="mt-3 grid gap-2">
-                  {REWARDS_CATALOG.map((reward) => {
+                  {rewards.map((reward) => {
                     const affordable = pointsBalance !== undefined && pointsBalance >= reward.pointsCost;
                     const isSelected = selectedRewardId === reward.id;
                     return (
