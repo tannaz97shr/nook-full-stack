@@ -62,7 +62,7 @@ export function AdminOrderQueueTable({ rows }: AdminOrderQueueTableProps) {
 
   return (
     <div className="overflow-x-auto rounded-md border border-border bg-admin-panel">
-      <div className="grid min-w-[660px] grid-cols-[1.1fr_1.9fr_0.6fr_1.5fr] gap-3.5 border-b border-border bg-admin-row px-[17px] py-[11px] font-mono text-[10.5px] uppercase tracking-[0.08em] text-ink-subtle">
+      <div className="grid min-w-[720px] grid-cols-[1.1fr_1.7fr_0.9fr_1.4fr] gap-3.5 border-b border-border bg-admin-row px-[17px] py-[11px] font-mono text-[10.5px] uppercase tracking-[0.08em] text-ink-subtle">
         {ADMIN_ORDER_QUEUE_COLUMNS.map((column) => (
           <span key={column}>{column}</span>
         ))}
@@ -72,7 +72,7 @@ export function AdminOrderQueueTable({ rows }: AdminOrderQueueTableProps) {
         return (
           <div
             key={row.id}
-            className={`grid min-w-[660px] grid-cols-[1.1fr_1.9fr_0.6fr_1.5fr] items-center gap-3.5 border-b border-border px-[17px] py-3 last:border-b-0 ${
+            className={`grid min-w-[720px] grid-cols-[1.1fr_1.7fr_0.9fr_1.4fr] items-center gap-3.5 border-b border-border px-[17px] py-3 last:border-b-0 ${
               row.fulfillmentStatus === "Completed" ? "opacity-60" : ""
             }`}
           >
@@ -85,7 +85,7 @@ export function AdminOrderQueueTable({ rows }: AdminOrderQueueTableProps) {
             <div className="min-w-0 text-[13.5px] leading-snug text-ink-muted">{row.itemsSummary}</div>
             <div className="min-w-0">
               <div className="font-mono text-[13.5px] text-ink">{row.totalLabel}</div>
-              <div className="mt-0.5 text-[11.5px] leading-snug text-ink-subtle">{row.taxLabel}</div>
+              <div className="mt-0.5 whitespace-nowrap text-[11.5px] leading-snug text-ink-subtle">{row.taxLabel}</div>
             </div>
             <div className="flex flex-wrap items-center gap-1.5">
               <Badge variant={adminOrderStatusChipVariant(row.fulfillmentStatus)}>{row.fulfillmentStatus ?? "—"}</Badge>
