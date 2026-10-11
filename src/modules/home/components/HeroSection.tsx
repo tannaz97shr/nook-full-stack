@@ -16,10 +16,12 @@ export function HeroSection({ initialOpenStatus }: HeroSectionProps) {
         <div className="mb-5">
           <OpenStatusBadge initialStatus={initialOpenStatus} />
         </div>
-        <h1 className="mb-5 font-display text-hero font-medium text-ink">
+        <h1 className="mb-5 text-balance font-display text-hero font-medium text-ink">
           {HOME_HERO.heading.lead}
           <br />
-          <span className="italic text-gold">{HOME_HERO.heading.accent}</span> {HOME_HERO.heading.tail}
+          {/* Large display type, so the brighter brand gold passes (3:1 rule). */}
+          <span className="italic text-gold-display">{HOME_HERO.heading.accent}</span>{" "}
+          {HOME_HERO.heading.tail}
         </h1>
         <p className="mb-8 max-w-md text-base text-ink-muted md:text-lg">{HOME_HERO.body}</p>
         <div className="flex flex-wrap items-center gap-3">

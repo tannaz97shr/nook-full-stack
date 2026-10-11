@@ -91,6 +91,7 @@ export function MenuScreen({
           optionGroupsById={optionGroupsById}
           optionsById={optionsById}
           onAdd={handleAdd}
+          prioritizeFirst
         />
       </div>
       <p className="border-t border-border pt-6 text-xs text-ink-subtle">{DIETARY_LEGEND}</p>

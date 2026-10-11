@@ -7,17 +7,18 @@ export const HOME_METADATA = {
 };
 
 export const HOME_HERO = {
-  heading: { lead: "A quiet corner", accent: "and a proper", tail: "flat white." },
+  // Non-breaking space: "flat white." must never split across lines.
+  heading: { lead: "A quiet corner", accent: "and a proper", tail: "flat white." },
   body: "Small-batch roasts, bread baked out the back, and a table by the window that's usually free before nine. Order ahead and we'll have it waiting.",
   ctaPrimary: "See the menu",
   ctaSecondary: "Find us",
   mainPhoto: {
-    src: "/images/marketing/coffee-latte-hands.jpg",
-    alt: "Hands cupping a takeaway flat white against a dark background",
+    src: "/images/marketing/hero-latte-art.jpg",
+    alt: "Latte with heart art, steam rising",
   },
   insetPhoto: {
-    src: "/images/marketing/pastry-croissant-honey.jpg",
-    alt: "Fresh croissants on a plate beside a jar of apricot jam",
+    src: "/images/marketing/brownie-lattes.jpg",
+    alt: "Brownie and two lattes",
   },
 };
 
@@ -86,4 +87,5 @@ export const OPEN_STATUS_COPY = {
   closed: (daysAhead: number, weekday: Weekday, opensAt: number) =>
     `Closed · opens ${daysAhead === 1 ? "tomorrow" : WEEKDAY_NAMES[weekday]} ${formatBadgeTime(opensAt)}`,
   closedNoHours: "Closed",
+  publicHoliday: "Closed today · public holiday",
 };

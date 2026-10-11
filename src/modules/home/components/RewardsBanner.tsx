@@ -24,7 +24,7 @@ export function RewardsBanner({ isSignedIn }: RewardsBannerProps) {
         />
         <div aria-hidden className="absolute inset-0 bg-photo-scrim-narrow md:bg-photo-scrim" />
         <div className="relative flex max-w-xl flex-col justify-center p-7 md:p-14">
-          <h2 className="mb-3.5 font-display text-3xl font-medium tracking-tight text-on-photo md:text-4xl">
+          <h2 className="mb-3.5 text-balance font-display text-3xl font-medium tracking-tight text-on-photo md:text-4xl">
             {HOME_REWARDS.heading.lead}
             <br />
             {HOME_REWARDS.heading.tail}

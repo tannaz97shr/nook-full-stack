@@ -19,7 +19,7 @@ export function FeaturedItemsSection({ featured }: FeaturedItemsSectionProps) {
           <span className="mb-2.5 block font-mono text-xs uppercase text-ink-subtle">
             {HOME_FEATURED.eyebrow}
           </span>
-          <h2 className="font-display text-3xl font-medium tracking-tight text-ink md:text-4xl">
+          <h2 className="text-balance font-display text-3xl font-medium tracking-tight text-ink md:text-4xl">
             {HOME_FEATURED.heading}
           </h2>
         </div>
