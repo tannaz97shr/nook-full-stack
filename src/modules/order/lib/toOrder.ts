@@ -1,5 +1,13 @@
-import type { DocumentSnapshot } from "firebase-admin/firestore";
-import type { Order } from "../types/order";
+import type { DocumentData, DocumentSnapshot } from "firebase-admin/firestore";
+import type { Order, OrderPricing } from "../types/order";
+
+/** New orders store gstIncluded; orders placed before GST-inclusive pricing store tax instead and are never migrated. */
+function toOrderPricing(data: DocumentData): OrderPricing {
+  if (typeof data.gstIncluded === "number") {
+    return { kind: "gst-inclusive", gstIncluded: data.gstIncluded };
+  }
+  return { kind: "legacy-tax-added", tax: data.tax };
+}
 
 export function toOrder(doc: DocumentSnapshot): Order {
   const data = doc.data();
@@ -12,7 +20,7 @@ export function toOrder(doc: DocumentSnapshot): Order {
     userId: data.userId,
     lineItems: data.lineItems,
     subtotal: data.subtotal,
-    tax: data.tax,
+    pricing: toOrderPricing(data),
     shipping: data.shipping,
     total: data.total,
     paymentStatus: data.paymentStatus,

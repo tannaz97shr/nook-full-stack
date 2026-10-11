@@ -12,6 +12,8 @@ import { formatMoney } from "@/shared/utils/format-money";
 import { logError } from "@/shared/utils/log-error";
 import { useLoyaltyBalance } from "@/modules/loyalty/hooks/useLoyaltyBalance";
 import { useRewardsCatalog } from "@/modules/loyalty/hooks/useRewardsCatalog";
+import { GST_INCLUDED_LABEL } from "@/modules/order/content/orderStatusContent";
+import { computeOrderTotals } from "@/modules/order/lib/gst";
 import type { CheckoutRequestBody } from "@/modules/order/types";
 import {
   CART_HEADER_TITLE,
@@ -39,8 +41,6 @@ export function CartDrawer() {
     selectReward,
     clearReward,
     subtotal,
-    tax,
-    total,
     count,
     isEmpty,
   } = useCart();
@@ -48,7 +48,7 @@ export function CartDrawer() {
   const { data: pointsBalance } = useLoyaltyBalance(userId !== null && isOpen);
   const { data: rewards = [] } = useRewardsCatalog();
   const selectedReward = rewards.find((reward) => reward.id === selectedRewardId) ?? null;
-  const discountPreview = selectedReward ? Math.min(selectedReward.discountValue, subtotal + tax) : 0;
+  const totals = computeOrderTotals({ subtotal, discountAmount: selectedReward?.discountValue ?? 0 });
 
   function handleBrowseMenu() {
     close();
@@ -145,23 +145,23 @@ export function CartDrawer() {
                 <span>Subtotal</span>
                 <span className="font-mono">{formatMoney(subtotal)}</span>
               </div>
-              <div className="flex justify-between text-[14.5px] text-ink-muted">
-                <span>Tax (10%)</span>
-                <span className="font-mono">{formatMoney(tax)}</span>
-              </div>
               {selectedReward && (
                 <div className="flex justify-between text-[14.5px] text-gold">
                   <span>{selectedReward.name}</span>
-                  <span className="font-mono">−{formatMoney(discountPreview)}</span>
+                  <span className="font-mono">−{formatMoney(totals.discountAmount)}</span>
                 </div>
               )}
               <div className="flex justify-between border-t border-border pt-2 text-[17px] font-bold text-ink">
                 <span>Total</span>
-                <span className="font-mono">{formatMoney(Math.max(0, total - discountPreview))}</span>
+                <span className="font-mono">{formatMoney(totals.total)}</span>
+              </div>
+              <div className="flex justify-between text-[13px] text-ink-subtle">
+                <span>{GST_INCLUDED_LABEL}</span>
+                <span className="font-mono">{formatMoney(totals.gstIncluded)}</span>
               </div>
             </div>
             <Button variant="primary" fullWidth disabled={isSubmitting} onClick={handleCheckout}>
-              {checkoutButtonLabel(Math.max(0, total - discountPreview), isSubmitting)}
+              {checkoutButtonLabel(totals.total, isSubmitting)}
             </Button>
           </div>
         </>

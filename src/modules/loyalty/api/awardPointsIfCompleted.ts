@@ -4,7 +4,7 @@ import { toUser } from "@/modules/auth/lib/toUser";
 import { ORDER_COLLECTIONS } from "@/modules/order/lib/collections";
 import { toOrder } from "@/modules/order/lib/toOrder";
 import { adminDb } from "@/shared/lib/firebase-admin";
-import { pointsForSubtotal } from "../lib/pointsForSubtotal";
+import { pointsForOrder } from "../lib/pointsForOrder";
 
 export type AwardPointsResult = "awarded" | "already-awarded" | "not-found" | "guest-order" | "not-paid";
 
@@ -16,10 +16,8 @@ export type AwardPointsResult = "awarded" | "already-awarded" | "not-found" | "g
  * one Completed transition per order, unlike a redeliverable webhook
  * event, so a scalar "has this fired" marker is sufficient).
  *
- * Points are earned on order.subtotal even if the order redeemed a
- * reward: subtotal is never touched by redemption (only tax->total are),
- * and the customer received the full line-item value regardless of what
- * they paid for it.
+ * Points are earned on the amount actually paid (order.total, after any
+ * reward) — see pointsForOrder for the rule and its legacy-order case.
  */
 export async function awardPointsIfCompleted(orderId: string): Promise<AwardPointsResult> {
   const orderRef = adminDb.collection(ORDER_COLLECTIONS.orders).doc(orderId);
@@ -48,7 +46,7 @@ export async function awardPointsIfCompleted(orderId: string): Promise<AwardPoin
     }
 
     const user = toUser(userSnap);
-    const pointsEarned = pointsForSubtotal(order.subtotal);
+    const pointsEarned = pointsForOrder(order);
 
     tx.update(orderRef, {
       fulfillmentStatus: "Completed",

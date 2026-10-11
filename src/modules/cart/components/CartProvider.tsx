@@ -4,7 +4,6 @@ import { createContext, useEffect, useState } from "react";
 import type { ReactNode } from "react";
 import { roundToCents } from "@/shared/utils/format-money";
 import type { MenuItem, Option } from "@/modules/menu/types";
-import { TAX_RATE } from "../content/cartContent";
 import { cartStorageKey } from "../lib/cartId";
 import { cartLineKey } from "../lib/cartLineKey";
 import { reconcileCart } from "../lib/reconcileCart";
@@ -48,9 +47,8 @@ export interface CartContextValue {
   selectedRewardId: string | null;
   selectReward: (rewardId: string) => void;
   clearReward: () => void;
+  /** Sum of GST-inclusive line prices — the pre-reward total. Discount/GST figures come from order/lib/gst.ts's computeOrderTotals, the same function /api/checkout uses. */
   subtotal: number;
-  tax: number;
-  total: number;
   count: number;
   isEmpty: boolean;
 }
@@ -175,8 +173,6 @@ export function CartProvider({
   }
 
   const subtotal = roundToCents(items.reduce((sum, line) => sum + line.unitPrice * line.quantity, 0));
-  const tax = roundToCents(subtotal * TAX_RATE);
-  const total = roundToCents(subtotal + tax);
   const count = items.reduce((sum, line) => sum + line.quantity, 0);
 
   return (
@@ -199,8 +195,6 @@ export function CartProvider({
         selectReward,
         clearReward,
         subtotal,
-        tax,
-        total,
         count,
         isEmpty: items.length === 0,
       }}

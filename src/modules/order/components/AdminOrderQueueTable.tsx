@@ -83,7 +83,10 @@ export function AdminOrderQueueTable({ rows }: AdminOrderQueueTableProps) {
               </div>
             </div>
             <div className="min-w-0 text-[13.5px] leading-snug text-ink-muted">{row.itemsSummary}</div>
-            <div className="font-mono text-[13.5px] text-ink">{row.totalLabel}</div>
+            <div className="min-w-0">
+              <div className="font-mono text-[13.5px] text-ink">{row.totalLabel}</div>
+              <div className="mt-0.5 text-[11.5px] leading-snug text-ink-subtle">{row.taxLabel}</div>
+            </div>
             <div className="flex flex-wrap items-center gap-1.5">
               <Badge variant={adminOrderStatusChipVariant(row.fulfillmentStatus)}>{row.fulfillmentStatus ?? "—"}</Badge>
               {next && (

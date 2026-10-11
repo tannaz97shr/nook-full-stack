@@ -1,7 +1,4 @@
 import { formatMoney } from "@/shared/utils/format-money";
-import { TAX_RATE } from "@/modules/order/lib/pricingConstants";
-
-export { TAX_RATE };
 
 export const CART_HEADER_TITLE = "Your order";
 export const CART_PICKUP_LOCATION = "Pickup at 41 Ashgrove Lane";

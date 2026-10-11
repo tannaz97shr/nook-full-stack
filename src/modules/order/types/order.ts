@@ -43,9 +43,22 @@ export interface OrderRedemption {
   /** Snapshotted server-side at order-creation time — a later catalog edit never changes how an already-placed order displays. */
   name: string;
   pointsCost: number;
-  /** Dollars, same unit as subtotal/tax/total — already capped to <= the pre-discount total. */
+  /** Dollars, same unit as subtotal/total — already capped to <= the pre-discount total. */
   discountAmount: number;
 }
+
+/**
+ * How an order's tax was treated — orders are never migrated, so both
+ * shapes coexist. "gst-inclusive": total is the sum of GST-inclusive menu
+ * prices (less any reward) and gstIncluded is the informational GST
+ * contained in it (total ÷ 11, cents-rounded). "legacy-tax-added": placed
+ * before GST-inclusive pricing, when a 10% tax was added on top of
+ * subtotal — displayed exactly as stored so its total stays what was
+ * charged.
+ */
+export type OrderPricing =
+  | { kind: "gst-inclusive"; gstIncluded: number }
+  | { kind: "legacy-tax-added"; tax: number };
 
 export interface Order {
   /** Firestore auto-generated document ID — see authorizeOrderAccess.ts for why. */
@@ -53,11 +66,12 @@ export interface Order {
   /** Null for guest checkout. */
   userId: string | null;
   lineItems: OrderLineItem[];
+  /** Sum of line items, before any reward. */
   subtotal: number;
-  tax: number;
+  pricing: OrderPricing;
   /** Fixed constant at MVP (0 — pickup-only cafe, no delivery in scope). */
   shipping: number;
-  /** subtotal + tax + shipping − (redemption?.discountAmount ?? 0), floored at 0. */
+  /** What was charged. GST-inclusive orders: subtotal − (redemption?.discountAmount ?? 0). Legacy orders: subtotal + tax + shipping − discount. */
   total: number;
   paymentStatus: PaymentStatus;
   fulfillmentStatus: FulfillmentStatus | null;

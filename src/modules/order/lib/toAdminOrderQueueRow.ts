@@ -1,4 +1,5 @@
 import { formatMoney } from "@/shared/utils/format-money";
+import { formatOrderTaxLine } from "../content/orderStatusContent";
 import type { FulfillmentStatus, Order, PaymentStatus } from "../types/order";
 import { formatOrderDisplayId } from "./formatOrderDisplayId";
 import { formatOrderQueueTimestamp } from "./formatOrderQueueTimestamp";
@@ -11,6 +12,7 @@ export interface AdminOrderQueueRow {
   timeLabel: string;
   itemsSummary: string;
   totalLabel: string;
+  taxLabel: string;
   paymentStatus: PaymentStatus;
   fulfillmentStatus: FulfillmentStatus | null;
 }
@@ -28,6 +30,7 @@ export function toAdminOrderQueueRow(order: Order, customerName: string | null):
     timeLabel: formatOrderQueueTimestamp(order.createdAt),
     itemsSummary: formatOrderSummaryLine(order.lineItems),
     totalLabel: formatMoney(order.total),
+    taxLabel: formatOrderTaxLine(order.pricing),
     paymentStatus: order.paymentStatus,
     fulfillmentStatus: order.fulfillmentStatus,
   };
