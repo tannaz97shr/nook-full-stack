@@ -8,10 +8,9 @@
 import { useEffect, useRef, useState } from "react";
 import { itemRemovedMessage } from "@/modules/cart/content/cartContent";
 import { useCart } from "@/modules/cart/hooks/useCart";
-import { buildSelectedGroups } from "@/modules/cart/lib/pricing";
+import { useMenuAddFlow } from "@/modules/cart/hooks/useMenuAddFlow";
 import { useToast } from "@/shared/hooks/useToast";
-import { DIETARY_LEGEND, instantAddToastMessage } from "../content/menuContent";
-import type { SelectionsByGroupId } from "../lib/optionGroupValidation";
+import { DIETARY_LEGEND } from "../content/menuContent";
 import type { MenuItem, Option, OptionGroup } from "../types";
 import { CategoryTabs } from "./CategoryTabs";
 import type { CategoryTabItem } from "./CategoryTabs";
@@ -34,9 +33,13 @@ export function MenuScreen({
   optionsById,
 }: MenuScreenProps) {
   const [activeCategoryId, setActiveCategoryId] = useState(categories[0]?.id ?? "");
-  const [openItemId, setOpenItemId] = useState<string | null>(null);
   const cart = useCart();
   const { showToast } = useToast();
+  const { openItem, openItemGroups, handleAdd, handleAddFromModal, closeModal } = useMenuAddFlow({
+    menuItemsById,
+    optionGroupsById,
+    optionsById,
+  });
 
   // Opportunistic detection only — /menu always has fresh availability
   // data from its Server Component fetch, so this is where the spec's
@@ -64,25 +67,6 @@ export function MenuScreen({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cart.isHydrated]);
 
-  function handleAdd(item: MenuItem) {
-    if (item.optionGroupIds.length === 0) {
-      cart.addSimpleItem(item);
-      showToast(instantAddToastMessage(item.name));
-      return;
-    }
-    setOpenItemId(item.id);
-  }
-
-  function handleAddFromModal(
-    item: MenuItem,
-    selections: SelectionsByGroupId,
-    quantity: number,
-    unitPrice: number,
-  ) {
-    const selectedGroups = buildSelectedGroups(selections, optionGroupsById, optionsById);
-    cart.addItem(item, selectedGroups, quantity, unitPrice);
-  }
-
   if (categories.length === 0) {
     return (
       <main className="mx-auto max-w-[1240px] px-4 py-12 text-center sm:px-8">
@@ -92,12 +76,6 @@ export function MenuScreen({
   }
 
   const activeItems = itemsByCategoryId[activeCategoryId] ?? [];
-  const openItem = openItemId ? menuItemsById[openItemId] : null;
-  const openItemGroups = openItem
-    ? openItem.optionGroupIds
-        .map((id) => optionGroupsById[id])
-        .filter((group): group is OptionGroup => Boolean(group))
-    : [];
 
   return (
     <main className="mx-auto max-w-[1240px] px-4 pb-16 sm:px-8">
@@ -123,7 +101,7 @@ export function MenuScreen({
           optionGroups={openItemGroups}
           optionsById={optionsById}
           open={Boolean(openItem)}
-          onClose={() => setOpenItemId(null)}
+          onClose={closeModal}
           onAddToCart={handleAddFromModal}
         />
       )}

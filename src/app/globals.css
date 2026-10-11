@@ -37,6 +37,26 @@
     --color-admin-panel: #fffdf8;
     --color-admin-row: #faf5ec;
 
+    /* On-photo (theme-invariant, deliberately NOT redefined under .dark):
+       text and controls that sit on a photo behind a fixed dark scrim,
+       so they read the same in both modes. */
+    --color-on-photo: #fbf7f0;
+    --color-on-photo-ink: #2a1d14;
+    --color-on-photo-muted: rgba(251, 247, 240, 0.78);
+    --gradient-photo-scrim: linear-gradient(
+      100deg,
+      rgba(24, 15, 9, 0.86) 0%,
+      rgba(24, 15, 9, 0.55) 48%,
+      rgba(24, 15, 9, 0.12) 100%
+    );
+    /* Narrow screens: copy spans the full card width, so the left-to-right
+       fade above would leave its right half on bare photo. */
+    --gradient-photo-scrim-narrow: linear-gradient(
+      180deg,
+      rgba(24, 15, 9, 0.8) 0%,
+      rgba(24, 15, 9, 0.66) 100%
+    );
+
     /* Radii (theme-invariant) */
     --radius-sm: 8px;
     --radius-md: 12px;

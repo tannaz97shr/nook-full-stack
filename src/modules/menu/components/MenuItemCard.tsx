@@ -39,7 +39,9 @@ export function MenuItemCard({ item, optionGroupsById, optionsById, onAdd }: Men
             src={item.images[0]}
             alt={item.name}
             fill
-            sizes="(min-width: 640px) 272px, 100vw"
+            // Cards are minmax(272px, 1fr) columns: ~280px at the 1240px
+            // container, up to ~half the viewport in the 2-column range.
+            sizes="(min-width: 1240px) 280px, (min-width: 640px) 50vw, 100vw"
             className={`object-cover ${soldOut ? "grayscale contrast-[0.92]" : ""}`}
           />
         )}

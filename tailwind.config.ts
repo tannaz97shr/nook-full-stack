@@ -34,6 +34,11 @@ const config: Config = {
         leaf: "var(--color-leaf)",
         clay: "var(--color-clay)",
         overlay: "var(--color-overlay)",
+        "on-photo": {
+          DEFAULT: "var(--color-on-photo)",
+          ink: "var(--color-on-photo-ink)",
+          muted: "var(--color-on-photo-muted)",
+        },
         admin: {
           bg: "var(--color-admin-bg)",
           panel: "var(--color-admin-panel)",
@@ -49,7 +54,21 @@ const config: Config = {
         sans: 'var(--font-sans, "Helvetica Neue", Helvetica, Arial, sans-serif)',
         mono: "var(--font-mono, ui-monospace, Menlo, monospace)",
       },
+      backgroundImage: {
+        "photo-scrim": "var(--gradient-photo-scrim)",
+        "photo-scrim-narrow": "var(--gradient-photo-scrim-narrow)",
+      },
+      maxWidth: {
+        page: "1240px",
+      },
+      aspectRatio: {
+        portrait: "4 / 5",
+      },
       fontSize: {
+        hero: [
+          "clamp(2.6rem,6.4vw,4.3rem)",
+          { lineHeight: "1.02", letterSpacing: "-0.025em" },
+        ],
         display: [
           "clamp(2rem,4.4vw,3.1rem)",
           { lineHeight: "1.05", letterSpacing: "-0.025em" },

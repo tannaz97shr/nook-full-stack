@@ -177,6 +177,49 @@ being marked `Cancelled`/`Failed`. Action: handle `checkout.session.expired`
 (and related events) if/when stale `Pending` orders become a real problem.
 Status: open, deferred.
 
+**No public `/rewards` explainer page.** Area: marketing/loyalty. Issue: the
+homepage design's rewards banner has a secondary "How it works" button
+linking to `/rewards`, which doesn't exist — only the protected
+`/account/rewards`. Phase 8 dropped the button rather than link guests into
+a sign-in bounce. Impact: guests get only "Join rewards". Action: build a
+public explainer page and restore the button (`ROUTES` entry + a
+`secondary`-style on-photo `ButtonLink` variant). Status: open, deferred.
+
+**Homepage open/closed badge doesn't know about public holidays.** Area:
+home, shared hours. Issue: `src/shared/content/opening-hours.ts` models
+weekly hours only; the contact page lists "Public holidays: Closed" as
+static copy, but `getOpenStatus` has no holiday calendar. Impact: on a
+Victorian public holiday the badge says "Open today until X". Action: add a
+holiday date list (or an admin-set "closed today" override) if it matters
+in practice. Status: open, accepted.
+
+**Homepage needs `SITE_URL` set per deployed environment.** Area: metadata.
+Issue: `src/shared/site.ts` feeds `metadataBase` from `SITE_URL`, falling
+back to `http://localhost:3000`. Impact: without it, production
+`og:image` URLs point at localhost and link previews break. Action: add
+`SITE_URL` to the Vercel/production env. Status: open, undeployed infra step.
+
+**`isFeatured` isn't in the seed data that's been applied.** Area:
+menu/seed. Issue: Phase 8 added `isFeatured` to `scripts/seed-menu.ts`, but
+the seed wasn't re-run; live items were flagged through the admin form
+instead. Missing fields read as `false` (`toMenuItem.ts`), so no migration
+is required. Impact: a fresh environment seeded from the old script shows
+no featured row until items are flagged. Status: open, informational.
+
+**Admin availability switch knob overlaps its "Available" label.** Area:
+admin/menu. Issue: in `AdminItemsTable.tsx` the switch knob is
+`absolute` with no `left-0`, so in the "on" state (`translate-x-[21px]`)
+it renders past the track and covers the first letter ("vailable").
+Confirmed pre-existing during Phase 8 (reproduced with the Phase 8 table
+change stashed). Impact: cosmetic. Action: anchor the knob with `left-0`.
+Status: open.
+
+**Stale references to the removed `design/` folder.** Area: docs/config.
+Issue: f5d3452 deleted `design/`, but CLAUDE.md, the `tailwind.config.ts`
+colors comment, `src/shared/routes.ts`, and the Tailwind-v4 entry above
+still point at files in it. `globals.css` + `tailwind.config.ts` are now the
+token source of truth. Action: update those references. Status: open.
+
 ## Resolved
 
 **Marketing images were AI-generated placeholders, not real cafe
