@@ -3,6 +3,7 @@ import { QuantityStepper } from "@/shared/components";
 import { formatMoney } from "@/shared/utils/format-money";
 import {
   REMOVE_LABEL,
+  cartLineAccessibleName,
   decreaseQuantityLabel,
   increaseQuantityLabel,
   removeItemLabel,
@@ -17,9 +18,9 @@ export interface CartLineItemRowProps {
 }
 
 export function CartLineItemRow({ line, onIncrement, onDecrement, onRemove }: CartLineItemRowProps) {
-  const optionsSummary = line.selections
-    .flatMap((group) => group.options.map((option) => option.name))
-    .join(" · ");
+  const optionNames = line.selections.flatMap((group) => group.options.map((option) => option.name));
+  const optionsSummary = optionNames.join(" · ");
+  const accessibleName = cartLineAccessibleName(line.name, optionNames);
   const lineTotal = line.unitPrice * line.quantity;
 
   return (
@@ -44,13 +45,13 @@ export function CartLineItemRow({ line, onIncrement, onDecrement, onRemove }: Ca
             onDecrement={onDecrement}
             size="sm"
             min={0}
-            incrementLabel={increaseQuantityLabel(line.name)}
-            decrementLabel={decreaseQuantityLabel(line.name)}
+            incrementLabel={increaseQuantityLabel(accessibleName)}
+            decrementLabel={decreaseQuantityLabel(accessibleName)}
           />
           <button
             type="button"
             onClick={onRemove}
-            aria-label={removeItemLabel(line.name)}
+            aria-label={removeItemLabel(accessibleName)}
             className="text-[12.5px] text-ink-subtle underline decoration-1 underline-offset-[3px] hover:text-clay"
           >
             {REMOVE_LABEL}

@@ -16,7 +16,12 @@ export const REMOVE_LABEL = "Remove";
 
 // Accessible names for a cart row's controls — the visible text stays generic ("Remove", "−", "+"), but a screen reader
 // user tabbing through several rows needs to know which item each button acts on. Remove's name starts with its visible
-// text so voice-control users can still say "click Remove".
+// text so voice-control users can still say "click Remove". The selected options are part of the name because two rows
+// can hold the same item ("Remove Flat White, Large, Oat" vs "Remove Flat White, Small").
+export function cartLineAccessibleName(name: string, optionNames: string[]): string {
+  return [name, ...optionNames].join(", ");
+}
+
 export function removeItemLabel(name: string): string {
   return `${REMOVE_LABEL} ${name}`;
 }
