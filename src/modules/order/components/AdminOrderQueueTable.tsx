@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Badge } from "@/shared/components";
 import { useToast } from "@/shared/hooks/useToast";
@@ -85,7 +85,17 @@ export function AdminOrderQueueTable({ rows }: AdminOrderQueueTableProps) {
             <div className="min-w-0 text-[13.5px] leading-snug text-ink-muted">{row.itemsSummary}</div>
             <div className="min-w-0">
               <div className="font-mono text-[13.5px] text-ink">{row.totalLabel}</div>
-              <div className="mt-0.5 whitespace-nowrap text-[11.5px] leading-snug text-ink-subtle">{row.taxLabel}</div>
+              {row.subLineParts.length > 0 && (
+                <div className="mt-0.5 text-[11.5px] leading-snug text-ink-subtle">
+                  {/* inline-block: a part moves to the next line whole, and only breaks inside if it's wider than the column. */}
+                  {row.subLineParts.map((part, index) => (
+                    <Fragment key={part}>
+                      {index > 0 && " · "}
+                      <span className="inline-block">{part}</span>
+                    </Fragment>
+                  ))}
+                </div>
+              )}
             </div>
             <div className="flex flex-wrap items-center gap-1.5">
               <Badge variant={adminOrderStatusChipVariant(row.fulfillmentStatus)}>{row.fulfillmentStatus ?? "—"}</Badge>

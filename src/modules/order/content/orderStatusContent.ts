@@ -1,5 +1,5 @@
 import { formatMoney } from "@/shared/utils/format-money";
-import type { FulfillmentStatus, OrderPricing, PaymentStatus } from "../types/order";
+import type { FulfillmentStatus, OrderPricing, OrderRedemption, PaymentStatus } from "../types/order";
 import type { OrderSummaryDTO } from "../types/order-summary-dto";
 
 export const GST_INCLUDED_LABEL = "Includes GST";
@@ -18,6 +18,17 @@ export function orderTaxLine(pricing: OrderPricing): { label: string; amount: nu
 export function formatOrderTaxLine(pricing: OrderPricing): string {
   const { label, amount } = orderTaxLine(pricing);
   return `${label} ${formatMoney(amount)}`;
+}
+
+/** Older orders may predate the snapshotted reward name. */
+export const REDEMPTION_FALLBACK_LABEL = "Reward applied";
+
+/**
+ * Compact redemption line for the admin queue: "Free drip coffee −$3.96". If it wraps, the no-break space keeps the
+ * amount with the last word and the word joiner stops a break between "−" and "$" (browsers allow one there).
+ */
+export function formatRedemptionLine(redemption: Pick<OrderRedemption, "name" | "discountAmount">): string {
+  return `${redemption.name || REDEMPTION_FALLBACK_LABEL} −⁠${formatMoney(redemption.discountAmount)}`;
 }
 
 export const ORDER_CONFIRMATION_HEADING = "Order confirmed";
