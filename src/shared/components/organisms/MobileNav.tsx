@@ -102,7 +102,8 @@ export function MobileNav({ isSignedIn, isAdmin }: MobileNavProps) {
         onClick={handleOpen}
         aria-label={MOBILE_NAV.openLabel}
         aria-expanded={isOpen}
-        aria-controls={PANEL_ID}
+        // Drawer unmounts when closed, so only point at it while it exists.
+        aria-controls={isOpen ? PANEL_ID : undefined}
         className="grid h-9 w-9 flex-none place-items-center rounded-pill border border-border text-ink hover:bg-sunken md:hidden"
       >
         <span aria-hidden>☰</span>

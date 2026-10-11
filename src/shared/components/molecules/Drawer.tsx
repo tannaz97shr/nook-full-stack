@@ -9,7 +9,7 @@ export interface DrawerProps {
   onClose: () => void;
   children: ReactNode;
   labelledBy?: string;
-  /** For the opener's `aria-controls`. */
+  /** For the opener's `aria-controls` — only exists while open, so openers set it conditionally. */
   id?: string;
   /** The opener, if it's a single known control — see useDialogBehavior. */
   returnFocusRef?: RefObject<HTMLElement>;
