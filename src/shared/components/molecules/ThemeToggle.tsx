@@ -1,21 +1,16 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useIsDarkTheme } from "@/shared/hooks/useIsDarkTheme";
 import { DARK_CLASS, THEME_STORAGE_KEY } from "@/shared/utils/theme";
 import { logError } from "@/shared/utils/log-error";
 
 export function ThemeToggle() {
-  // THEME_INIT_SCRIPT already set the class before hydration — read it back
-  // rather than defaulting to light, so the icon matches on first paint.
-  const [isDark, setIsDark] = useState(false);
-
-  useEffect(() => {
-    setIsDark(document.documentElement.classList.contains(DARK_CLASS));
-  }, []);
+  // Read from the <html> class, not local state, so every instance on the page
+  // (AdminShell renders two) re-renders when any of them flips the theme.
+  const isDark = useIsDarkTheme();
 
   function toggleTheme() {
     const next = !isDark;
-    setIsDark(next);
     document.documentElement.classList.toggle(DARK_CLASS, next);
     document.documentElement.style.colorScheme = next ? "dark" : "light";
     // Raw string, not JSON — THEME_INIT_SCRIPT reads this key with a plain
