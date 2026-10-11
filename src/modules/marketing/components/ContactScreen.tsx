@@ -21,7 +21,7 @@ export function ContactScreen() {
           <div className="rounded-xl border border-border bg-surface p-6 shadow-xs">
             <div className="flex items-center justify-between gap-4">
               <h2 className="font-display text-xl text-ink">Hours</h2>
-              <span className="rounded-pill bg-gold-soft px-3 py-1 text-xs font-semibold text-gold-hover">
+              <span className="rounded-pill bg-gold-soft px-3 py-1 text-xs font-semibold text-gold">
                 {CONTACT_HOURS.badge}
               </span>
             </div>

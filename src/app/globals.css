@@ -18,13 +18,21 @@
     /* Ink */
     --color-ink: #2a1d14;
     --color-ink-muted: #594636;
-    --color-ink-subtle: #8a7563;
+    /* Darkened from the design's #8a7563 (4.09:1 on bg) to clear WCAG AA
+       4.5:1 on every light surface (bg 5.63, surface 5.87, sunken 5.04). */
+    --color-ink-subtle: #716051;
 
     /* Brand */
     --color-gold: #b07c35;
     --color-gold-hover: #96682a;
     --color-gold-ink: #fff9ee;
     --color-gold-soft: #f6e8cf;
+    /* Gold as small TEXT on light surfaces. --color-gold stays the brand
+       fill/accent; as text it only reaches 3.0–3.55:1. This clears AA
+       (gold-soft 4.85, sunken 4.92, bg 5.50). Wired to text-gold in
+       tailwind.config.ts; text-gold-display opts back into --color-gold
+       for large display type (3:1 rule). */
+    --color-gold-text: #845d28;
 
     /* Accents */
     --color-leaf: #5b7a4e;
@@ -100,6 +108,8 @@
     --color-gold-hover: #ebbb6e;
     --color-gold-ink: #241804;
     --color-gold-soft: #36281a;
+    /* Dark gold already passes as text, so it's unchanged here. */
+    --color-gold-text: #dda857;
 
     --color-leaf: #8fae7f;
     --color-clay: #d9765a;
