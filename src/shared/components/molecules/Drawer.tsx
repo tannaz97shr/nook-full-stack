@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef } from "react";
-import type { ReactNode } from "react";
+import type { ReactNode, RefObject } from "react";
 import { useDialogBehavior } from "@/shared/hooks/useDialogBehavior";
 
 export interface DrawerProps {
@@ -11,11 +11,13 @@ export interface DrawerProps {
   labelledBy?: string;
   /** For the opener's `aria-controls`. */
   id?: string;
+  /** The opener, if it's a single known control — see useDialogBehavior. */
+  returnFocusRef?: RefObject<HTMLElement>;
 }
 
-export function Drawer({ open, onClose, children, labelledBy, id }: DrawerProps) {
+export function Drawer({ open, onClose, children, labelledBy, id, returnFocusRef }: DrawerProps) {
   const panelRef = useRef<HTMLElement>(null);
-  useDialogBehavior(open, panelRef, onClose);
+  useDialogBehavior(open, panelRef, onClose, returnFocusRef);
 
   if (!open) return null;
 
