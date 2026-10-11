@@ -16,7 +16,7 @@ export interface TradingHours {
   closes: number;
 }
 
-/** `null` = closed all day. Public holidays aren't modeled (see specs/known-issues.md). */
+/** `null` = closed all day. Public holidays override this — see VIC_PUBLIC_HOLIDAYS. */
 export const OPENING_HOURS: Record<Weekday, TradingHours | null> = {
   0: { opens: 8 * 60, closes: 14 * 60 },
   1: { opens: 7 * 60, closes: 16 * 60 },
@@ -26,6 +26,57 @@ export const OPENING_HOURS: Record<Weekday, TradingHours | null> = {
   5: { opens: 7 * 60, closes: 16 * 60 },
   6: { opens: 8 * 60, closes: 15 * 60 },
 };
+
+/**
+ * Closed all day on Victorian public holidays (the contact page's "Public
+ * holidays: Closed"). Dates are Melbourne-local calendar dates. Source:
+ * Business Victoria. Includes Melbourne Cup Day (metro Melbourne) and
+ * "additional day" substitutes; Victoria gives no substitute for Anzac Day.
+ *
+ * Extend before PUBLIC_HOLIDAYS_COVERED_THROUGH runs out (see
+ * specs/known-issues.md). AFL Grand Final Friday 2027 is deliberately absent
+ * until the AFL confirms the date — a wrong guess would show "Closed" on a
+ * real trading day.
+ */
+export const PUBLIC_HOLIDAYS_COVERED_THROUGH = 2027;
+
+export const VIC_PUBLIC_HOLIDAYS: { date: string; name: string }[] = [
+  { date: "2026-01-01", name: "New Year's Day" },
+  { date: "2026-01-26", name: "Australia Day" },
+  { date: "2026-03-09", name: "Labour Day" },
+  { date: "2026-04-03", name: "Good Friday" },
+  { date: "2026-04-04", name: "Saturday before Easter Sunday" },
+  { date: "2026-04-05", name: "Easter Sunday" },
+  { date: "2026-04-06", name: "Easter Monday" },
+  { date: "2026-04-25", name: "Anzac Day" },
+  { date: "2026-06-08", name: "King's Birthday" },
+  { date: "2026-09-25", name: "Friday before the AFL Grand Final" },
+  { date: "2026-11-03", name: "Melbourne Cup Day" },
+  { date: "2026-12-25", name: "Christmas Day" },
+  { date: "2026-12-26", name: "Boxing Day" },
+  { date: "2026-12-28", name: "Boxing Day (additional day)" },
+  { date: "2027-01-01", name: "New Year's Day" },
+  { date: "2027-01-26", name: "Australia Day" },
+  { date: "2027-03-08", name: "Labour Day" },
+  { date: "2027-03-26", name: "Good Friday" },
+  { date: "2027-03-27", name: "Saturday before Easter Sunday" },
+  { date: "2027-03-28", name: "Easter Sunday" },
+  { date: "2027-03-29", name: "Easter Monday" },
+  { date: "2027-04-25", name: "Anzac Day" },
+  { date: "2027-06-14", name: "King's Birthday" },
+  { date: "2027-11-02", name: "Melbourne Cup Day" },
+  { date: "2027-12-25", name: "Christmas Day" },
+  { date: "2027-12-26", name: "Boxing Day" },
+  { date: "2027-12-27", name: "Christmas Day (additional day)" },
+  { date: "2027-12-28", name: "Boxing Day (additional day)" },
+];
+
+const PUBLIC_HOLIDAY_DATES = new Set(VIC_PUBLIC_HOLIDAYS.map((holiday) => holiday.date));
+
+/** `isoDate` is a Melbourne-local "YYYY-MM-DD". */
+export function isPublicHoliday(isoDate: string): boolean {
+  return PUBLIC_HOLIDAY_DATES.has(isoDate);
+}
 
 export interface OpeningHoursRow {
   shortLabel: string;

@@ -5,4 +5,5 @@ export type OpenStatus =
   | { kind: "before-open"; opensAt: number }
   | { kind: "open"; closesAt: number }
   | { kind: "closing-soon"; closesAt: number }
+  | { kind: "public-holiday" }
   | { kind: "closed"; next: { daysAhead: number; weekday: Weekday; opensAt: number } | null };

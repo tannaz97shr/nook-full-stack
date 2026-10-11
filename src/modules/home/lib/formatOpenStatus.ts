@@ -9,6 +9,8 @@ export function formatOpenStatus(status: OpenStatus): string {
       return OPEN_STATUS_COPY.closingSoon(status.closesAt);
     case "before-open":
       return OPEN_STATUS_COPY.beforeOpen(status.opensAt);
+    case "public-holiday":
+      return OPEN_STATUS_COPY.publicHoliday;
     case "closed":
       return status.next
         ? OPEN_STATUS_COPY.closed(status.next.daysAhead, status.next.weekday, status.next.opensAt)
@@ -16,7 +18,7 @@ export function formatOpenStatus(status: OpenStatus): string {
   }
 }
 
-/** Open and closing-soon get the gold treatment; before-open and closed are muted. */
+/** Open and closing-soon get the gold treatment; before-open, closed and public holidays are muted. */
 export function isOpenNow(status: OpenStatus): boolean {
   return status.kind === "open" || status.kind === "closing-soon";
 }
