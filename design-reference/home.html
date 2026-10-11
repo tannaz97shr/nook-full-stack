@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<!--
+  NOOK — HOMEPAGE DEVELOPER REFERENCE
+  Static markup of the homepage only. Images are referenced from ./img-web/ (≈1500px JPEGs).
+  Design tokens live in :root / [data-theme="dark"] below and match the @theme block in globals.css.
+
+  PHOTOS USED ON THIS PAGE
+  - img-web/hero-latte-art.jpg    Hero, main image (4:5)  ·  Popular card "Flat White"
+  - img-web/brownie-lattes.jpg    Hero, overlapping inset (1:1, bottom-left)
+  - img-web/table-outdoor.jpg     Popular card "Morning Bun"
+  - img-web/souffle-pancakes.jpg  Popular card "Soufflé Pancakes"
+  - img-web/toasties-tray.jpg     Popular card "Three-Cheese Toastie"
+  - img-web/interior-night.jpg    Rewards banner background (under a dark left-to-right gradient)
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nook — Homepage reference</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300..700;1,6..72,300..600&family=Karla:ital,wght@0,300..700;1,400..600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --color-bg:#FBF7F0; --color-surface:#FFFCF6; --color-sunken:#F3EADB;
+  --color-border:#E7DBC9; --color-border-strong:#D6C4AC;
+  --color-ink:#2A1D14; --color-ink-muted:#594636; --color-ink-subtle:#8A7563;
+  --color-gold:#B07C35; --color-gold-hover:#96682A; --color-gold-ink:#FFF9EE; --color-gold-soft:#F6E8CF;
+  --color-leaf:#5B7A4E; --color-clay:#A6462C;
+  --font-display:"Newsreader",Georgia,"Times New Roman",serif;
+  --font-sans:"Karla","Helvetica Neue",Helvetica,Arial,sans-serif;
+  --font-mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+  --radius-sm:8px; --radius-md:12px; --radius-lg:18px; --radius-xl:28px; --radius-2xl:40px; --radius-pill:999px;
+  --shadow-xs:0 1px 2px rgba(42,29,20,.06);
+  --shadow-sm:0 2px 6px rgba(42,29,20,.07);
+  --shadow-md:0 8px 20px -6px rgba(42,29,20,.14);
+  --shadow-lg:0 20px 44px -14px rgba(42,29,20,.22);
+  --shadow-xl:0 36px 76px -24px rgba(42,29,20,.30);
+  color-scheme:light;
+}
+[data-theme="dark"]{
+  --color-bg:#161210; --color-surface:#201A16; --color-sunken:#2A221C;
+  --color-border:#382D25; --color-border-strong:#4C3D31;
+  --color-ink:#F4ECE1; --color-ink-muted:#D3C3B2; --color-ink-subtle:#A08D7B;
+  --color-gold:#DDA857; --color-gold-hover:#EBBB6E; --color-gold-ink:#241804; --color-gold-soft:#36281A;
+  --color-leaf:#8FAE7F; --color-clay:#D9765A;
+  --shadow-xs:0 1px 2px rgba(0,0,0,.35);
+  --shadow-sm:0 2px 6px rgba(0,0,0,.4);
+  --shadow-md:0 8px 20px -6px rgba(0,0,0,.5);
+  --shadow-lg:0 20px 44px -14px rgba(0,0,0,.6);
+  --shadow-xl:0 36px 76px -24px rgba(0,0,0,.7);
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--color-bg);color:var(--color-ink);font-family:var(--font-sans);font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased;text-wrap:pretty;transition:background .25s,color .25s}
+h1,h2,h3,p{margin:0}
+button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
+a{color:var(--color-gold);text-decoration:none}
+a:hover{color:var(--color-gold-hover);text-decoration:underline;text-underline-offset:3px}
+img{max-width:100%;display:block}
+/* Hover states (inline in the source design) */
+.h-gold:hover{color:var(--color-gold)!important}
+.h-border:hover{border-color:var(--color-border-strong)!important;color:var(--color-gold)!important}
+.h-fill-gold:hover{background:var(--color-gold-hover)!important}
+.h-lift:hover{background:var(--color-gold-hover)!important;transform:translateY(-1px)}
+.h-sunken:hover{background:var(--color-sunken)!important}
+.h-card{transition:box-shadow .2s,transform .2s}
+.h-card:hover{box-shadow:var(--shadow-lg)!important;transform:translateY(-3px)}
+.h-white:hover{background:#fff!important}
+.h-ghost-light:hover{background:rgba(251,247,240,.12)!important}
+/* Header breakpoint: ≥900px shows inline nav + account; below shows hamburger */
+.nav-wide{display:flex}.nav-narrow{display:none}
+@media (max-width:899px){.nav-wide{display:none!important}.nav-narrow{display:grid!important}}
+</style>
+</head>
+<body>
+
+<!--
+  HEADER (site-wide, sticky)
+  - Sticky at top:0, 72px tall, translucent bg with backdrop blur.
+  - Nav: active page gets a 2px gold underline (Home is active here).
+  - Theme button toggles [data-theme="dark"] on <html>; glyph ☾ in light mode, ☀ in dark. Persist the choice.
+  - Account pill shows "Sign in" when signed out, the user's first name when signed in.
+  - Cart pill shows live item count (mono numerals); opens the cart drawer (not part of this file).
+  - Below 900px: nav + account pill hide, hamburger appears and toggles a stacked link panel under the bar.
+-->
+<header style="position:sticky;top:0;z-index:40;background:color-mix(in srgb,var(--color-bg) 86%,transparent);backdrop-filter:blur(14px) saturate(1.2);border-bottom:1px solid var(--color-border)">
+  <div style="max-width:1240px;margin:0 auto;padding:0 clamp(16px,4vw,40px);height:72px;display:flex;align-items:center;gap:clamp(12px,3vw,36px)">
+    <a href="/" style="display:flex;align-items:baseline;gap:2px;flex:0 0 auto;color:var(--color-ink);text-decoration:none">
+      <span style="font-family:var(--font-display);font-size:27px;font-weight:600;letter-spacing:-.02em;line-height:1">Nook</span>
+      <span style="width:5px;height:5px;border-radius:var(--radius-pill);background:var(--color-gold);display:block;margin-bottom:4px"></span>
+    </a>
+    <nav class="nav-wide" style="align-items:center;gap:clamp(14px,2.2vw,30px);margin-left:6px">
+      <a href="/" class="h-gold" style="position:relative;padding:6px 0;font-size:15px;font-weight:500;color:var(--color-ink-muted);text-decoration:none">Home<span style="position:absolute;left:0;right:0;bottom:0;height:2px;border-radius:var(--radius-pill);background:var(--color-gold)"></span></a>
+      <a href="/menu" class="h-gold" style="padding:6px 0;font-size:15px;font-weight:500;color:var(--color-ink-muted);text-decoration:none">Menu</a>
+      <a href="/gallery" class="h-gold" style="padding:6px 0;font-size:15px;font-weight:500;color:var(--color-ink-muted);text-decoration:none">Gallery</a>
+      <a href="/about" class="h-gold" style="padding:6px 0;font-size:15px;font-weight:500;color:var(--color-ink-muted);text-decoration:none">About</a>
+      <a href="/contact" class="h-gold" style="padding:6px 0;font-size:15px;font-weight:500;color:var(--color-ink-muted);text-decoration:none">Contact</a>
+    </nav>
+    <div style="flex:1"></div>
+    <button id="theme-toggle" class="h-border" title="Switch to dark" style="width:38px;height:38px;display:grid;place-items:center;border-radius:var(--radius-pill);border:1px solid var(--color-border);color:var(--color-ink-muted);flex:0 0 auto"><span style="font-size:15px;line-height:1">☾</span></button>
+    <a href="/sign-in" class="nav-wide h-border" style="padding:9px 16px;border-radius:var(--radius-pill);border:1px solid var(--color-border);font-size:14px;font-weight:600;color:var(--color-ink-muted);flex:0 0 auto;white-space:nowrap;text-decoration:none">Sign in</a>
+    <button class="h-fill-gold" style="display:flex;align-items:center;gap:9px;padding:10px 18px;border-radius:var(--radius-pill);background:var(--color-gold);color:var(--color-gold-ink);font-size:14px;font-weight:700;box-shadow:var(--shadow-sm);flex:0 0 auto">
+      <span>Cart</span>
+      <span style="min-width:21px;height:21px;padding:0 6px;display:grid;place-items:center;border-radius:var(--radius-pill);background:color-mix(in srgb,var(--color-gold-ink) 16%,transparent);font-family:var(--font-mono);font-size:12px;font-weight:500">0</span>
+    </button>
+    <button class="nav-narrow" aria-label="Menu" style="width:38px;height:38px;place-items:center;border-radius:var(--radius-pill);border:1px solid var(--color-border);flex:0 0 auto">
+      <span style="display:grid;gap:4px"><span style="width:16px;height:1.5px;background:currentColor;display:block"></span><span style="width:16px;height:1.5px;background:currentColor;display:block"></span><span style="width:16px;height:1.5px;background:currentColor;display:block"></span></span>
+    </button>
+  </div>
+</header>
+
+<main>
+
+<!--
+  HERO
+  - Two columns via auto-fit grid (min 330px); stacks to one column on narrow screens, text first.
+  - OPEN/CLOSED BADGE: derive from today's hours (see footer) and current local time (Australia/Melbourne).
+      Open:          gold-soft pill, gold dot  → "Open today until 4pm"
+      Closing soon:  same styling, ≤30 min to close → "Closing at 4pm" (suggested)
+      Before open:   swap to sunken bg / ink-subtle text, grey dot → "Opens at 7am"
+      Closed for day: same muted styling → "Closed · opens tomorrow 8am"
+    The design only shows the Open state; the muted states use existing tokens.
+  - "See the menu" → /menu. "Find us" → /contact.
+  - Images: main 4:5 latte (radius-2xl, shadow-xl); inset 1:1 brownie overlaps bottom-left with a 5px bg-colored border.
+-->
+<section style="max-width:1240px;margin:0 auto;padding:clamp(28px,5vw,64px) clamp(16px,4vw,40px) clamp(24px,4vw,48px);display:grid;gap:clamp(24px,4vw,56px);grid-template-columns:repeat(auto-fit,minmax(min(100%,330px),1fr));align-items:center">
+  <div style="max-width:560px">
+    <div style="display:inline-flex;align-items:center;gap:8px;padding:6px 14px 6px 10px;border-radius:var(--radius-pill);background:var(--color-gold-soft);color:var(--color-gold);font-size:13px;font-weight:600;letter-spacing:.01em;margin-bottom:22px">
+      <span style="width:6px;height:6px;border-radius:var(--radius-pill);background:var(--color-gold);display:block"></span>
+      Open today until 4pm
+    </div>
+    <h1 style="font-family:var(--font-display);font-weight:500;font-size:clamp(2.6rem,6.4vw,4.3rem);line-height:1.02;letter-spacing:-.025em;margin-bottom:20px">A quiet corner<br><span style="font-style:italic;color:var(--color-gold)">and a proper</span> flat white.</h1>
+    <p style="font-size:clamp(1rem,1.5vw,1.15rem);line-height:1.6;color:var(--color-ink-muted);max-width:44ch;margin-bottom:32px">Small-batch roasts, bread baked out the back, and a table by the window that's usually free before nine. Order ahead and we'll have it waiting.</p>
+    <div style="display:flex;flex-wrap:wrap;gap:12px;align-items:center">
+      <a href="/menu" class="h-lift" style="padding:15px 30px;border-radius:var(--radius-pill);background:var(--color-gold);color:var(--color-gold-ink);font-size:16px;font-weight:700;box-shadow:var(--shadow-md);text-decoration:none">See the menu</a>
+      <a href="/contact" class="h-sunken" style="padding:15px 26px;border-radius:var(--radius-pill);border:1px solid var(--color-border-strong);font-size:16px;font-weight:600;color:var(--color-ink);text-decoration:none">Find us</a>
+    </div>
+  </div>
+  <div style="position:relative">
+    <div style="border-radius:var(--radius-2xl);overflow:hidden;box-shadow:var(--shadow-xl);aspect-ratio:4/5;background:var(--color-sunken)">
+      <img src="img-web/hero-latte-art.jpg" alt="Latte with heart art, steam rising" style="width:100%;height:100%;object-fit:cover">
+    </div>
+    <div style="position:absolute;left:-6px;bottom:-18px;width:min(46%,190px);border-radius:var(--radius-xl);overflow:hidden;box-shadow:var(--shadow-lg);border:5px solid var(--color-bg);aspect-ratio:1/1;background:var(--color-sunken)">
+      <img src="img-web/brownie-lattes.jpg" alt="Brownie and two lattes" style="width:100%;height:100%;object-fit:cover">
+    </div>
+  </div>
+</section>
+
+<!--
+  VALUES ("Three things we're stubborn about")
+  - Static. Full-bleed sunken band; three columns via auto-fit grid (min 240px).
+  - First column has a gold top rule; the others use border-strong.
+-->
+<section style="background:var(--color-sunken);border-top:1px solid var(--color-border);border-bottom:1px solid var(--color-border);margin-top:clamp(28px,4vw,44px)">
+  <div style="max-width:1240px;margin:0 auto;padding:clamp(44px,6vw,76px) clamp(16px,4vw,40px)">
+    <h2 style="font-family:var(--font-display);font-weight:500;font-size:clamp(1.75rem,3.4vw,2.5rem);letter-spacing:-.02em;margin-bottom:clamp(28px,4vw,48px);max-width:22ch">Three things we're stubborn about</h2>
+    <div style="display:grid;gap:clamp(24px,3vw,40px);grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr))">
+      <div style="padding-top:22px;border-top:2px solid var(--color-gold)">
+        <div style="font-family:var(--font-mono);font-size:13px;color:var(--color-gold);margin-bottom:14px">01</div>
+        <h3 style="font-family:var(--font-display);font-size:1.4rem;font-weight:500;margin-bottom:10px">Roasted eleven days ago, tops</h3>
+        <p style="color:var(--color-ink-muted);font-size:15px;line-height:1.62">We take one 12kg drop a week from a roaster four suburbs over. Whatever's left on Sunday goes home with staff.</p>
+      </div>
+      <div style="padding-top:22px;border-top:2px solid var(--color-border-strong)">
+        <div style="font-family:var(--font-mono);font-size:13px;color:var(--color-gold);margin-bottom:14px">02</div>
+        <h3 style="font-family:var(--font-display);font-size:1.4rem;font-weight:500;margin-bottom:10px">The pastry case is baked here</h3>
+        <p style="color:var(--color-ink-muted);font-size:15px;line-height:1.62">Laminated dough on Tuesdays and Fridays, so the croissants are gone by eleven. We're not sorry, but we are aware.</p>
+      </div>
+      <div style="padding-top:22px;border-top:2px solid var(--color-border-strong)">
+        <div style="font-family:var(--font-mono);font-size:13px;color:var(--color-gold);margin-bottom:14px">03</div>
+        <h3 style="font-family:var(--font-display);font-size:1.4rem;font-weight:500;margin-bottom:10px">No music loud enough to shout over</h3>
+        <p style="color:var(--color-ink-muted);font-size:15px;line-height:1.62">Wifi's on the receipt. Stay as long as you like — we'd rather a full room than a fast one.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!--
+  POPULAR THIS WEEK
+  - Four featured menu items pulled from the menu data by id: flat-white, morning-bun, souffle, toastie.
+  - Each card opens that item's customize sheet (same modal as the Menu page; not in this file).
+  - Price label: "From $X" when the item has a required single-choice option group with any paid option
+    (e.g. Size, Bread); X = base + cheapest required options. Otherwise plain "$X".
+  - If a featured item is 86'd (sold out in admin), either swap it out or render the Menu page's
+    "Sold out" overlay + grayscale image and disable the click.
+  - Hover: card lifts 3px and shadow grows to shadow-lg. "Full menu →" → /menu.
+-->
+<section style="max-width:1240px;margin:0 auto;padding:clamp(44px,6vw,80px) clamp(16px,4vw,40px)">
+  <div style="display:flex;flex-wrap:wrap;gap:16px;align-items:end;justify-content:space-between;margin-bottom:clamp(22px,3vw,34px)">
+    <div>
+      <div style="font-family:var(--font-mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--color-ink-subtle);margin-bottom:10px">Popular this week</div>
+      <h2 style="font-family:var(--font-display);font-weight:500;font-size:clamp(1.75rem,3.4vw,2.5rem);letter-spacing:-.02em">What people keep ordering</h2>
+    </div>
+    <a href="/menu" class="h-sunken" style="padding:12px 22px;border-radius:var(--radius-pill);border:1px solid var(--color-border-strong);font-size:15px;font-weight:600;color:var(--color-ink);text-decoration:none">Full menu →</a>
+  </div>
+  <div style="display:grid;gap:clamp(16px,2vw,24px);grid-template-columns:repeat(auto-fill,minmax(min(100%,250px),1fr))">
+    <button class="h-card" style="text-align:left;display:block;background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-xl);overflow:hidden;box-shadow:var(--shadow-xs)">
+      <div style="aspect-ratio:4/3;background:var(--color-sunken)"><img src="img-web/hero-latte-art.jpg" alt="Flat White" style="width:100%;height:100%;object-fit:cover"></div>
+      <div style="padding:16px 18px 18px">
+        <div style="font-family:var(--font-display);font-size:1.18rem;font-weight:500;line-height:1.2;margin-bottom:6px">Flat White</div>
+        <div style="font-size:13.5px;color:var(--color-ink-subtle);line-height:1.5;margin-bottom:12px;min-height:40px">Two ristretto shots, silky milk, no foam moustache.</div>
+        <div style="font-family:var(--font-mono);font-size:14px;color:var(--color-gold);text-align:right">From $4.20</div>
+      </div>
+    </button>
+    <button class="h-card" style="text-align:left;display:block;background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-xl);overflow:hidden;box-shadow:var(--shadow-xs)">
+      <div style="aspect-ratio:4/3;background:var(--color-sunken)"><img src="img-web/table-outdoor.jpg" alt="Morning Bun" style="width:100%;height:100%;object-fit:cover"></div>
+      <div style="padding:16px 18px 18px">
+        <div style="font-family:var(--font-display);font-size:1.18rem;font-weight:500;line-height:1.2;margin-bottom:6px">Morning Bun</div>
+        <div style="font-size:13.5px;color:var(--color-ink-subtle);line-height:1.5;margin-bottom:12px;min-height:40px">Croissant dough rolled in orange and cinnamon sugar.</div>
+        <div style="font-family:var(--font-mono);font-size:14px;color:var(--color-gold);text-align:right">$4.80</div>
+      </div>
+    </button>
+    <button class="h-card" style="text-align:left;display:block;background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-xl);overflow:hidden;box-shadow:var(--shadow-xs)">
+      <div style="aspect-ratio:4/3;background:var(--color-sunken)"><img src="img-web/souffle-pancakes.jpg" alt="Soufflé Pancakes" style="width:100%;height:100%;object-fit:cover"></div>
+      <div style="padding:16px 18px 18px">
+        <div style="font-family:var(--font-display);font-size:1.18rem;font-weight:500;line-height:1.2;margin-bottom:6px">Soufflé Pancakes</div>
+        <div style="font-size:13.5px;color:var(--color-ink-subtle);line-height:1.5;margin-bottom:12px;min-height:40px">Three tall ones, macerated strawberries, cream.</div>
+        <div style="font-family:var(--font-mono);font-size:14px;color:var(--color-gold);text-align:right">$14.00</div>
+      </div>
+    </button>
+    <button class="h-card" style="text-align:left;display:block;background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-xl);overflow:hidden;box-shadow:var(--shadow-xs)">
+      <div style="aspect-ratio:4/3;background:var(--color-sunken)"><img src="img-web/toasties-tray.jpg" alt="Three-Cheese Toastie" style="width:100%;height:100%;object-fit:cover"></div>
+      <div style="padding:16px 18px 18px">
+        <div style="font-family:var(--font-display);font-size:1.18rem;font-weight:500;line-height:1.2;margin-bottom:6px">Three-Cheese Toastie</div>
+        <div style="font-size:13.5px;color:var(--color-ink-subtle);line-height:1.5;margin-bottom:12px;min-height:40px">Gruyère, cheddar, taleggio. Pressed until it sighs.</div>
+        <div style="font-family:var(--font-mono);font-size:14px;color:var(--color-gold);text-align:right">From $11.00</div>
+      </div>
+    </button>
+  </div>
+</section>
+
+<!--
+  REWARDS BANNER
+  - Full-bleed photo card (radius-2xl) with a fixed dark gradient overlay; text colours are hard-coded
+    cream (#FBF7F0) so the banner reads the same in light and dark mode.
+  - "Join rewards" → /sign-in (sign-up tab). If the user is already signed in, change to "View my points" → /account/rewards.
+  - "How it works" → /rewards.
+-->
+<section style="max-width:1240px;margin:0 auto;padding:0 clamp(16px,4vw,40px) clamp(56px,7vw,96px)">
+  <div style="position:relative;border-radius:var(--radius-2xl);overflow:hidden;box-shadow:var(--shadow-lg);min-height:clamp(300px,42vw,420px);display:grid">
+    <img src="img-web/interior-night.jpg" alt="Nook interior in the evening" style="grid-area:1/1;width:100%;height:100%;object-fit:cover">
+    <div style="grid-area:1/1;background:linear-gradient(100deg,rgba(24,15,9,.86) 0%,rgba(24,15,9,.55) 48%,rgba(24,15,9,.12) 100%)"></div>
+    <div style="grid-area:1/1;position:relative;padding:clamp(28px,5vw,60px);display:flex;flex-direction:column;justify-content:center;max-width:600px">
+      <h2 style="font-family:var(--font-display);font-weight:500;font-size:clamp(1.7rem,3.6vw,2.6rem);line-height:1.1;letter-spacing:-.02em;color:#FBF7F0;margin-bottom:14px">Earn a free coffee<br>roughly every ninth visit</h2>
+      <p style="color:rgba(251,247,240,.78);font-size:16px;line-height:1.6;max-width:42ch;margin-bottom:26px">A point per dollar, no card to lose. Sign in before you order and it tracks itself.</p>
+      <div style="display:flex;flex-wrap:wrap;gap:12px">
+        <a href="/sign-in" class="h-white" style="padding:14px 28px;border-radius:var(--radius-pill);background:#FBF7F0;color:#2A1D14;font-size:15px;font-weight:700;text-decoration:none">Join rewards</a>
+        <a href="/rewards" class="h-ghost-light" style="padding:14px 24px;border-radius:var(--radius-pill);border:1px solid rgba(251,247,240,.4);color:#FBF7F0;font-size:15px;font-weight:600;text-decoration:none">How it works</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!--
+  FOOTER (site-wide)
+  - Static. Four columns via auto-fit grid (min 190px): brand + address, hours, site links, contact links.
+  - Hours here are the source of truth for the hero open/closed badge.
+  - Bottom bar links (Design tokens, Staff dashboard) are demo-only; staff link should require an admin session.
+-->
+<footer style="border-top:1px solid var(--color-border);background:var(--color-surface)">
+  <div style="max-width:1240px;margin:0 auto;padding:clamp(44px,5vw,68px) clamp(16px,4vw,40px) 28px;display:grid;gap:clamp(28px,4vw,48px);grid-template-columns:repeat(auto-fit,minmax(min(100%,190px),1fr))">
+    <div style="max-width:280px">
+      <div style="display:flex;align-items:baseline;gap:2px;margin-bottom:14px">
+        <span style="font-family:var(--font-display);font-size:25px;font-weight:600;letter-spacing:-.02em">Nook</span>
+        <span style="width:5px;height:5px;border-radius:var(--radius-pill);background:var(--color-gold);display:block;margin-bottom:4px"></span>
+      </div>
+      <p style="font-size:14px;color:var(--color-ink-subtle);line-height:1.6">41 Ashgrove Lane<br>Carlton North, VIC 3054</p>
+    </div>
+    <div>
+      <div style="font-family:var(--font-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--color-ink-subtle);margin-bottom:16px">Visit</div>
+      <div style="display:grid;gap:9px;font-size:14.5px;color:var(--color-ink-muted)">
+        <div style="display:flex;justify-content:space-between;gap:14px"><span>Mon – Fri</span><span style="font-family:var(--font-mono);font-size:13px">7:00 – 16:00</span></div>
+        <div style="display:flex;justify-content:space-between;gap:14px"><span>Saturday</span><span style="font-family:var(--font-mono);font-size:13px">8:00 – 15:00</span></div>
+        <div style="display:flex;justify-content:space-between;gap:14px"><span>Sunday</span><span style="font-family:var(--font-mono);font-size:13px">8:00 – 14:00</span></div>
+      </div>
+    </div>
+    <div>
+      <div style="font-family:var(--font-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--color-ink-subtle);margin-bottom:16px">Site</div>
+      <div style="display:grid;gap:9px;justify-items:start;font-size:14.5px">
+        <a href="/menu" class="h-gold" style="color:var(--color-ink-muted)">Menu</a>
+        <a href="/gallery" class="h-gold" style="color:var(--color-ink-muted)">Gallery</a>
+        <a href="/about" class="h-gold" style="color:var(--color-ink-muted)">Our story</a>
+        <a href="/rewards" class="h-gold" style="color:var(--color-ink-muted)">Rewards</a>
+      </div>
+    </div>
+    <div>
+      <div style="font-family:var(--font-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--color-ink-subtle);margin-bottom:16px">Elsewhere</div>
+      <div style="display:grid;gap:9px;justify-items:start;font-size:14.5px">
+        <a href="#" class="h-gold" style="color:var(--color-ink-muted)">Instagram</a>
+        <a href="#" class="h-gold" style="color:var(--color-ink-muted)">Facebook</a>
+        <a href="mailto:hello@nook.cafe" class="h-gold" style="color:var(--color-ink-muted)">hello@nook.cafe</a>
+        <a href="tel:+61390418827" class="h-gold" style="color:var(--color-ink-muted)">(03) 9041 8827</a>
+      </div>
+    </div>
+  </div>
+  <div style="max-width:1240px;margin:0 auto;padding:20px clamp(16px,4vw,40px) 34px;border-top:1px solid var(--color-border);display:flex;flex-wrap:wrap;gap:14px;align-items:center;justify-content:space-between">
+    <span style="font-size:12.5px;color:var(--color-ink-subtle)">© 2026 Nook Coffee. Made on Wurundjeri land.</span>
+    <div style="display:flex;flex-wrap:wrap;gap:18px">
+      <a href="/tokens" class="h-gold" style="font-size:12.5px;color:var(--color-ink-subtle)">Design tokens</a>
+      <a href="/admin" class="h-gold" style="font-size:12.5px;color:var(--color-ink-subtle)">Staff dashboard</a>
+    </div>
+  </div>
+</footer>
+
+<!-- Theme toggle only, so both modes can be inspected. -->
+<script>
+document.getElementById('theme-toggle').onclick = function () {
+  var dark = document.documentElement.getAttribute('data-theme') === 'dark';
+  document.documentElement.setAttribute('data-theme', dark ? 'light' : 'dark');
+  this.firstElementChild.textContent = dark ? '☾' : '☀';
+  this.title = dark ? 'Switch to dark' : 'Switch to light';
+};
+</script>
+</body>
+</html>
