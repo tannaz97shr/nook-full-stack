@@ -22,6 +22,7 @@ import {
   checkoutButtonLabel,
 } from "../content/cartContent";
 import { useCart } from "../hooks/useCart";
+import { CART_DRAWER_ID } from "../lib/cartDrawerId";
 import { CartEmptyState } from "./CartEmptyState";
 import { CartLineItemRow } from "./CartLineItemRow";
 
@@ -79,7 +80,7 @@ export function CartDrawer() {
   }
 
   return (
-    <Drawer open={isOpen} onClose={close} labelledBy="cart-drawer-title">
+    <Drawer open={isOpen} onClose={close} labelledBy="cart-drawer-title" id={CART_DRAWER_ID}>
       <div className="flex items-start justify-between gap-3 border-b border-border px-6 py-5">
         <div>
           <h2 id="cart-drawer-title" className="font-display text-2xl text-ink">
