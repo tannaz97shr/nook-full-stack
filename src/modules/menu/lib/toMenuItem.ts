@@ -16,6 +16,9 @@ export function toMenuItem(doc: DocumentSnapshot): MenuItem {
     images: data.images,
     dietaryTags: data.dietaryTags,
     isAvailable: data.isAvailable,
+    // Docs written before the field existed have no isFeatured — read as
+    // false, so no migration script is needed.
+    isFeatured: data.isFeatured === true,
     displayOrder: data.displayOrder,
     optionGroupIds: data.optionGroupIds,
   };

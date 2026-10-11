@@ -2,10 +2,16 @@
 
 import Image from "next/image";
 import { useEffect, useState } from "react";
+import { Badge } from "@/shared/components";
 import { useToast } from "@/shared/hooks/useToast";
 import { formatMoney } from "@/shared/utils/format-money";
 import { useMenuItemAvailabilityToggle } from "../hooks/useMenuItemAvailabilityToggle";
-import { ADMIN_ITEMS_FOOTNOTE, AVAILABILITY_TOGGLE_ERROR, NEW_ITEM_LABEL } from "../content/adminMenuContent";
+import {
+  ADMIN_ITEMS_FOOTNOTE,
+  AVAILABILITY_TOGGLE_ERROR,
+  FEATURED_CHIP_LABEL,
+  NEW_ITEM_LABEL,
+} from "../content/adminMenuContent";
 import type { Category, MenuItem, OptionGroup } from "../types";
 
 export interface AdminItemsTableProps {
@@ -102,7 +108,10 @@ export function AdminItemsTable({
                   )}
                 </span>
                 <span className="min-w-0">
-                  <span className="block truncate text-[13.5px] font-semibold text-ink">{item.name}</span>
+                  <span className="flex min-w-0 items-center gap-2">
+                    <span className="truncate text-[13.5px] font-semibold text-ink">{item.name}</span>
+                    {item.isFeatured && <Badge variant="gold">{FEATURED_CHIP_LABEL}</Badge>}
+                  </span>
                   <span className="block font-mono text-[10.5px] text-ink-subtle">{item.id}</span>
                 </span>
               </button>

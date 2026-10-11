@@ -1,14 +1,20 @@
+import { CLOSED_LABEL, formatHoursRange, OPENING_HOURS_ROWS } from "@/shared/content/opening-hours";
+
 export const CONTACT_HEADER = {
   heading: "Come find us",
   body: "No bookings, no fuss — just turn up. If the two tables out front are free, they're yours.",
 };
 
-export const CONTACT_HOURS = {
+export const CONTACT_HOURS: {
+  rows: { label: string; value: string; muted?: boolean }[];
+  badge: string;
+} = {
   rows: [
-    { label: "Monday – Friday", value: "7:00 – 16:00" },
-    { label: "Saturday", value: "8:00 – 15:00" },
-    { label: "Sunday", value: "8:00 – 14:00" },
-    { label: "Public holidays", value: "Closed", muted: true },
+    ...OPENING_HOURS_ROWS.map((row) => ({
+      label: row.longLabel,
+      value: formatHoursRange(row.hours, " – "),
+    })),
+    { label: "Public holidays", value: CLOSED_LABEL, muted: true },
   ],
   badge: "Kitchen closes 15:30",
 };

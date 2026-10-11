@@ -20,6 +20,7 @@ export async function updateMenuItem(id: string, input: MenuItemInput): Promise<
     images: input.images,
     dietaryTags: input.dietaryTags,
     isAvailable: input.isAvailable,
+    isFeatured: input.isFeatured,
     optionGroupIds: input.optionGroupIds,
   };
   await ref.update(data);

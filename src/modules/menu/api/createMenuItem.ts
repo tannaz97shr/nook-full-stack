@@ -37,6 +37,7 @@ export async function createMenuItem(input: MenuItemInput): Promise<MenuItem> {
       images: input.images,
       dietaryTags: input.dietaryTags,
       isAvailable: input.isAvailable,
+      isFeatured: input.isFeatured,
       displayOrder,
       optionGroupIds: input.optionGroupIds,
     };

@@ -177,6 +177,78 @@ being marked `Cancelled`/`Failed`. Action: handle `checkout.session.expired`
 (and related events) if/when stale `Pending` orders become a real problem.
 Status: open, deferred.
 
+**No public `/rewards` explainer page.** Area: marketing/loyalty. Issue: the
+homepage design's rewards banner has a secondary "How it works" button
+linking to `/rewards`, which doesn't exist — only the protected
+`/account/rewards`. Phase 8 dropped the button rather than link guests into
+a sign-in bounce. Impact: guests get only "Join rewards". Action: build a
+public explainer page and restore the button (`ROUTES` entry + a
+`secondary`-style on-photo `ButtonLink` variant). Status: open, deferred.
+
+**Public holiday list runs out after 2027 — extend before 2028.** Area:
+home, shared hours. Issue: `VIC_PUBLIC_HOLIDAYS` in
+`src/shared/content/opening-hours.ts` (the same source as footer/contact
+hours) covers 2026–2027 only (`PUBLIC_HOLIDAYS_COVERED_THROUGH = 2027`).
+It also deliberately omits **AFL Grand Final Friday 2027**: the date depends
+on the AFL fixture and isn't confirmed (aggregators guess Fri 24 Sep), and a
+wrong guess would show "Closed" on a real trading day. Impact: from 1 Jan
+2028, and on GF Friday 2027, the homepage badge treats holidays as normal
+trading days. Action: add GF Friday 2027 once the AFL confirms it; add 2028+
+dates from Business Victoria before the end of 2027. Status: open,
+scheduled.
+
+**Primary (gold-fill) buttons fail WCAG AA in light mode.** Area: design
+tokens, shared Button. Issue: `gold-ink` text (#fff9ee) on the `gold` fill
+(#b07c35) is 3.47:1. At 16px bold that isn't "large text", so it needs 4.5:1.
+Affects every primary button and the header Cart pill. Phase 8's contrast
+fix added a separate `--color-gold-text` for gold *text* and left the fill
+alone on purpose. Action: brand decision — a light-mode fill of about
+`#94682d` gives 4.68:1 but visibly browns every CTA. Status: open, needs
+decision.
+
+**Opacity-dimmed text fails AA in two components.** Area: menu, admin/orders.
+Issue: found by Phase 8's light-mode contrast scan. The category-tab counts in
+`CategoryTabs.tsx` use `opacity-60` (2.22:1 on the active gold tab, 3.09:1
+on inactive tabs). Completed rows in `AdminOrderQueueTable.tsx` are
+`opacity-60` (2.56–4.34:1). Both are component-level opacity, not token
+colours, so the Phase 8 token fix doesn't reach them. Action: replace the
+opacity with a token colour (e.g. `text-ink-subtle`, or `text-gold-ink` on
+the active tab). Status: open.
+
+**Item photos still announce the item name twice in two places.** Area:
+cart, menu. Issue: `MenuItemCard` images are now decorative (`alt=""`),
+because the name is the heading right below. `CartLineItemRow` (cart, out of
+Phase 8 scope) and `ItemCustomizationModal` (image above its own `<h2>`)
+still use `alt={name}`. Impact: screen readers read the name twice there.
+Action: set both to `alt=""`. Status: open.
+
+**Homepage needs `SITE_URL` set per deployed environment.** Area: metadata.
+Issue: `src/shared/site.ts` feeds `metadataBase` from `SITE_URL`, falling
+back to `http://localhost:3000`. Impact: without it, production
+`og:image` URLs point at localhost and link previews break. Action: add
+`SITE_URL` to the Vercel/production env. Status: open, undeployed infra step.
+
+**`isFeatured` isn't in the seed data that's been applied.** Area:
+menu/seed. Issue: Phase 8 added `isFeatured` to `scripts/seed-menu.ts`, but
+the seed wasn't re-run; live items were flagged through the admin form
+instead. Missing fields read as `false` (`toMenuItem.ts`), so no migration
+is required. Impact: a fresh environment seeded from the old script shows
+no featured row until items are flagged. Status: open, informational.
+
+**Admin availability switch knob overlaps its "Available" label.** Area:
+admin/menu. Issue: in `AdminItemsTable.tsx` the switch knob is
+`absolute` with no `left-0`, so in the "on" state (`translate-x-[21px]`)
+it renders past the track and covers the first letter ("vailable").
+Confirmed pre-existing during Phase 8 (reproduced with the Phase 8 table
+change stashed). Impact: cosmetic. Action: anchor the knob with `left-0`.
+Status: open.
+
+**Stale references to the removed `design/` folder.** Area: docs/config.
+Issue: f5d3452 deleted `design/`, but CLAUDE.md, the `tailwind.config.ts`
+colors comment, `src/shared/routes.ts`, and the Tailwind-v4 entry above
+still point at files in it. `globals.css` + `tailwind.config.ts` are now the
+token source of truth. Action: update those references. Status: open.
+
 ## Resolved
 
 **Marketing images were AI-generated placeholders, not real cafe

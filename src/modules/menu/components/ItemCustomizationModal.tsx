@@ -66,7 +66,9 @@ export function ItemCustomizationModal({
               src={item.images[0]}
               alt={item.name}
               fill
-              sizes="100vw"
+              // Modal caps at sm:max-w-lg (512px); 100vw here made a
+              // 1920px DPR-2 screen fetch the w=3840 variant.
+              sizes="(min-width: 640px) 512px, 100vw"
               className="object-cover"
             />
           )}

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { IBM_Plex_Mono, Karla, Newsreader } from "next/font/google";
 import { auth } from "@/auth";
 import { Footer, Header } from "@/shared/components";
+import { SITE_OPEN_GRAPH, SITE_URL } from "@/shared/site";
 import { THEME_INIT_SCRIPT } from "@/shared/utils/theme";
 import { CartDrawer } from "@/modules/cart/components/CartDrawer";
 import { Providers } from "./providers";
@@ -34,6 +35,8 @@ const ibmPlexMono = IBM_Plex_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
+  openGraph: SITE_OPEN_GRAPH,
   title: {
     default: "Nook",
     template: "%s · Nook",

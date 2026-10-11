@@ -1,4 +1,5 @@
 export { getCategories } from "./getCategories";
+export { getFeaturedMenuItems } from "./getFeaturedMenuItems";
 export { getMenuItemById, getMenuItemsByCategory, getAllMenuItems } from "./getMenuItems";
 export { getOptionGroupById, getOptionGroupsByIds, getAllOptionGroups } from "./getOptionGroups";
 export { getOptionsByIds, getAllOptions } from "./getOptions";
