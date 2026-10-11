@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { formatHoursRange, OPENING_HOURS_ROWS } from "@/shared/content/opening-hours";
 import { ROUTES } from "@/shared/routes";
 
 export function Footer() {
@@ -16,9 +17,11 @@ export function Footer() {
 
         <div>
           <h2 className="font-mono text-xs uppercase tracking-[0.08em] text-ink-subtle">Visit</h2>
-          <p className="mt-3 text-sm text-ink-muted">Mon–Fri 7:00–16:00</p>
-          <p className="text-sm text-ink-muted">Sat 8:00–15:00</p>
-          <p className="text-sm text-ink-muted">Sun 8:00–14:00</p>
+          {OPENING_HOURS_ROWS.map((row, index) => (
+            <p key={row.shortLabel} className={`${index === 0 ? "mt-3 " : ""}text-sm text-ink-muted`}>
+              {`${row.shortLabel} ${formatHoursRange(row.hours, "–")}`}
+            </p>
+          ))}
         </div>
 
         <div>
