@@ -2,12 +2,14 @@ import Image from "next/image";
 import { Button } from "@/shared/components";
 import { formatMoney } from "@/shared/utils/format-money";
 import {
+  addButtonAccessibleName,
   CHOOSE_ADD_LABEL,
   FROM_PRICE_PREFIX,
   QUICK_ADD_LABEL,
   SOLD_OUT_LABEL,
   UNAVAILABLE_ADD_LABEL,
 } from "../content/menuContent";
+import type { AddButtonKind } from "../content/menuContent";
 import { computeFromPrice } from "../lib/computeFromPrice";
 import type { MenuItem, Option, OptionGroup } from "../types";
 import { DietaryBadgeList } from "./DietaryBadgeList";
@@ -31,11 +33,12 @@ export function MenuItemCard({
   const soldOut = !item.isAvailable;
   const hasOptionGroups = item.optionGroupIds.length > 0;
   const { isFrom, price } = computeFromPrice(item, optionGroupsById, optionsById);
-  const addLabel = soldOut
-    ? UNAVAILABLE_ADD_LABEL
-    : hasOptionGroups
-      ? CHOOSE_ADD_LABEL
-      : QUICK_ADD_LABEL;
+  const addKind: AddButtonKind = soldOut ? "unavailable" : hasOptionGroups ? "choose" : "quick-add";
+  const addLabel = {
+    unavailable: UNAVAILABLE_ADD_LABEL,
+    choose: CHOOSE_ADD_LABEL,
+    "quick-add": QUICK_ADD_LABEL,
+  }[addKind];
 
   return (
     <article
@@ -74,7 +77,12 @@ export function MenuItemCard({
             {isFrom && <span className="text-[11px] text-ink-subtle">{FROM_PRICE_PREFIX}</span>}
             <span className="font-mono text-base font-medium text-ink">{formatMoney(price)}</span>
           </div>
-          <Button variant="secondary" disabled={soldOut} onClick={() => onAdd(item)}>
+          <Button
+            variant="secondary"
+            disabled={soldOut}
+            onClick={() => onAdd(item)}
+            aria-label={addButtonAccessibleName(addKind, item.name)}
+          >
             {addLabel}
           </Button>
         </div>
