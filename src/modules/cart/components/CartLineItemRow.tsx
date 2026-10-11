@@ -1,7 +1,12 @@
 import Image from "next/image";
 import { QuantityStepper } from "@/shared/components";
 import { formatMoney } from "@/shared/utils/format-money";
-import { REMOVE_LABEL } from "../content/cartContent";
+import {
+  REMOVE_LABEL,
+  decreaseQuantityLabel,
+  increaseQuantityLabel,
+  removeItemLabel,
+} from "../content/cartContent";
 import type { CartLineItem } from "../types";
 
 export interface CartLineItemRowProps {
@@ -39,10 +44,13 @@ export function CartLineItemRow({ line, onIncrement, onDecrement, onRemove }: Ca
             onDecrement={onDecrement}
             size="sm"
             min={0}
+            incrementLabel={increaseQuantityLabel(line.name)}
+            decrementLabel={decreaseQuantityLabel(line.name)}
           />
           <button
             type="button"
             onClick={onRemove}
+            aria-label={removeItemLabel(line.name)}
             className="text-[12.5px] text-ink-subtle underline decoration-1 underline-offset-[3px] hover:text-clay"
           >
             {REMOVE_LABEL}
