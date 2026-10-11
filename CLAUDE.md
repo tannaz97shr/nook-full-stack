@@ -108,10 +108,17 @@ exported reference screens from Claude Design).
 
 ### Local Stripe testing
 
-- `stripe login` once, then `stripe listen --forward-to
-  localhost:3000/api/webhooks/stripe` — prints a `whsec_...` value for
-  `STRIPE_WEBHOOK_SECRET` (this differs from the dashboard's production
-  webhook secret; keep it updated in `.env.local` per dev session).
+- Run the listener with `bun run stripe:listen` (`scripts/stripe-listen.sh`).
+  A plain `stripe listen --forward-to ...` doesn't work here: under the CLI's
+  OAuth login it fails with a 403, and Stripe CLI 1.53 also requires
+  `--events`. The script reads `STRIPE_SECRET_KEY` from `.env.local` at
+  runtime and passes it with `--api-key`, forwarding
+  `checkout.session.completed` and `checkout.session.expired`.
+- **Tia runs the listener in her own terminal.** Claude Code can't read
+  `.env.local`, so it never starts the listener itself.
+- The listener prints a `whsec_...` value for `STRIPE_WEBHOOK_SECRET`. It
+  differs from the dashboard's production webhook secret, so keep it
+  updated in `.env.local` each dev session.
 - Prefer driving a real Checkout Session through `/api/checkout` with test
   card `4242 4242 4242 4242` over `stripe trigger` — a `trigger`-synthesized
   event won't carry a real `metadata.orderId`, so the webhook handler has

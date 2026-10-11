@@ -11,7 +11,8 @@ export function CartTrigger() {
       type="button"
       onClick={open}
       aria-expanded={isOpen}
-      aria-controls={CART_DRAWER_ID}
+      // Drawer unmounts when closed, so only point at it while it exists.
+      aria-controls={isOpen ? CART_DRAWER_ID : undefined}
       className="flex items-center gap-2.5 rounded-pill bg-gold px-[18px] py-2.5 text-sm font-bold text-gold-ink shadow-sm hover:bg-gold-hover"
     >
       <span>Cart</span>

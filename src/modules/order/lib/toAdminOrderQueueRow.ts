@@ -1,5 +1,5 @@
 import { formatMoney } from "@/shared/utils/format-money";
-import { formatOrderTaxLine } from "../content/orderStatusContent";
+import { formatOrderTaxLine, formatRedemptionLine } from "../content/orderStatusContent";
 import type { FulfillmentStatus, Order, PaymentStatus } from "../types/order";
 import { formatOrderDisplayId } from "./formatOrderDisplayId";
 import { formatOrderQueueTimestamp } from "./formatOrderQueueTimestamp";
@@ -12,9 +12,19 @@ export interface AdminOrderQueueRow {
   timeLabel: string;
   itemsSummary: string;
   totalLabel: string;
-  taxLabel: string;
+  /** Tax and redemption lines under the total, e.g. ["Tax $0.36", "Free drip coffee −$3.96"] — may be empty. */
+  subLineParts: string[];
   paymentStatus: PaymentStatus;
   fulfillmentStatus: FulfillmentStatus | null;
+}
+
+/** A legacy "Tax $0.00" says nothing, so it's dropped; the redemption explains totals like $0.00. */
+function subLineParts(order: Order): string[] {
+  const parts: string[] = [];
+  const isZeroLegacyTax = order.pricing.kind === "legacy-tax-added" && order.pricing.tax === 0;
+  if (!isZeroLegacyTax) parts.push(formatOrderTaxLine(order.pricing));
+  if (order.redemption) parts.push(formatRedemptionLine(order.redemption));
+  return parts;
 }
 
 /**
@@ -30,7 +40,7 @@ export function toAdminOrderQueueRow(order: Order, customerName: string | null):
     timeLabel: formatOrderQueueTimestamp(order.createdAt),
     itemsSummary: formatOrderSummaryLine(order.lineItems),
     totalLabel: formatMoney(order.total),
-    taxLabel: formatOrderTaxLine(order.pricing),
+    subLineParts: subLineParts(order),
     paymentStatus: order.paymentStatus,
     fulfillmentStatus: order.fulfillmentStatus,
   };
