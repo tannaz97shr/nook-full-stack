@@ -222,12 +222,6 @@ Phase 8 scope) and `ItemCustomizationModal` (image above its own `<h2>`)
 still use `alt={name}`. Impact: screen readers read the name twice there.
 Action: set both to `alt=""`. Status: open.
 
-**Homepage needs `SITE_URL` set per deployed environment.** Area: metadata.
-Issue: `src/shared/site.ts` feeds `metadataBase` from `SITE_URL`, falling
-back to `http://localhost:3000`. Impact: without it, production
-`og:image` URLs point at localhost and link previews break. Action: add
-`SITE_URL` to the Vercel/production env. Status: open, undeployed infra step.
-
 **`isFeatured` isn't in the seed data that's been applied.** Area:
 menu/seed. Issue: Phase 8 added `isFeatured` to `scripts/seed-menu.ts`, but
 the seed wasn't re-run; live items were flagged through the admin form
@@ -250,6 +244,16 @@ still point at files in it. `globals.css` + `tailwind.config.ts` are now the
 token source of truth. Action: update those references. Status: open.
 
 ## Resolved
+
+**Production og:image / twitter:image pointed at localhost.** ~~`metadataBase`
+came from `SITE_URL` with a `http://localhost:3000` fallback, and `SITE_URL`
+was never set on Vercel, so production link previews used
+`http://localhost:3000/opengraph-image.jpg`.~~ Resolved 2026-10-11:
+`src/shared/site.ts` now resolves `SITE_URL` override → Vercel production
+domain (`VERCEL_PROJECT_PRODUCTION_URL`) → preview deployment URL
+(`VERCEL_URL`) → localhost. It relies on Vercel's "Automatically expose
+System Environment Variables" setting, which is on by default. Set `SITE_URL`
+only if a custom domain should win over the Vercel-reported one.
 
 **Marketing images were AI-generated placeholders, not real cafe
 photography.** ~~`public/images/marketing/` (hero-latte-art.jpg,
