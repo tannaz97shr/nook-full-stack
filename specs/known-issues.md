@@ -6,6 +6,17 @@ migration scripts, known UX gaps.
 
 ## Open
 
+**Items possibly lost on add right after sign-in.** Area: cart. Issue:
+seen once in QA. Items added right after signing in seemed to go missing,
+and the header cart count flipped between 6 and 0. Not reproduced since.
+Impact: if real, a customer could lose cart items in the moments after
+signing in. Action: investigate before fixing. Starting points: the cart
+key switching from the guest anonymous id to the user id on session change
+(`cart/lib/cartId.ts`, `cart/lib/storage.ts`, `CartProvider`), and whether
+an add that lands during that switch is written under the old key or
+overwritten by a read of the new one. Status: open, not reproduced, no fix
+attempted.
+
 **Every menu item is treated as GST-taxable.** Area: order/pricing.
 Issue: menu prices are GST-inclusive, and the "Includes GST" figure is
 always total ÷ 11 (`order/lib/gst.ts`). Real cafes sell some GST-free
