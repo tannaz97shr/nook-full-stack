@@ -17,6 +17,7 @@ export const menuItemInputSchema = z.object({
   images: z.array(z.string()),
   dietaryTags: z.array(z.enum(DIETARY_TAGS)),
   isAvailable: z.boolean(),
+  isFeatured: z.boolean(),
   optionGroupIds: z.array(z.string()),
 });
 

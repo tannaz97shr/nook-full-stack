@@ -1,3 +1,5 @@
+import { HOMEPAGE_FEATURED_LIMIT } from "../lib/featured";
+
 export type AdminMenuTabId = "items" | "categories" | "groups";
 
 export const ADMIN_MENU_TABS: { id: AdminMenuTabId; label: string }[] = [
@@ -28,8 +30,12 @@ export const ITEM_FORM_LABELS = {
   dietaryTags: "Dietary tags",
   optionGroups: "Option groups",
   isAvailable: "Available for purchase",
+  isFeatured: "Feature on the homepage",
   photo: "Photo",
 };
+
+export const FEATURED_HELP_TEXT = `Up to ${HOMEPAGE_FEATURED_LIMIT} show on the homepage, in menu order. Sold-out items are skipped automatically.`;
+export const FEATURED_CHIP_LABEL = "Featured";
 
 export const CATEGORY_FORM_LABELS = {
   name: "Name",

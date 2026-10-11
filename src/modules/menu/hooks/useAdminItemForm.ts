@@ -38,6 +38,7 @@ export function useAdminItemForm({ item, onSuccess }: UseAdminItemFormInput) {
           images: item.images,
           dietaryTags: item.dietaryTags,
           isAvailable: item.isAvailable,
+          isFeatured: item.isFeatured,
           optionGroupIds: item.optionGroupIds,
         }
       : {
@@ -48,6 +49,7 @@ export function useAdminItemForm({ item, onSuccess }: UseAdminItemFormInput) {
           images: [],
           dietaryTags: [],
           isAvailable: true,
+          isFeatured: false,
           optionGroupIds: [],
         },
   });

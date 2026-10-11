@@ -17,6 +17,8 @@ export interface MenuItem {
   dietaryTags: DietaryTag[];
   /** The 86'd flag. */
   isAvailable: boolean;
+  /** Shown in the homepage "Popular this week" row (up to HOMEPAGE_FEATURED_LIMIT, available items only). */
+  isFeatured: boolean;
   displayOrder: number;
   /** References OptionGroup.id — OptionGroups are standalone, not embedded. */
   optionGroupIds: string[];

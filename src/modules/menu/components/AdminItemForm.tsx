@@ -7,6 +7,7 @@ import type { MenuItemInput } from "../lib/menuItemSchema";
 import {
   CANCEL_LABEL,
   DIETARY_TAG_OPTIONS,
+  FEATURED_HELP_TEXT,
   ITEM_FORM_LABELS,
   ITEM_FORM_TITLE,
   SAVE_LABEL,
@@ -97,6 +98,8 @@ export function AdminItemForm({ open, onClose, onSaved, item, categories, option
         />
 
         <Checkbox label={ITEM_FORM_LABELS.isAvailable} {...register("isAvailable")} />
+        <Checkbox label={ITEM_FORM_LABELS.isFeatured} {...register("isFeatured")} />
+        <p className="-mt-2 text-[12.5px] text-ink-subtle">{FEATURED_HELP_TEXT}</p>
 
         {formError && (
           <p role="alert" className="text-sm text-clay">
