@@ -1,15 +1,18 @@
 import Link from "next/link";
 import { CartTrigger } from "@/modules/cart/components/CartTrigger";
+import { AUTH_NAV_LABELS, NAV_LINKS } from "@/shared/content/nav-content";
 import { ROUTES } from "@/shared/routes";
 import { ThemeToggle } from "../molecules/ThemeToggle";
+import { MobileNav } from "./MobileNav";
 
 export interface HeaderProps {
   userId: string | null;
+  isAdmin: boolean;
 }
 
-export function Header({ userId }: HeaderProps) {
+export function Header({ userId, isAdmin }: HeaderProps) {
   const accountHref = userId ? ROUTES.account.root : ROUTES.signIn;
-  const accountLabel = userId ? "Account" : "Sign in";
+  const accountLabel = userId ? AUTH_NAV_LABELS.account : AUTH_NAV_LABELS.signIn;
 
   return (
     <header className="sticky top-0 z-30 border-b border-border bg-bg">
@@ -18,32 +21,24 @@ export function Header({ userId }: HeaderProps) {
           <span className="h-2 w-2 rounded-pill bg-gold" />
           Nook
         </Link>
-        <nav className="hidden items-center gap-6 text-sm font-medium text-ink-muted sm:flex">
-          <Link href={ROUTES.home} className="hover:text-ink">
-            Home
-          </Link>
-          <Link href={ROUTES.menu} className="hover:text-ink">
-            Menu
-          </Link>
-          <Link href={ROUTES.gallery} className="hover:text-ink">
-            Gallery
-          </Link>
-          <Link href={ROUTES.about} className="hover:text-ink">
-            About
-          </Link>
-          <Link href={ROUTES.contact} className="hover:text-ink">
-            Contact
-          </Link>
+        <nav className="hidden items-center gap-6 text-sm font-medium text-ink-muted md:flex">
+          {NAV_LINKS.map((link) => (
+            <Link key={link.href} href={link.href} className="hover:text-ink">
+              {link.label}
+            </Link>
+          ))}
         </nav>
-        <div className="flex items-center gap-3">
+        {/* gap-2 below md: logo + toggle + cart + menu button must fit in 320px. */}
+        <div className="flex items-center gap-2 md:gap-3">
           <ThemeToggle />
           <Link
             href={accountHref}
-            className="hidden text-sm font-semibold text-ink-muted hover:text-ink sm:inline"
+            className="hidden text-sm font-semibold text-ink-muted hover:text-ink md:inline"
           >
             {accountLabel}
           </Link>
           <CartTrigger />
+          <MobileNav isSignedIn={userId !== null} isAdmin={isAdmin} />
         </div>
       </div>
     </header>

@@ -17,6 +17,23 @@ export const CHOOSE_ADD_LABEL = "Choose";
 export const QUICK_ADD_LABEL = "+ Add";
 export const FROM_PRICE_PREFIX = "From";
 
+export type AddButtonKind = "unavailable" | "choose" | "quick-add";
+
+/**
+ * Card action names for assistive tech — the visible label leads (WCAG
+ * 2.5.3 Label in Name), followed by the item so each button is distinct.
+ */
+export function addButtonAccessibleName(kind: AddButtonKind, itemName: string): string {
+  switch (kind) {
+    case "unavailable":
+      return `${UNAVAILABLE_ADD_LABEL}: ${itemName}`;
+    case "choose":
+      return `${CHOOSE_ADD_LABEL} ${itemName}`;
+    case "quick-add":
+      return `Add ${itemName}`;
+  }
+}
+
 export const MODAL_SELECTION_HINTS: Record<"single" | "multiple", string> = {
   single: "Choose one",
   multiple: "Choose as many as you like",

@@ -51,6 +51,9 @@ export default async function RootLayout({
 }>) {
   const session = await auth();
   const userId = session?.user?.id ?? null;
+  // Only decides whether the mobile nav shows an Admin link — /admin and
+  // /api/admin/* still gate themselves (requireAdminSession).
+  const isAdmin = session?.user?.role === "admin";
 
   return (
     <html
@@ -70,7 +73,7 @@ export default async function RootLayout({
             reload (useAuthForm.ts), so there's no case where a client
             component needs this to change without a fresh render here. */}
         <Providers userId={userId}>
-          <Header userId={userId} />
+          <Header userId={userId} isAdmin={isAdmin} />
           {children}
           <Footer />
           <CartDrawer />

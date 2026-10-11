@@ -243,6 +243,17 @@ colors comment, `src/shared/routes.ts`, and the Tailwind-v4 entry above
 still point at files in it. `globals.css` + `tailwind.config.ts` are now the
 token source of truth. Action: update those references. Status: open.
 
+**`Modal` doesn't trap focus or lock scroll yet.** Area: shared
+components. Issue: `Drawer` now uses `useDialogBehavior` (Escape, focus
+in on open and back to the opener on close, Tab trap, body scroll lock),
+but `Modal` still only handles Escape, and its backdrop close button can
+be reached with Tab. Impact: keyboard users in `ItemCustomizationModal`
+and the admin form modals can tab out behind the overlay, and the page
+scrolls underneath. Action: call `useDialogBehavior` from `Modal` (ref on
+the dialog div, `tabIndex={-1}`, backdrop `tabIndex={-1}`), then re-check
+each modal's initial focus. Status: open, deferred from fix/mobile-nav
+to keep that branch scoped.
+
 ## Resolved
 
 **Production og:image / twitter:image pointed at localhost.** ~~`metadataBase`
