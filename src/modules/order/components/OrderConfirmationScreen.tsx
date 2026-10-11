@@ -6,6 +6,7 @@ import { formatMoney } from "@/shared/utils/format-money";
 import {
   FULFILLMENT_STATUS_STEPS,
   ORDER_CONFIRMATION_HEADING,
+  orderTaxLine,
   pendingPaymentStatusCopy,
 } from "../content/orderStatusContent";
 import { useOrderStatusPoll } from "../hooks/useOrderStatusPoll";
@@ -27,6 +28,7 @@ export function OrderConfirmationScreen({
   const cart = useCart();
   const { data } = useOrderStatusPoll(orderId, sessionId ?? "", shouldPoll);
   const order = data ?? initialOrder;
+  const taxLine = orderTaxLine(order.pricing);
 
   // Fires off whatever paymentStatus currently IS, not "a poll just
   // completed" — this is what correctly handles both orderings of the
@@ -92,10 +94,12 @@ export function OrderConfirmationScreen({
             <span>Subtotal</span>
             <span className="font-mono">{formatMoney(order.subtotal)}</span>
           </div>
-          <div className="flex justify-between text-[14.5px] text-ink-muted">
-            <span>Tax</span>
-            <span className="font-mono">{formatMoney(order.tax)}</span>
-          </div>
+          {order.pricing.kind === "legacy-tax-added" && (
+            <div className="flex justify-between text-[14.5px] text-ink-muted">
+              <span>{taxLine.label}</span>
+              <span className="font-mono">{formatMoney(taxLine.amount)}</span>
+            </div>
+          )}
           {order.redemption && (
             <div className="flex justify-between text-[14.5px] text-gold">
               <span>{order.redemption.name ?? "Reward applied"}</span>
@@ -106,6 +110,12 @@ export function OrderConfirmationScreen({
             <span>Total</span>
             <span className="font-mono">{formatMoney(order.total)}</span>
           </div>
+          {order.pricing.kind === "gst-inclusive" && (
+            <div className="flex justify-between text-[13px] text-ink-subtle">
+              <span>{taxLine.label}</span>
+              <span className="font-mono">{formatMoney(taxLine.amount)}</span>
+            </div>
+          )}
         </div>
       </div>
     </div>

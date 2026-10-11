@@ -1,6 +1,6 @@
 import { Badge, Button } from "@/shared/components";
 import { formatMoney } from "@/shared/utils/format-money";
-import { orderHistoryChipLabel } from "@/modules/order/content/orderStatusContent";
+import { formatOrderTaxLine, orderHistoryChipLabel } from "@/modules/order/content/orderStatusContent";
 import type { OrderSummaryDTO } from "@/modules/order/types";
 import { formatOrderSummaryLine } from "@/modules/order/lib/formatOrderSummaryLine";
 import { REORDER_CTA, REORDER_DEFERRED_TITLE } from "../content/orderHistoryContent";
@@ -27,7 +27,10 @@ export function OrderHistoryCard({ order }: OrderHistoryCardProps) {
       <p className="text-[14.5px] text-ink">{formatOrderSummaryLine(order.lineItems)}</p>
 
       <div className="flex items-center justify-between gap-3 border-t border-border pt-4">
-        <span className="font-mono text-base font-semibold text-ink">{formatMoney(order.total)}</span>
+        <div>
+          <div className="font-mono text-base font-semibold text-ink">{formatMoney(order.total)}</div>
+          <div className="mt-0.5 text-[12.5px] text-ink-subtle">{formatOrderTaxLine(order.pricing)}</div>
+        </div>
         <Button variant="secondary" disabled title={REORDER_DEFERRED_TITLE}>
           {REORDER_CTA}
         </Button>

@@ -7,11 +7,11 @@ import {
   markOrderFailed,
 } from "@/modules/order/api";
 import { checkoutRequestSchema } from "@/modules/order/lib/checkoutRequestSchema";
-import { SHIPPING_FLAT, TAX_RATE } from "@/modules/order/lib/pricingConstants";
+import { computeOrderTotals, toCents } from "@/modules/order/lib/gst";
+import { SHIPPING_FLAT } from "@/modules/order/lib/pricingConstants";
 import { reverifyOrderLines } from "@/modules/order/lib/reverifyOrderLines";
 import { ROUTES } from "@/shared/routes";
 import { stripe } from "@/shared/lib/stripe";
-import { roundToCents } from "@/shared/utils/format-money";
 import { logError } from "@/shared/utils/log-error";
 
 export async function POST(req: Request) {
@@ -28,18 +28,30 @@ export async function POST(req: Request) {
     return Response.json({ error: result.reason }, { status: 400 });
   }
 
-  const tax = roundToCents(result.subtotal * TAX_RATE);
-  const shipping = SHIPPING_FLAT;
-  const preDiscountTotal = roundToCents(result.subtotal + tax + shipping);
-
-  const redemptionResult = await verifyRedemption(parsed.data.rewardId, sessionUser, preDiscountTotal);
+  // Menu prices are GST-inclusive, so the pre-discount total IS the subtotal — nothing is added on top.
+  const redemptionResult = await verifyRedemption(parsed.data.rewardId, sessionUser, result.subtotal);
   if (!redemptionResult.ok) {
     return Response.json({ error: redemptionResult.reason }, { status: 400 });
   }
   const redemption = redemptionResult.redemption;
-  const total = roundToCents(preDiscountTotal - (redemption?.discountAmount ?? 0));
+  const { total, gstIncluded } = computeOrderTotals({
+    subtotal: result.subtotal,
+    discountAmount: redemption?.discountAmount ?? 0,
+  });
 
-  const orderData = { lineItems: result.lines, subtotal: result.subtotal, tax, shipping, total };
+  // Stripe charges Σ(unit_amount × quantity) − coupon, all in cents. Refuse before creating anything if that could ever differ from the total we store and display.
+  const stripeLineCents = result.lines.reduce((sum, line) => sum + toCents(line.unitPrice) * line.quantity, 0);
+  const stripeCouponCents = redemption ? toCents(redemption.discountAmount) : 0;
+  if (stripeLineCents - stripeCouponCents !== toCents(total)) {
+    logError(
+      new Error(`Stripe amount ${stripeLineCents - stripeCouponCents}c != order total ${toCents(total)}c`),
+      "checkout.amountMismatch",
+      { level: "error" },
+    );
+    return Response.json({ error: "Could not start checkout" }, { status: 500 });
+  }
+
+  const orderData = { lineItems: result.lines, subtotal: result.subtotal, gstIncluded, shipping: SHIPPING_FLAT, total };
 
   let orderId: string;
   if (redemption === null) {
@@ -62,7 +74,7 @@ export async function POST(req: Request) {
     let discounts: { coupon: string }[] | undefined;
     if (redemption && redemption.discountAmount > 0) {
       const coupon = await stripe.coupons.create({
-        amount_off: Math.round(redemption.discountAmount * 100),
+        amount_off: stripeCouponCents,
         currency: "usd",
         duration: "once",
         name: `Reward: ${redemption.rewardId}`,
@@ -72,24 +84,15 @@ export async function POST(req: Request) {
 
     const session = await stripe.checkout.sessions.create({
       mode: "payment",
-      line_items: [
-        ...result.lines.map((line) => ({
-          price_data: {
-            currency: "usd",
-            product_data: { name: line.name },
-            unit_amount: Math.round(line.unitPrice * 100),
-          },
-          quantity: line.quantity,
-        })),
-        {
-          price_data: {
-            currency: "usd",
-            product_data: { name: "Tax" },
-            unit_amount: Math.round(tax * 100),
-          },
-          quantity: 1,
+      // GST-inclusive unit prices — no separate tax line item.
+      line_items: result.lines.map((line) => ({
+        price_data: {
+          currency: "usd",
+          product_data: { name: line.name },
+          unit_amount: toCents(line.unitPrice),
         },
-      ],
+        quantity: line.quantity,
+      })),
       discounts,
       metadata: { orderId },
       success_url: `${origin}${ROUTES.orderConfirmation(orderId)}?session_id={CHECKOUT_SESSION_ID}`,

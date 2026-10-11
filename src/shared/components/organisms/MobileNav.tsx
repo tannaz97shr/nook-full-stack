@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
@@ -37,6 +37,7 @@ export function MobileNav({ isSignedIn, isAdmin }: MobileNavProps) {
   const { showToast } = useToast();
   const [open, setOpen] = useState(false);
   const [isSigningOut, setIsSigningOut] = useState(false);
+  const toggleRef = useRef<HTMLButtonElement>(null);
 
   // Never open alongside the cart: derived in the same render so both
   // drawers can't commit open together, and reset so it doesn't pop back
@@ -96,6 +97,7 @@ export function MobileNav({ isSignedIn, isAdmin }: MobileNavProps) {
   return (
     <>
       <button
+        ref={toggleRef}
         type="button"
         onClick={handleOpen}
         aria-label={MOBILE_NAV.openLabel}
@@ -106,7 +108,7 @@ export function MobileNav({ isSignedIn, isAdmin }: MobileNavProps) {
         <span aria-hidden>☰</span>
       </button>
 
-      <Drawer open={isOpen} onClose={handleClose} labelledBy={TITLE_ID} id={PANEL_ID}>
+      <Drawer open={isOpen} onClose={handleClose} labelledBy={TITLE_ID} id={PANEL_ID} returnFocusRef={toggleRef}>
         <div className="flex items-center justify-between gap-3 border-b border-border px-6 py-5">
           <h2
             id={TITLE_ID}

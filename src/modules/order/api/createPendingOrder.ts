@@ -7,7 +7,8 @@ export interface CreatePendingOrderInput {
   userId: string | null;
   lineItems: OrderLineItem[];
   subtotal: number;
-  tax: number;
+  /** Informational GST contained in total — never added on top. Legacy orders stored `tax` instead (see toOrder.ts). */
+  gstIncluded: number;
   shipping: number;
   total: number;
 }
@@ -31,7 +32,7 @@ export async function createPendingOrder(input: CreatePendingOrderInput): Promis
     userId: input.userId,
     lineItems: input.lineItems,
     subtotal: input.subtotal,
-    tax: input.tax,
+    gstIncluded: input.gstIncluded,
     shipping: input.shipping,
     total: input.total,
     paymentStatus: "Pending",

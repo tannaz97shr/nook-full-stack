@@ -1,5 +1,24 @@
-import type { FulfillmentStatus, PaymentStatus } from "../types/order";
+import { formatMoney } from "@/shared/utils/format-money";
+import type { FulfillmentStatus, OrderPricing, PaymentStatus } from "../types/order";
 import type { OrderSummaryDTO } from "../types/order-summary-dto";
+
+export const GST_INCLUDED_LABEL = "Includes GST";
+/** Orders placed before GST-inclusive pricing, displayed exactly as charged. */
+export const LEGACY_TAX_LABEL = "Tax";
+
+/** The one tax line every order surface shows — informational GST for new orders, the stored added-on tax for legacy ones. */
+export function orderTaxLine(pricing: OrderPricing): { label: string; amount: number } {
+  if (pricing.kind === "legacy-tax-added") {
+    return { label: LEGACY_TAX_LABEL, amount: pricing.tax };
+  }
+  return { label: GST_INCLUDED_LABEL, amount: pricing.gstIncluded };
+}
+
+/** Single-line form for compact surfaces (order history, admin queue): "Includes GST $2.51". */
+export function formatOrderTaxLine(pricing: OrderPricing): string {
+  const { label, amount } = orderTaxLine(pricing);
+  return `${label} ${formatMoney(amount)}`;
+}
 
 export const ORDER_CONFIRMATION_HEADING = "Order confirmed";
 export const ORDER_NOT_FOUND_HEADING = "Order not found";

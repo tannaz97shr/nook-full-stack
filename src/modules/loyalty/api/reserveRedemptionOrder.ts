@@ -60,7 +60,7 @@ export async function reserveRedemptionOrder(
       userId,
       lineItems: orderData.lineItems,
       subtotal: orderData.subtotal,
-      tax: orderData.tax,
+      gstIncluded: orderData.gstIncluded,
       shipping: orderData.shipping,
       total: orderData.total,
       paymentStatus: "Pending",

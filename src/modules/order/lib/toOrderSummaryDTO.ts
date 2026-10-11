@@ -6,7 +6,7 @@ export function toOrderSummaryDTO(order: Order): OrderSummaryDTO {
     id: order.id,
     lineItems: order.lineItems,
     subtotal: order.subtotal,
-    tax: order.tax,
+    pricing: order.pricing,
     shipping: order.shipping,
     total: order.total,
     paymentStatus: order.paymentStatus,

@@ -1,7 +1,4 @@
 import { formatMoney } from "@/shared/utils/format-money";
-import { TAX_RATE } from "@/modules/order/lib/pricingConstants";
-
-export { TAX_RATE };
 
 export const CART_HEADER_TITLE = "Your order";
 export const CART_PICKUP_LOCATION = "Pickup at 41 Ashgrove Lane";
@@ -16,6 +13,21 @@ export const CART_EMPTY_COPY = "Add something from the menu to get started.";
 export const CART_EMPTY_CTA = "Browse the menu";
 
 export const REMOVE_LABEL = "Remove";
+
+// Accessible names for a cart row's controls — the visible text stays generic ("Remove", "−", "+"), but a screen reader
+// user tabbing through several rows needs to know which item each button acts on. Remove's name starts with its visible
+// text so voice-control users can still say "click Remove".
+export function removeItemLabel(name: string): string {
+  return `${REMOVE_LABEL} ${name}`;
+}
+
+export function increaseQuantityLabel(name: string): string {
+  return `Increase quantity of ${name}`;
+}
+
+export function decreaseQuantityLabel(name: string): string {
+  return `Decrease quantity of ${name}`;
+}
 export const CHECKOUT_ERROR_MESSAGE = "Something went wrong starting checkout. Please try again.";
 
 export function checkoutButtonLabel(total: number, isSubmitting: boolean): string {

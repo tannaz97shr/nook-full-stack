@@ -23,11 +23,17 @@ function getFocusable(panel: HTMLElement): HTMLElement[] {
  *
  * `panelRef` must point at an element with `tabIndex={-1}` so it can take
  * focus itself when it contains nothing focusable.
+ *
+ * `returnFocusRef`, when given, is where focus goes on close instead of
+ * whatever was focused at open time. Pass the opener whenever it's a
+ * single known control: a pointer click doesn't focus a button in WebKit
+ * (Safari/iOS), so the captured "opener" there is just <body>.
  */
 export function useDialogBehavior(
   open: boolean,
   panelRef: RefObject<HTMLElement>,
   onClose: () => void,
+  returnFocusRef?: RefObject<HTMLElement>,
 ) {
   // Kept in a ref so a new onClose identity each render doesn't re-run the
   // open/close effect below (which would bounce focus back to the opener).
@@ -41,7 +47,8 @@ export function useDialogBehavior(
     const panel = panelRef.current;
     if (!panel) return;
 
-    const opener = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    const opener =
+      returnFocusRef?.current ?? (document.activeElement instanceof HTMLElement ? document.activeElement : null);
     (getFocusable(panel)[0] ?? panel).focus();
 
     const { body, documentElement } = document;
@@ -87,5 +94,5 @@ export function useDialogBehavior(
       body.style.paddingRight = previousPaddingRight;
       if (opener?.isConnected) opener.focus();
     };
-  }, [open, panelRef]);
+  }, [open, panelRef, returnFocusRef]);
 }

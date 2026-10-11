@@ -3,6 +3,7 @@ export type {
   OrderLineItem,
   OrderLineGroup,
   OrderLineOption,
+  OrderPricing,
   PaymentStatus,
   FulfillmentStatus,
 } from "./order";

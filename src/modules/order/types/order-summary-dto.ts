@@ -1,4 +1,4 @@
-import type { FulfillmentStatus, OrderLineItem, OrderRedemption, PaymentStatus } from "./order";
+import type { FulfillmentStatus, OrderLineItem, OrderPricing, OrderRedemption, PaymentStatus } from "./order";
 
 /**
  * What the confirmation page/polling route actually sends to the client —
@@ -11,7 +11,7 @@ export interface OrderSummaryDTO {
   id: string;
   lineItems: OrderLineItem[];
   subtotal: number;
-  tax: number;
+  pricing: OrderPricing;
   shipping: number;
   total: number;
   paymentStatus: PaymentStatus;

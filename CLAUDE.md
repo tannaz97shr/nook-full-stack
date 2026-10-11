@@ -13,7 +13,8 @@ exported reference screens from Claude Design).
 ## Stack
 
 - Runtime/package manager: **Bun**
-- Framework: **Next.js** (App Router)
+- Framework: **Next.js 14** (App Router)
+- Styling: **Tailwind CSS 3** (classic `tailwind.config.ts`)
 - Data fetching: **Axios + TanStack Query** — all data fetching goes through this
 - Auth: **Auth.js v5 (beta)** (`next-auth`) — credentials + Google providers
 - Backend/data: **Firebase Admin SDK** — Firestore + Storage (Blaze plan),
@@ -27,9 +28,10 @@ exported reference screens from Claude Design).
 ## Code style & structure
 
 - Fully typed TypeScript; split into separate files where sensible.
-- Design tokens via CSS variables + Tailwind `@theme` block — **no hardcoded
-  colors in components**, every color comes from a variable. See `design/`
-  for the token source of truth.
+- Design tokens via CSS variables wired into `tailwind.config.ts`
+  `theme.extend` (Tailwind 3) — **no hardcoded colors in components**,
+  every color comes from a variable. See `design/` for the token source
+  of truth.
 - Light and dark mode supported everywhere.
 - Minimum Tailwind classes at the component level — most elements come from
   `src/shared/components/...`, fully styled per the design system.
@@ -52,8 +54,8 @@ exported reference screens from Claude Design).
 
 - **Authorization:** `requireAdminSession()` and `requireSession()` are
   checked independently at the top of every relevant API route — never
-  rely on a page-level layout gate alone. `proxy.ts` (Next's renamed
-  middleware) uses its own lightweight, provider-less NextAuth instance;
+  rely on a page-level layout gate alone. `src/middleware.ts` uses its
+  own lightweight, provider-less NextAuth instance;
   its matcher excludes `/api`, so API routes must self-check.
 - **Firestore:** explicit field-mapping via mapper functions
   (`toProduct.ts`-style) — never spread `doc.data()` directly into a

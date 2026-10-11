@@ -6,6 +6,27 @@ migration scripts, known UX gaps.
 
 ## Open
 
+**Every menu item is treated as GST-taxable.** Area: order/pricing.
+Issue: menu prices are GST-inclusive, and the "Includes GST" figure is
+always total ÷ 11 (`order/lib/gst.ts`). Real cafes sell some GST-free
+food (e.g. basic unprepared food such as plain bread or fresh fruit),
+which this doesn't model. Impact: the informational GST line overstates
+GST on any order containing a GST-free item. The amount charged is
+unaffected. Action: if needed, add a per-item `gstFree` flag snapshotted
+onto order line items, and compute GST over the taxable lines only (with
+a rule for apportioning a reward discount across taxable and GST-free
+lines). Status: open, deliberate MVP simplification.
+
+**Currency is USD, not AUD.** Area: checkout, shared utils. Issue:
+Stripe Checkout Sessions and reward coupons are created with
+`currency: "usd"`, and `formatMoney` formats as `en-US`/`USD`. That
+doesn't match the cafe's Australian, GST-inclusive pricing. Impact:
+display shows "$", so it looks right, but Stripe settles in USD and
+receipts say USD. Action: switch to `aud` (Stripe, coupons) and
+`en-AU`/`AUD` (`format-money.ts`) together. Do it in its own change,
+since every Stripe amount and test flow is affected. Status: open, noted
+during the GST-inclusive pricing change.
+
 **Add-to-cart toast overlaps the cart drawer's Checkout button on mobile.**
 Area: cart, shared components. Issue: `ToastProvider` positions toasts with
 `fixed inset-x-0 bottom-6 z-[70]` (full viewport width, centered, above the
