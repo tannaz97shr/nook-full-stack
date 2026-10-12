@@ -1,4 +1,8 @@
-import { readLocalStorage, writeLocalStorage } from "@/shared/utils/safe-local-storage";
+import {
+  readLocalStorage,
+  removeLocalStorage,
+  writeLocalStorage,
+} from "@/shared/utils/safe-local-storage";
 import type { CartState } from "../types";
 
 const EMPTY_CART: CartState = { version: 2, items: [], selectedRewardId: null };
@@ -23,6 +27,16 @@ export function readCart(key: string): CartState {
   return EMPTY_CART;
 }
 
+/**
+ * Skips the write when the stored cart is already identical — after a tab
+ * re-reads its cart from another tab's `storage` event, the persist effect
+ * fires with that same state, and rewriting it would just echo between tabs.
+ */
 export function writeCart(key: string, state: CartState): void {
+  if (JSON.stringify(readLocalStorage<unknown>(key, null)) === JSON.stringify(state)) return;
   writeLocalStorage(key, state);
+}
+
+export function removeCart(key: string): void {
+  removeLocalStorage(key);
 }

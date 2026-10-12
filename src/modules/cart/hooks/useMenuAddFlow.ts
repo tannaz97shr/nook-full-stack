@@ -4,6 +4,7 @@ import { useState } from "react";
 import { instantAddToastMessage } from "@/modules/menu/content/menuContent";
 import type { SelectionsByGroupId } from "@/modules/menu/lib/optionGroupValidation";
 import type { MenuItem, Option, OptionGroup } from "@/modules/menu/types";
+import { useHasMounted } from "@/shared/hooks/useHasMounted";
 import { useToast } from "@/shared/hooks/useToast";
 import { buildSelectedGroups } from "../lib/pricing";
 import { useCart } from "./useCart";
@@ -25,6 +26,15 @@ export function useMenuAddFlow({ menuItemsById, optionGroupsById, optionsById }:
   const [openItemId, setOpenItemId] = useState<string | null>(null);
   const cart = useCart();
   const { showToast } = useToast();
+  // Add buttons are server-rendered, so they're visible before React has
+  // attached their click handlers — a click in that gap silently does
+  // nothing. Keep them disabled until this component has mounted (handlers
+  // live) and the cart has hydrated. useHasMounted, not cart.isHydrated
+  // alone: on /menu the grid streams in behind loading.tsx and hydrates
+  // after CartProvider, so isHydrated is already true there while the
+  // server HTML says disabled — a mismatch React 18 never patches.
+  const hasMounted = useHasMounted();
+  const isAddReady = hasMounted && cart.isHydrated;
 
   function handleAdd(item: MenuItem) {
     if (item.optionGroupIds.length === 0) {
@@ -53,6 +63,7 @@ export function useMenuAddFlow({ menuItemsById, optionGroupsById, optionsById }:
     : [];
 
   return {
+    isAddReady,
     openItem,
     openItemGroups,
     handleAdd,

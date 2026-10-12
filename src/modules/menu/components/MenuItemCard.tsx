@@ -19,6 +19,8 @@ export interface MenuItemCardProps {
   optionGroupsById: Record<string, OptionGroup>;
   optionsById: Record<string, Option>;
   onAdd: (item: MenuItem) => void;
+  /** The add flow isn't ready yet (pre-hydration) — the button renders disabled with a soft pending look. */
+  addPending?: boolean;
   /** Preload the photo — set only on the card that's the page's LCP element. */
   priority?: boolean;
 }
@@ -28,6 +30,7 @@ export function MenuItemCard({
   optionGroupsById,
   optionsById,
   onAdd,
+  addPending = false,
   priority = false,
 }: MenuItemCardProps) {
   const soldOut = !item.isAvailable;
@@ -80,6 +83,7 @@ export function MenuItemCard({
           <Button
             variant="secondary"
             disabled={soldOut}
+            pending={addPending}
             onClick={() => onAdd(item)}
             aria-label={addButtonAccessibleName(addKind, item.name)}
           >

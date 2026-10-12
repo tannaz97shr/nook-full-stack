@@ -6,17 +6,6 @@ migration scripts, known UX gaps.
 
 ## Open
 
-**Items possibly lost on add right after sign-in.** Area: cart. Issue:
-seen once in QA. Items added right after signing in seemed to go missing,
-and the header cart count flipped between 6 and 0. Not reproduced since.
-Impact: if real, a customer could lose cart items in the moments after
-signing in. Action: investigate before fixing. Starting points: the cart
-key switching from the guest anonymous id to the user id on session change
-(`cart/lib/cartId.ts`, `cart/lib/storage.ts`, `CartProvider`), and whether
-an add that lands during that switch is written under the old key or
-overwritten by a read of the new one. Status: open, not reproduced, no fix
-attempted.
-
 **Every menu item is treated as GST-taxable.** Area: order/pricing.
 Issue: menu prices are GST-inclusive, and the "Includes GST" figure is
 always total ÷ 11 (`order/lib/gst.ts`). Real cafes sell some GST-free
@@ -287,6 +276,47 @@ each modal's initial focus. Status: open, deferred from fix/mobile-nav
 to keep that branch scoped.
 
 ## Resolved
+
+**Items possibly lost on add right after sign-in.** ~~Seen once in QA:
+the first two adds right after signing in never reached the cart, and the
+header count flipped between 6 and 0. Suspected cause: the cart key
+switching from guest to user id mid-add.~~ Resolved 2026-10-12
+(fix/cart-sign-in-race). Reproduced with instrumented Playwright runs; it
+was not a key-switch race (`userId` is server-derived and fixed per
+document load, so there's no client "session loading" window). It was three
+separate causes:
+1. **Pre-hydration clicks were dead.** Add buttons are in the server HTML,
+   so they were visible and clickable before React attached handlers. A
+   click in that gap was silently dropped. Dev: 12/12 throttled runs lost
+   both adds (gap up to ~13s on Fast 3G while dev bundles load). Prod: the
+   homepage featured row had a ~35–90ms window. `/menu` in prod did not,
+   because its grid streams in behind `menu/loading.tsx` after hydration.
+   Fix: Choose, quick-add and the modal's "Add to cart" render disabled
+   (soft `pending` Button style plus `aria-busy`) until the component has
+   mounted and the cart has hydrated. Gating on `useHasMounted`, not
+   `cart.isHydrated` alone, matters: on `/menu` the streamed grid hydrates
+   after CartProvider, so `isHydrated` is already true while the server HTML
+   says disabled. React 18 never patches that attribute mismatch, so the
+   button would have stayed disabled.
+2. **The guest cart was never carried over.** On sign-in the header went
+   from the guest cart (6) to the empty account cart (0), and items added
+   in a tab still on the pre-sign-in page went to the guest cart, invisible
+   after sign-in. Fix: `cart/lib/mergeGuestCart.ts` merges the guest cart
+   into the account cart in CartProvider's hydration effect, whenever the
+   user is signed in and this device's guest cart has items. Matching lines
+   sum quantities, the account's reward is kept, and the guest cart is
+   deleted in the same effect, so it's idempotent under Strict Mode and on
+   sign-out/sign-in. A toast reports how many items were added.
+3. **Two tabs overwrote each other.** Each tab persisted its own stale
+   in-memory cart (last writer wins: an add in tab A was erased by an add in
+   tab B). Fix: a `storage` listener re-reads this tab's own cart key, and
+   `writeCart` skips writes identical to what's stored.
+
+Ruled out: adds landing between hydration and the cart's storage read (React
+flushes the hydration effect first; never lost), and bfcache restoring the
+pre-sign-in page (`Cache-Control: no-store` prevents it). Reconcile's
+non-functional `setItems` was only checked by reading the code. Exercising
+it needs an unavailable menu item, and dev shares production Firebase.
 
 **Production og:image / twitter:image pointed at localhost.** ~~`metadataBase`
 came from `SITE_URL` with a `http://localhost:3000` fallback, and `SITE_URL`

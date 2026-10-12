@@ -2,12 +2,15 @@
 
 import { createContext, useEffect, useState } from "react";
 import type { ReactNode } from "react";
+import { useToast } from "@/shared/hooks/useToast";
 import { roundToCents } from "@/shared/utils/format-money";
 import type { MenuItem, Option } from "@/modules/menu/types";
-import { cartStorageKey } from "../lib/cartId";
+import { guestCartMergedMessage } from "../content/cartContent";
+import { cartStorageKey, existingGuestCartStorageKey } from "../lib/cartId";
 import { cartLineKey } from "../lib/cartLineKey";
+import { mergeGuestCart } from "../lib/mergeGuestCart";
 import { reconcileCart } from "../lib/reconcileCart";
-import { readCart, writeCart } from "../lib/storage";
+import { readCart, removeCart, writeCart } from "../lib/storage";
 import type { CartLineItem, CartSelectedGroup, CartState } from "../types";
 
 export interface CartContextValue {
@@ -85,11 +88,51 @@ export function CartProvider({
     undefined,
   );
 
+  const { showToast } = useToast();
+
   useEffect(() => {
-    const state = readCart(cartStorageKey(userId));
+    const key = cartStorageKey(userId);
+    let state = readCart(key);
+
+    // Signed in with items still in this device's guest cart — either from
+    // before sign-in, or added afterwards in a tab still on the guest page.
+    // Merged and the guest cart deleted right here, synchronously, rather
+    // than via the persist effect: that makes it idempotent under Strict
+    // Mode's double invoke (the second run finds no guest cart and does
+    // nothing), and rescues stale-tab items on any later load, not just the
+    // first one after signing in.
+    const guestKey = userId ? existingGuestCartStorageKey() : null;
+    const guest = guestKey ? readCart(guestKey) : null;
+    if (guestKey && guest && guest.items.length > 0) {
+      const { merged, movedCount } = mergeGuestCart(state, guest);
+      writeCart(key, merged);
+      removeCart(guestKey);
+      state = merged;
+      showToast(guestCartMergedMessage(movedCount));
+    }
+
     setItems(state.items);
     setSelectedRewardId(state.selectedRewardId);
     setHydratedForUserId(userId);
+  }, [userId, showToast]);
+
+  // Another tab changed this cart: adopt its state instead of letting this
+  // tab's stale in-memory copy overwrite it on the next change. Only this
+  // tab's own key (or a full clear(), which reports key === null). The
+  // write that follows the re-render is skipped by writeCart since the
+  // stored value already matches, and the persist effect's
+  // hydratedForUserId gate still applies.
+  useEffect(() => {
+    const key = cartStorageKey(userId);
+    function handleStorage(event: StorageEvent) {
+      if (event.storageArea !== localStorage) return;
+      if (event.key !== null && event.key !== key) return;
+      const state = readCart(key);
+      setItems(state.items);
+      setSelectedRewardId(state.selectedRewardId);
+    }
+    window.addEventListener("storage", handleStorage);
+    return () => window.removeEventListener("storage", handleStorage);
   }, [userId]);
 
   useEffect(() => {

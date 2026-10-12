@@ -40,6 +40,10 @@ export function checkoutButtonLabel(total: number, isSubmitting: boolean): strin
   return `Checkout · ${formatMoney(total)}`;
 }
 
+export function guestCartMergedMessage(count: number): string {
+  return `Added ${count} item${count === 1 ? "" : "s"} from before you signed in`;
+}
+
 export function itemRemovedMessage(name: string): string {
   return `${name} is no longer available and was removed from your cart.`;
 }

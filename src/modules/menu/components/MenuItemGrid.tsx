@@ -6,6 +6,7 @@ export interface MenuItemGridProps {
   optionGroupsById: Record<string, OptionGroup>;
   optionsById: Record<string, Option>;
   onAdd: (item: MenuItem) => void;
+  addPending?: boolean;
   /** Preload the first card's photo — for grids that sit above the fold, where it's the LCP. */
   prioritizeFirst?: boolean;
 }
@@ -15,6 +16,7 @@ export function MenuItemGrid({
   optionGroupsById,
   optionsById,
   onAdd,
+  addPending = false,
   prioritizeFirst = false,
 }: MenuItemGridProps) {
   return (
@@ -26,6 +28,7 @@ export function MenuItemGrid({
           optionGroupsById={optionGroupsById}
           optionsById={optionsById}
           onAdd={onAdd}
+          addPending={addPending}
           priority={prioritizeFirst && index === 0}
         />
       ))}

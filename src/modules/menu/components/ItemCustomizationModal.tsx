@@ -22,6 +22,8 @@ export interface ItemCustomizationModalProps {
     quantity: number,
     unitPrice: number,
   ) => void;
+  /** The add flow isn't ready yet — "Add to cart" renders disabled with a soft pending look. */
+  addPending?: boolean;
 }
 
 export function ItemCustomizationModal({
@@ -31,6 +33,7 @@ export function ItemCustomizationModal({
   open,
   onClose,
   onAddToCart,
+  addPending = false,
 }: ItemCustomizationModalProps) {
   const {
     selections,
@@ -116,7 +119,7 @@ export function ItemCustomizationModal({
             onDecrement={decrementQuantity}
             size="md"
           />
-          <Button variant="primary" fullWidth disabled={!isValid} onClick={handleAdd}>
+          <Button variant="primary" fullWidth disabled={!isValid} pending={addPending} onClick={handleAdd}>
             {addToCartButtonLabel(total, isValid)}
           </Button>
         </div>
