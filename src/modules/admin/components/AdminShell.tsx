@@ -13,7 +13,9 @@ export interface AdminShellProps {
  * Sidebar on large screens (fixed, full-height), collapses to a top bar +
  * horizontal pill nav on small screens — same wideNav/narrowNav split as
  * the design source. A sibling <main> in admin/layout.tsx needs a
- * matching lg:pl-60 offset for the fixed sidebar.
+ * matching lg:pl-60 offset for the fixed sidebar. Owns the top of the
+ * page: the public Header/Footer live in the (site) route group, so
+ * nothing renders above or below this shell on /admin.
  */
 export function AdminShell({ user }: AdminShellProps) {
   return (
