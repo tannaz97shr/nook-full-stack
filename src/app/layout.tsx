@@ -1,10 +1,8 @@
 import type { Metadata } from "next";
 import { IBM_Plex_Mono, Karla, Newsreader } from "next/font/google";
 import { auth } from "@/auth";
-import { Footer, Header } from "@/shared/components";
 import { SITE_OPEN_GRAPH, SITE_URL } from "@/shared/site";
 import { THEME_INIT_SCRIPT } from "@/shared/utils/theme";
-import { CartDrawer } from "@/modules/cart/components/CartDrawer";
 import { Providers } from "./providers";
 import "./globals.css";
 
@@ -51,9 +49,6 @@ export default async function RootLayout({
 }>) {
   const session = await auth();
   const userId = session?.user?.id ?? null;
-  // Only decides whether the mobile nav shows an Admin link — /admin and
-  // /api/admin/* still gate themselves (requireAdminSession).
-  const isAdmin = session?.user?.role === "admin";
 
   return (
     <html
@@ -72,12 +67,9 @@ export default async function RootLayout({
             CartProvider/cartId.ts. Sign-in/out already does a full page
             reload (useAuthForm.ts), so there's no case where a client
             component needs this to change without a fresh render here. */}
-        <Providers userId={userId}>
-          <Header userId={userId} isAdmin={isAdmin} />
-          {children}
-          <Footer />
-          <CartDrawer />
-        </Providers>
+        {/* Public header/footer/cart drawer live in (site)/layout.tsx so
+            /admin's own shell owns the page there. */}
+        <Providers userId={userId}>{children}</Providers>
       </body>
     </html>
   );
