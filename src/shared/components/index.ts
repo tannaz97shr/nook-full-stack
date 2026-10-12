@@ -9,6 +9,7 @@ export * from "./atoms/Checkbox";
 export * from "./atoms/FileInput";
 export * from "./atoms/QuantityStepper";
 export * from "./atoms/SelectField";
+export * from "./atoms/Switch";
 export * from "./atoms/TextField";
 export * from "./molecules/CheckboxGroup";
 export * from "./molecules/Drawer";

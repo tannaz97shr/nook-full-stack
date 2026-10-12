@@ -9,14 +9,15 @@ export function AdminNav() {
   const pathname = usePathname();
 
   return (
-    <nav className="flex gap-2 overflow-x-auto lg:grid lg:gap-[3px] lg:overflow-visible">
+    // Equal thirds on small screens so every link is visible at 375px without scrolling.
+    <nav className="grid grid-cols-3 gap-2 lg:grid-cols-1 lg:gap-[3px]">
       {ADMIN_NAV_ITEMS.map((item) => {
         const isActive = pathname.startsWith(item.href);
         return (
           <Link
             key={item.id}
             href={item.href}
-            className={`whitespace-nowrap rounded-pill px-3 py-2 text-[13.5px] font-semibold lg:rounded-md lg:px-3 lg:py-[10px] ${
+            className={`whitespace-nowrap rounded-pill px-3 py-2 text-center text-[13.5px] lg:text-left font-semibold lg:rounded-md lg:px-3 lg:py-[10px] ${
               isActive
                 ? "bg-admin-row text-ink"
                 : "border border-border text-ink-subtle hover:bg-admin-row hover:text-ink lg:border-0"

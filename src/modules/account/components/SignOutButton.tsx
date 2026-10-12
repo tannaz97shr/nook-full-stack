@@ -2,7 +2,7 @@
 
 import { Button } from "@/shared/components";
 import { useHasMounted } from "@/shared/hooks/useHasMounted";
-import { SIGN_OUT_LABEL } from "../content/accountContent";
+import { SIGN_OUT_LABEL, SIGNING_OUT_LABEL } from "../content/accountContent";
 import { useSignOut } from "../hooks/useSignOut";
 
 export function SignOutButton() {
@@ -14,7 +14,7 @@ export function SignOutButton() {
 
   return (
     <Button variant="secondary" pending={!hasMounted || isSigningOut} onClick={signOut}>
-      {SIGN_OUT_LABEL}
+      {isSigningOut ? SIGNING_OUT_LABEL : SIGN_OUT_LABEL}
     </Button>
   );
 }

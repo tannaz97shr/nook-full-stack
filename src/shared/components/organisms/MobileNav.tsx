@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useCart } from "@/modules/cart/hooks/useCart";
-import { SIGN_OUT_LABEL } from "@/modules/account/content/accountContent";
+import { SIGN_OUT_LABEL, SIGNING_OUT_LABEL } from "@/modules/account/content/accountContent";
 import { useSignOut } from "@/modules/account/hooks/useSignOut";
 import { AUTH_NAV_LABELS, MOBILE_NAV, NAV_LINKS } from "@/shared/content/nav-content";
 import { ROUTES } from "@/shared/routes";
@@ -130,9 +130,10 @@ export function MobileNav({ isSignedIn, isAdmin }: MobileNavProps) {
                   type="button"
                   onClick={signOut}
                   disabled={isSigningOut}
-                  className="block w-full rounded-lg px-3 py-3 text-left font-display text-2xl text-ink-muted hover:bg-sunken hover:text-ink disabled:opacity-40"
+                  aria-busy={isSigningOut || undefined}
+                  className="block w-full rounded-lg px-3 py-3 text-left font-display text-2xl text-ink-muted hover:bg-sunken hover:text-ink disabled:cursor-wait disabled:opacity-80"
                 >
-                  {SIGN_OUT_LABEL}
+                  {isSigningOut ? SIGNING_OUT_LABEL : SIGN_OUT_LABEL}
                 </button>
               </>
             ) : (

@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import { Badge } from "@/shared/components";
+import { Badge, Switch } from "@/shared/components";
 import { useToast } from "@/shared/hooks/useToast";
 import { DEMO_READ_ONLY_MESSAGE } from "@/shared/content/demo-content";
 import { isDemoReadOnlyError } from "@/shared/utils/demo-read-only";
@@ -10,9 +10,11 @@ import { formatMoney } from "@/shared/utils/format-money";
 import { useMenuItemAvailabilityToggle } from "../hooks/useMenuItemAvailabilityToggle";
 import {
   ADMIN_ITEMS_FOOTNOTE,
+  AVAILABILITY_STATE_LABELS,
   AVAILABILITY_TOGGLE_ERROR,
   FEATURED_CHIP_LABEL,
   NEW_ITEM_LABEL,
+  availabilitySwitchLabel,
 } from "../content/adminMenuContent";
 import type { Category, MenuItem, OptionGroup } from "../types";
 
@@ -120,27 +122,12 @@ export function AdminItemsTable({
               <span className="text-[13px] text-ink-muted">{categoriesById[item.categoryId]?.name ?? "—"}</span>
               <span className="font-mono text-[13px] text-ink">{formatMoney(item.basePrice)}</span>
               <span className="text-[12.5px] leading-snug text-ink-subtle">{groupsSummary}</span>
-              <div className="flex items-center gap-2.5">
-                <button
-                  type="button"
-                  role="switch"
-                  aria-checked={item.isAvailable}
-                  aria-label={`Toggle availability for ${item.name}`}
-                  onClick={() => handleToggle(item)}
-                  className={`relative h-6 w-[42px] shrink-0 rounded-pill transition-colors ${
-                    item.isAvailable ? "bg-leaf" : "bg-border-strong"
-                  }`}
-                >
-                  <span
-                    className={`absolute top-[3px] h-[18px] w-[18px] rounded-pill bg-surface shadow-sm transition-transform ${
-                      item.isAvailable ? "translate-x-[21px]" : "translate-x-[3px]"
-                    }`}
-                  />
-                </button>
-                <span className="text-[12px] font-semibold text-ink-muted">
-                  {item.isAvailable ? "Available" : "86'd"}
-                </span>
-              </div>
+              <Switch
+                checked={item.isAvailable}
+                onCheckedChange={() => handleToggle(item)}
+                aria-label={availabilitySwitchLabel(item.name)}
+                stateLabel={item.isAvailable ? AVAILABILITY_STATE_LABELS.on : AVAILABILITY_STATE_LABELS.off}
+              />
             </div>
           );
         })}

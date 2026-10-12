@@ -88,6 +88,11 @@ export function optionGroupCreateErrorMessage(status: number | undefined): strin
 }
 
 export const AVAILABILITY_TOGGLE_ERROR = "Couldn't update availability — try again";
+export const AVAILABILITY_STATE_LABELS = { on: "Available", off: "86'd" };
+
+export function availabilitySwitchLabel(itemName: string): string {
+  return `Toggle availability for ${itemName}`;
+}
 export const IMAGE_UPLOAD_ERROR = "Couldn't upload that photo — try a JPEG, PNG, or WebP under 5MB";
 export const DIETARY_TAG_OPTIONS: { value: string; label: string }[] = [
   { value: "vegan", label: "Vegan" },

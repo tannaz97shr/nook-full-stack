@@ -13,6 +13,8 @@ export const ADMIN_NAV_ITEMS: AdminNavItem[] = [
 ];
 
 export const ADMIN_BACK_TO_SITE_LABEL = "← Back to site";
+/** Compact small-screen version of ADMIN_BACK_TO_SITE_LABEL. */
+export const ADMIN_EXIT_LABEL = "Exit";
 export const ADMIN_BRAND_LABEL = "Nook";
 export const ADMIN_STAFF_LABEL = "STAFF";
 

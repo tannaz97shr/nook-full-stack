@@ -7,6 +7,7 @@ import {
   ADMIN_BRAND_LABEL,
   ADMIN_DEMO_BADGE_LABEL,
   ADMIN_DEMO_BADGE_TITLE,
+  ADMIN_EXIT_LABEL,
   ADMIN_STAFF_LABEL,
 } from "../content/adminNavContent";
 import { AdminNav } from "./AdminNav";
@@ -28,7 +29,7 @@ export function AdminShell({ user }: AdminShellProps) {
 
   return (
     <header className="border-b border-border bg-admin-panel lg:fixed lg:inset-y-0 lg:left-0 lg:w-60 lg:border-b-0 lg:border-r">
-      <div className="flex items-center justify-between gap-3 px-4 py-3 lg:flex-col lg:items-stretch lg:justify-start lg:gap-6 lg:p-4">
+      <div className="flex flex-wrap items-center justify-between gap-3 px-4 py-3 lg:flex-col lg:flex-nowrap lg:items-stretch lg:justify-start lg:gap-6 lg:p-4">
         <div className="flex items-center gap-2 px-1">
           <span className="grid h-[30px] w-[30px] shrink-0 place-items-center rounded-sm bg-ink font-display text-base font-semibold text-bg">
             N
@@ -44,7 +45,8 @@ export function AdminShell({ user }: AdminShellProps) {
           )}
         </div>
 
-        <div className="min-w-0 flex-1 lg:flex-none">
+        {/* Own full-width row on small screens; squeezed between brand and actions, Loyalty was cut off at 390px. */}
+        <div className="order-last basis-full lg:order-none lg:basis-auto">
           <AdminNav />
         </div>
 
@@ -64,7 +66,7 @@ export function AdminShell({ user }: AdminShellProps) {
             href={ROUTES.home}
             className="rounded-pill border border-border px-3 py-2 text-[13px] font-semibold text-ink"
           >
-            Exit
+            {ADMIN_EXIT_LABEL}
           </Link>
         </div>
       </div>
