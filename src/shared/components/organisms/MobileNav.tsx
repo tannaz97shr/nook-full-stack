@@ -3,13 +3,11 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { signOut } from "next-auth/react";
 import { useCart } from "@/modules/cart/hooks/useCart";
 import { SIGN_OUT_LABEL } from "@/modules/account/content/accountContent";
+import { useSignOut } from "@/modules/account/hooks/useSignOut";
 import { AUTH_NAV_LABELS, MOBILE_NAV, NAV_LINKS } from "@/shared/content/nav-content";
-import { useToast } from "@/shared/hooks/useToast";
 import { ROUTES } from "@/shared/routes";
-import { logError } from "@/shared/utils/log-error";
 import { Drawer } from "../molecules/Drawer";
 
 const PANEL_ID = "mobile-nav";
@@ -34,9 +32,11 @@ export interface MobileNavProps {
 export function MobileNav({ isSignedIn, isAdmin }: MobileNavProps) {
   const pathname = usePathname();
   const { isOpen: isCartOpen, close: closeCart } = useCart();
-  const { showToast } = useToast();
+  // No useHasMounted gate here (unlike SignOutButton): the sign-out button
+  // lives in the Drawer, which only mounts after a client-side click, so
+  // it can never be on screen before hydration.
+  const { signOut, isSigningOut } = useSignOut("MobileNav.handleSignOut");
   const [open, setOpen] = useState(false);
-  const [isSigningOut, setIsSigningOut] = useState(false);
   const toggleRef = useRef<HTMLButtonElement>(null);
 
   // Never open alongside the cart: derived in the same render so both
@@ -67,17 +67,6 @@ export function MobileNav({ isSignedIn, isAdmin }: MobileNavProps) {
 
   function handleClose() {
     setOpen(false);
-  }
-
-  async function handleSignOut() {
-    setIsSigningOut(true);
-    try {
-      await signOut({ callbackUrl: ROUTES.home });
-    } catch (error) {
-      logError(error, "MobileNav.handleSignOut", { level: "error" });
-      showToast(MOBILE_NAV.signOutError, "error");
-      setIsSigningOut(false);
-    }
   }
 
   function renderLink(href: string, label: string) {
@@ -139,7 +128,7 @@ export function MobileNav({ isSignedIn, isAdmin }: MobileNavProps) {
                 {isAdmin && renderLink(ROUTES.admin.root, AUTH_NAV_LABELS.admin)}
                 <button
                   type="button"
-                  onClick={handleSignOut}
+                  onClick={signOut}
                   disabled={isSigningOut}
                   className="block w-full rounded-lg px-3 py-3 text-left font-display text-2xl text-ink-muted hover:bg-sunken hover:text-ink disabled:opacity-40"
                 >

@@ -26,5 +26,4 @@ export const MOBILE_NAV = {
   openLabel: "Open site navigation",
   closeLabel: "Close site navigation",
   title: "Site",
-  signOutError: "We couldn't sign you out just now. Please try again.",
 };
