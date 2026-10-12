@@ -21,6 +21,15 @@ export const AUTH_DIVIDER = "or";
 export const AUTH_GUEST_TEXT = "Ordering as a guest is fine too — you just won't collect points.";
 export const AUTH_GUEST_CTA = "Skip for now";
 
+export const AUTH_DEMO_CONTENT = {
+  heading: "Just looking around?",
+  blurb: "This is a portfolio demo. Jump straight in, no account needed.",
+  customerCta: "Try as a customer",
+  adminCta: "Try the admin, read-only",
+  pending: "Signing in…",
+  error: "Couldn't start the demo. Please try again.",
+} as const;
+
 export const AUTH_ERRORS = {
   invalidCredentials: "Incorrect email or password.",
   emailTaken: "That email's already registered.",

@@ -70,6 +70,7 @@ export async function reserveRedemptionOrder(
       redemption,
       pointsAwardedAt: null,
       pointsEarned: null,
+      isDemo: orderData.isDemo,
       createdAt: now,
       updatedAt: now,
     });

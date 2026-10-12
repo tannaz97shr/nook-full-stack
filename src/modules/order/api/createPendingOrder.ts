@@ -11,6 +11,7 @@ export interface CreatePendingOrderInput {
   gstIncluded: number;
   shipping: number;
   total: number;
+  isDemo: boolean;
 }
 
 /**
@@ -42,6 +43,7 @@ export async function createPendingOrder(input: CreatePendingOrderInput): Promis
     redemption: null,
     pointsAwardedAt: null,
     pointsEarned: null,
+    isDemo: input.isDemo,
     createdAt: FieldValue.serverTimestamp(),
     updatedAt: FieldValue.serverTimestamp(),
   });

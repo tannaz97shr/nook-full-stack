@@ -1,6 +1,7 @@
 import NextAuth from "next-auth";
 import { NextResponse } from "next/server";
 import { authConfig } from "@/auth.config";
+import { canViewAdmin } from "@/modules/auth/lib/roles";
 import {
   ROUTES,
   PROTECTED_ROUTE_PREFIXES,
@@ -32,7 +33,7 @@ export default auth((req) => {
     return NextResponse.redirect(new URL(signInWithCallback(pathname), req.nextUrl));
   }
 
-  if (isAdmin && req.auth?.user.role !== "admin") {
+  if (isAdmin && !canViewAdmin(req.auth?.user.role)) {
     return NextResponse.redirect(new URL(ROUTES.home, req.nextUrl));
   }
 });

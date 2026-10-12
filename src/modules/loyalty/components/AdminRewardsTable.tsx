@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { useToast } from "@/shared/hooks/useToast";
+import { DEMO_READ_ONLY_MESSAGE } from "@/shared/content/demo-content";
+import { isDemoReadOnlyError } from "@/shared/utils/demo-read-only";
 import { formatMoney } from "@/shared/utils/format-money";
 import { useRewardActiveToggle } from "../hooks/useRewardActiveToggle";
 import { ACTIVE_TOGGLE_ERROR, ADMIN_REWARDS_FOOTNOTE, NEW_REWARD_LABEL } from "../content/adminLoyaltyContent";
@@ -31,13 +33,13 @@ export function AdminRewardsTable({ rewards, onEdit, onCreateNew }: AdminRewards
     toggle.mutate(
       { rewardId: reward.id, isActive: nextActive },
       {
-        onError: () => {
+        onError: (error) => {
           setLocalRewards((current) =>
             current.map((existing) =>
               existing.id === reward.id ? { ...existing, isActive: reward.isActive } : existing,
             ),
           );
-          showToast(ACTIVE_TOGGLE_ERROR, "error");
+          showToast(isDemoReadOnlyError(error) ? DEMO_READ_ONLY_MESSAGE : ACTIVE_TOGGLE_ERROR, "error");
         },
       },
     );

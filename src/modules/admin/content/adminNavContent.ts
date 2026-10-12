@@ -15,3 +15,7 @@ export const ADMIN_NAV_ITEMS: AdminNavItem[] = [
 export const ADMIN_BACK_TO_SITE_LABEL = "← Back to site";
 export const ADMIN_BRAND_LABEL = "Nook";
 export const ADMIN_STAFF_LABEL = "STAFF";
+
+/** Shown to the read-only demo-admin role; every admin write is refused server-side. */
+export const ADMIN_DEMO_BADGE_LABEL = "Demo · read-only";
+export const ADMIN_DEMO_BADGE_TITLE = "Portfolio demo: you can look at everything, but changes are disabled.";

@@ -1,3 +1,4 @@
+import { isDemoAccountEmail } from "@/modules/auth/lib/demoAccounts";
 import { getOptionalSession } from "@/modules/auth/lib/getOptionalSession";
 import { reserveRedemptionOrder } from "@/modules/loyalty/api/reserveRedemptionOrder";
 import { verifyRedemption } from "@/modules/loyalty/lib/verifyRedemption";
@@ -6,6 +7,7 @@ import {
   createPendingOrder,
   markOrderFailed,
 } from "@/modules/order/api";
+import { STRIPE_CHECKOUT_DEMO_MESSAGE } from "@/modules/order/content/checkoutContent";
 import { checkoutRequestSchema } from "@/modules/order/lib/checkoutRequestSchema";
 import { computeOrderTotals, toCents } from "@/modules/order/lib/gst";
 import { SHIPPING_FLAT } from "@/modules/order/lib/pricingConstants";
@@ -51,7 +53,15 @@ export async function POST(req: Request) {
     return Response.json({ error: "Could not start checkout" }, { status: 500 });
   }
 
-  const orderData = { lineItems: result.lines, subtotal: result.subtotal, gstIncluded, shipping: SHIPPING_FLAT, total };
+  const orderData = {
+    lineItems: result.lines,
+    subtotal: result.subtotal,
+    gstIncluded,
+    shipping: SHIPPING_FLAT,
+    total,
+    // Tagged so demo checkouts never land in the real admin's queue.
+    isDemo: isDemoAccountEmail(sessionUser?.email),
+  };
 
   let orderId: string;
   if (redemption === null) {
@@ -95,6 +105,7 @@ export async function POST(req: Request) {
       })),
       discounts,
       metadata: { orderId },
+      custom_text: { submit: { message: STRIPE_CHECKOUT_DEMO_MESSAGE } },
       success_url: `${origin}${ROUTES.orderConfirmation(orderId)}?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${origin}${ROUTES.menu}`,
     });

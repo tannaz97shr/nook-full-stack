@@ -6,6 +6,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
 import { API_ROUTES } from "@/shared/api-routes";
 import { api } from "@/shared/lib/axios";
+import { DEMO_READ_ONLY_MESSAGE } from "@/shared/content/demo-content";
+import { isDemoReadOnlyError } from "@/shared/utils/demo-read-only";
 import { menuItemInputSchema } from "../lib/menuItemSchema";
 import type { MenuItemInput } from "../lib/menuItemSchema";
 import { itemCreateErrorMessage } from "../content/adminMenuContent";
@@ -65,7 +67,7 @@ export function useAdminItemForm({ item, onSuccess }: UseAdminItemFormInput) {
       onSuccess();
     } catch (error) {
       const status = axios.isAxiosError(error) ? error.response?.status : undefined;
-      setFormError(itemCreateErrorMessage(status));
+      setFormError(isDemoReadOnlyError(error) ? DEMO_READ_ONLY_MESSAGE : itemCreateErrorMessage(status));
     }
   }
 

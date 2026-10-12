@@ -1,5 +1,7 @@
-export type Role = "customer" | "admin";
-export type AuthProvider = "credentials" | "google";
+/** "demo-admin": can view every admin page, but every admin mutation is rejected server-side (see lib/roles.ts). */
+export type Role = "customer" | "admin" | "demo-admin";
+/** "demo": passwordless portfolio accounts, signed into only via the "demo" provider (see lib/demoAccounts.ts). */
+export type AuthProvider = "credentials" | "google" | "demo";
 
 export interface User {
   id: string;

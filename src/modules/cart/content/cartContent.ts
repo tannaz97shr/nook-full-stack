@@ -1,3 +1,4 @@
+import { STRIPE_TEST_CARD } from "@/shared/content/demo-content";
 import { formatMoney } from "@/shared/utils/format-money";
 
 export const CART_HEADER_TITLE = "Your order";
@@ -33,6 +34,9 @@ export function increaseQuantityLabel(name: string): string {
 export function decreaseQuantityLabel(name: string): string {
   return `Decrease quantity of ${name}`;
 }
+/** Portfolio deployment: Stripe runs in test mode, so every visitor needs the test card. */
+export const CART_DEMO_NOTICE = `Demo store. Payments use Stripe test mode, so nothing is charged. Pay with card ${STRIPE_TEST_CARD}, any future date and any CVC.`;
+
 export const CHECKOUT_ERROR_MESSAGE = "Something went wrong starting checkout. Please try again.";
 
 export function checkoutButtonLabel(total: number, isSubmitting: boolean): string {

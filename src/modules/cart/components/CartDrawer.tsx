@@ -16,6 +16,7 @@ import { GST_INCLUDED_LABEL } from "@/modules/order/content/orderStatusContent";
 import { computeOrderTotals } from "@/modules/order/lib/gst";
 import type { CheckoutRequestBody } from "@/modules/order/types";
 import {
+  CART_DEMO_NOTICE,
   CART_HEADER_TITLE,
   CHECKOUT_ERROR_MESSAGE,
   cartSummaryLine,
@@ -161,6 +162,7 @@ export function CartDrawer() {
                 <span className="font-mono">{formatMoney(totals.gstIncluded)}</span>
               </div>
             </div>
+            <p className="mb-3 text-[12.5px] leading-snug text-ink-subtle">{CART_DEMO_NOTICE}</p>
             <Button variant="primary" fullWidth disabled={isSubmitting} onClick={handleCheckout}>
               {checkoutButtonLabel(totals.total, isSubmitting)}
             </Button>

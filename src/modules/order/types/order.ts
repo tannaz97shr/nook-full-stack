@@ -90,6 +90,13 @@ export interface Order {
   pointsAwardedAt: number | null;
   /** Snapshot of points actually credited, set alongside pointsAwardedAt. */
   pointsEarned: number | null;
+  /**
+   * Placed by the portfolio demo customer (see auth/lib/demoAccounts.ts).
+   * Hidden from the real admin's queue and stats; the read-only
+   * demo-admin sees them. False for every order placed before this field
+   * existed.
+   */
+  isDemo: boolean;
   createdAt: number;
   updatedAt: number;
 }

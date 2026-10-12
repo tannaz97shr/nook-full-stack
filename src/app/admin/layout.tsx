@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { redirect } from "next/navigation";
+import { canViewAdmin } from "@/modules/auth/lib/roles";
 import { requireSession } from "@/modules/auth/lib/requireSession";
 import { AdminShell } from "@/modules/admin/components/AdminShell";
 import { ROUTES, signInWithCallback } from "@/shared/routes";
@@ -21,7 +22,8 @@ export default async function AdminLayout({ children }: { children: ReactNode })
   if ("error" in guard) {
     redirect(signInWithCallback(ROUTES.admin.root));
   }
-  if (guard.session.user.role !== "admin") {
+  // demo-admin may view; its writes are refused by requireAdminSession() in every admin API route.
+  if (!canViewAdmin(guard.session.user.role)) {
     redirect(ROUTES.home);
   }
 

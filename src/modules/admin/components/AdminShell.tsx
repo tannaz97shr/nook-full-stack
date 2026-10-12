@@ -1,8 +1,14 @@
 import Link from "next/link";
-import { ThemeToggle } from "@/shared/components";
+import { Badge, ThemeToggle } from "@/shared/components";
 import { ROUTES } from "@/shared/routes";
 import type { SessionUser } from "@/modules/auth/types/session-user";
-import { ADMIN_BACK_TO_SITE_LABEL, ADMIN_BRAND_LABEL, ADMIN_STAFF_LABEL } from "../content/adminNavContent";
+import {
+  ADMIN_BACK_TO_SITE_LABEL,
+  ADMIN_BRAND_LABEL,
+  ADMIN_DEMO_BADGE_LABEL,
+  ADMIN_DEMO_BADGE_TITLE,
+  ADMIN_STAFF_LABEL,
+} from "../content/adminNavContent";
 import { AdminNav } from "./AdminNav";
 
 export interface AdminShellProps {
@@ -18,6 +24,8 @@ export interface AdminShellProps {
  * nothing renders above or below this shell on /admin.
  */
 export function AdminShell({ user }: AdminShellProps) {
+  const isDemoAdmin = user.role === "demo-admin";
+
   return (
     <header className="border-b border-border bg-admin-panel lg:fixed lg:inset-y-0 lg:left-0 lg:w-60 lg:border-b-0 lg:border-r">
       <div className="flex items-center justify-between gap-3 px-4 py-3 lg:flex-col lg:items-stretch lg:justify-start lg:gap-6 lg:p-4">
@@ -29,6 +37,11 @@ export function AdminShell({ user }: AdminShellProps) {
             <div className="text-sm font-bold leading-tight text-ink">{ADMIN_BRAND_LABEL}</div>
             <div className="font-mono text-[10.5px] tracking-wide text-ink-subtle">{ADMIN_STAFF_LABEL}</div>
           </div>
+          {isDemoAdmin && (
+            <Badge variant="gold" title={ADMIN_DEMO_BADGE_TITLE} className="ml-1 hidden whitespace-nowrap lg:inline-flex">
+              {ADMIN_DEMO_BADGE_LABEL}
+            </Badge>
+          )}
         </div>
 
         <div className="min-w-0 flex-1 lg:flex-none">
@@ -55,6 +68,15 @@ export function AdminShell({ user }: AdminShellProps) {
           </Link>
         </div>
       </div>
+
+      {/* Own row on small screens — inline in the top bar it squeezed the horizontal nav to nothing. */}
+      {isDemoAdmin && (
+        <div className="border-t border-border px-4 py-2 lg:hidden">
+          <Badge variant="gold" title={ADMIN_DEMO_BADGE_TITLE}>
+            {ADMIN_DEMO_BADGE_LABEL}
+          </Badge>
+        </div>
+      )}
 
       <span className="sr-only">Signed in as {user.name}</span>
     </header>

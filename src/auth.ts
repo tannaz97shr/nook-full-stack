@@ -5,6 +5,8 @@ import bcrypt from "bcryptjs";
 import { authConfig } from "@/auth.config";
 import { getUserByEmail, getPasswordHashByEmail, upsertGoogleUser } from "@/modules/auth/api";
 import { credentialsSchema } from "@/modules/auth/lib/credentialsSchema";
+import { DEMO_ACCOUNTS, isDemoAccessEnabled } from "@/modules/auth/lib/demoAccounts";
+import { demoSignInSchema } from "@/modules/auth/lib/demoSignInSchema";
 import { toSessionUser } from "@/modules/auth/lib/toSessionUser";
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
@@ -26,6 +28,28 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
         const valid = await bcrypt.compare(parsed.data.password, hash);
         if (!valid) return null;
+
+        return toSessionUser(user);
+      },
+    }),
+    // One-click portfolio demo sign-in. Passwordless by design: the demo
+    // accounts have no credentials doc at all, so there's no secret to
+    // leak. Only a persona name comes from the client; the email is
+    // hardcoded in DEMO_ACCOUNTS and the stored doc must be a "demo"
+    // account with exactly the expected role.
+    Credentials({
+      id: "demo",
+      name: "Demo",
+      credentials: { persona: {} },
+      async authorize(raw) {
+        if (!isDemoAccessEnabled()) return null;
+
+        const parsed = demoSignInSchema.safeParse(raw);
+        if (!parsed.success) return null;
+
+        const account = DEMO_ACCOUNTS[parsed.data.persona];
+        const user = await getUserByEmail(account.email);
+        if (!user || user.authProvider !== "demo" || user.role !== account.role) return null;
 
         return toSessionUser(user);
       },
