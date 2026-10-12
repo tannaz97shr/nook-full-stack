@@ -19,6 +19,15 @@ export function getOrCreateAnonId(): string {
  * a signed-in one, at effectively zero extra cost over a flat "guest" key.
  */
 export function cartStorageKey(userId: string | null): string {
-  const effectiveId = userId ?? `guest:${getOrCreateAnonId()}`;
-  return `nook:cart:${effectiveId}`;
+  return userId ? `nook:cart:${userId}` : guestCartKey(getOrCreateAnonId());
+}
+
+/** This device's guest cart key, or null if it never had an anon id (so never had a guest cart). Never creates one. */
+export function existingGuestCartStorageKey(): string | null {
+  const anonId = readLocalStorage<string | null>(ANON_ID_STORAGE_KEY, null);
+  return anonId ? guestCartKey(anonId) : null;
+}
+
+function guestCartKey(anonId: string): string {
+  return `nook:cart:guest:${anonId}`;
 }

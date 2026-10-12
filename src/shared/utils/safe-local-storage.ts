@@ -23,3 +23,11 @@ export function writeLocalStorage<T>(key: string, value: T): void {
     logError(error, `writeLocalStorage:${key}`, { level: "warn" });
   }
 }
+
+export function removeLocalStorage(key: string): void {
+  try {
+    localStorage.removeItem(key);
+  } catch (error) {
+    logError(error, `removeLocalStorage:${key}`, { level: "warn" });
+  }
+}
