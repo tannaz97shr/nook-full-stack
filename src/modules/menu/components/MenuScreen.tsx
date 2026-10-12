@@ -35,7 +35,7 @@ export function MenuScreen({
   const [activeCategoryId, setActiveCategoryId] = useState(categories[0]?.id ?? "");
   const cart = useCart();
   const { showToast } = useToast();
-  const { openItem, openItemGroups, handleAdd, handleAddFromModal, closeModal } = useMenuAddFlow({
+  const { isAddReady, openItem, openItemGroups, handleAdd, handleAddFromModal, closeModal } = useMenuAddFlow({
     menuItemsById,
     optionGroupsById,
     optionsById,
@@ -91,6 +91,7 @@ export function MenuScreen({
           optionGroupsById={optionGroupsById}
           optionsById={optionsById}
           onAdd={handleAdd}
+          addPending={!isAddReady}
           prioritizeFirst
         />
       </div>
@@ -104,6 +105,7 @@ export function MenuScreen({
           open={Boolean(openItem)}
           onClose={closeModal}
           onAddToCart={handleAddFromModal}
+          addPending={!isAddReady}
         />
       )}
     </main>

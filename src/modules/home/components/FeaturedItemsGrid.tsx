@@ -14,7 +14,7 @@ export interface FeaturedItemsGridProps {
 }
 
 export function FeaturedItemsGrid({ items, optionGroupsById, optionsById }: FeaturedItemsGridProps) {
-  const { openItem, openItemGroups, handleAdd, handleAddFromModal, closeModal } = useMenuAddFlow({
+  const { isAddReady, openItem, openItemGroups, handleAdd, handleAddFromModal, closeModal } = useMenuAddFlow({
     menuItemsById: Object.fromEntries(items.map((item) => [item.id, item])),
     optionGroupsById,
     optionsById,
@@ -27,6 +27,7 @@ export function FeaturedItemsGrid({ items, optionGroupsById, optionsById }: Feat
         optionGroupsById={optionGroupsById}
         optionsById={optionsById}
         onAdd={handleAdd}
+        addPending={!isAddReady}
       />
       {openItem && (
         <ItemCustomizationModal
@@ -36,6 +37,7 @@ export function FeaturedItemsGrid({ items, optionGroupsById, optionsById }: Feat
           open={Boolean(openItem)}
           onClose={closeModal}
           onAddToCart={handleAddFromModal}
+          addPending={!isAddReady}
         />
       )}
     </>
