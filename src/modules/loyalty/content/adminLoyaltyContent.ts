@@ -16,6 +16,11 @@ export const ADMIN_REWARDS_FOOTNOTE =
   "Deactivating a reward hides it from the catalog immediately but never changes past orders that already redeemed it.";
 
 export const ACTIVE_TOGGLE_ERROR = "Couldn't update reward status — try again";
+export const ACTIVE_STATE_LABELS = { on: "Active", off: "Inactive" };
+
+export function activeSwitchLabel(rewardName: string): string {
+  return `Toggle active status for ${rewardName}`;
+}
 
 export function rewardCreateErrorMessage(status: number | undefined): string {
   return status === 409 ? "A reward with that name already exists" : "Something went wrong";

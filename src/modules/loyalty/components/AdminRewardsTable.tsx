@@ -1,12 +1,19 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { Switch } from "@/shared/components";
 import { useToast } from "@/shared/hooks/useToast";
 import { DEMO_READ_ONLY_MESSAGE } from "@/shared/content/demo-content";
 import { isDemoReadOnlyError } from "@/shared/utils/demo-read-only";
 import { formatMoney } from "@/shared/utils/format-money";
 import { useRewardActiveToggle } from "../hooks/useRewardActiveToggle";
-import { ACTIVE_TOGGLE_ERROR, ADMIN_REWARDS_FOOTNOTE, NEW_REWARD_LABEL } from "../content/adminLoyaltyContent";
+import {
+  ACTIVE_STATE_LABELS,
+  ACTIVE_TOGGLE_ERROR,
+  ADMIN_REWARDS_FOOTNOTE,
+  NEW_REWARD_LABEL,
+  activeSwitchLabel,
+} from "../content/adminLoyaltyContent";
 import type { RewardCatalogItem } from "../types/reward";
 
 export interface AdminRewardsTableProps {
@@ -75,27 +82,12 @@ export function AdminRewardsTable({ rewards, onEdit, onCreateNew }: AdminRewards
             </button>
             <span className="font-mono text-[13px] text-ink">{reward.pointsCost} pts</span>
             <span className="font-mono text-[13px] text-ink">{formatMoney(reward.discountValue)}</span>
-            <div className="flex items-center gap-2.5">
-              <button
-                type="button"
-                role="switch"
-                aria-checked={reward.isActive}
-                aria-label={`Toggle active status for ${reward.name}`}
-                onClick={() => handleToggle(reward)}
-                className={`relative h-6 w-[42px] shrink-0 rounded-pill transition-colors ${
-                  reward.isActive ? "bg-leaf" : "bg-border-strong"
-                }`}
-              >
-                <span
-                  className={`absolute top-[3px] h-[18px] w-[18px] rounded-pill bg-surface shadow-sm transition-transform ${
-                    reward.isActive ? "translate-x-[21px]" : "translate-x-[3px]"
-                  }`}
-                />
-              </button>
-              <span className="text-[12px] font-semibold text-ink-muted">
-                {reward.isActive ? "Active" : "Inactive"}
-              </span>
-            </div>
+            <Switch
+              checked={reward.isActive}
+              onCheckedChange={() => handleToggle(reward)}
+              aria-label={activeSwitchLabel(reward.name)}
+              stateLabel={reward.isActive ? ACTIVE_STATE_LABELS.on : ACTIVE_STATE_LABELS.off}
+            />
           </div>
         ))}
       </div>
