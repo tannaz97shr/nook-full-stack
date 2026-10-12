@@ -6,10 +6,12 @@ import { formatMoney } from "@/shared/utils/format-money";
 import {
   FULFILLMENT_STATUS_STEPS,
   ORDER_CONFIRMATION_HEADING,
+  ORDER_NUMBER_LABEL,
   orderTaxLine,
   pendingPaymentStatusCopy,
 } from "../content/orderStatusContent";
 import { useOrderStatusPoll } from "../hooks/useOrderStatusPoll";
+import { formatOrderDisplayId } from "../lib/formatOrderDisplayId";
 import type { OrderSummaryDTO } from "../types/order-summary-dto";
 
 export interface OrderConfirmationScreenProps {
@@ -56,6 +58,9 @@ export function OrderConfirmationScreen({
   return (
     <div className="mx-auto max-w-lg px-6 py-12">
       <h1 className="font-display text-3xl text-ink">{ORDER_CONFIRMATION_HEADING}</h1>
+      <p className="mt-1 text-[14.5px] text-ink-muted">
+        {ORDER_NUMBER_LABEL} <span className="font-mono font-medium text-ink">{formatOrderDisplayId(orderId)}</span>
+      </p>
 
       {order.paymentStatus !== "Paid" ? (
         <p className="mt-3 text-base text-ink-muted">{pendingPaymentStatusCopy(order.paymentStatus)}</p>

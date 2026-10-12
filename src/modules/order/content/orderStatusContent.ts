@@ -32,6 +32,8 @@ export function formatRedemptionLine(redemption: Pick<OrderRedemption, "name" | 
 }
 
 export const ORDER_CONFIRMATION_HEADING = "Order confirmed";
+/** Followed by the short display ID, the same form the admin queue shows. */
+export const ORDER_NUMBER_LABEL = "Order";
 export const ORDER_NOT_FOUND_HEADING = "Order not found";
 export const ORDER_NOT_FOUND_COPY = "We couldn't find that order. Check the link and try again.";
 
