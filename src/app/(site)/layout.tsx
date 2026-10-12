@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import { auth } from "@/auth";
 import { Footer, Header } from "@/shared/components";
 import { CartDrawer } from "@/modules/cart/components/CartDrawer";
+import { canViewAdmin } from "@/modules/auth/lib/roles";
 
 /**
  * Public-site chrome. Lives in the (site) route group rather than the root
@@ -14,7 +15,7 @@ export default async function SiteLayout({ children }: { children: ReactNode }) 
   const userId = session?.user?.id ?? null;
   // Only decides whether the mobile nav shows an Admin link — /admin and
   // /api/admin/* still gate themselves (requireAdminSession).
-  const isAdmin = session?.user?.role === "admin";
+  const isAdmin = canViewAdmin(session?.user?.role);
 
   return (
     <>

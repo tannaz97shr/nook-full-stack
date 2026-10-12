@@ -3,6 +3,10 @@
 import { useState } from "react";
 import { API_ROUTES } from "@/shared/api-routes";
 import { api } from "@/shared/lib/axios";
+import { DEMO_READ_ONLY_MESSAGE } from "@/shared/content/demo-content";
+import { isDemoReadOnlyError } from "@/shared/utils/demo-read-only";
+import { logError } from "@/shared/utils/log-error";
+import { IMAGE_UPLOAD_ERROR } from "../content/adminMenuContent";
 
 /** Uploads immediately on file-select — the resulting URL is held by the caller until form submit attaches it. */
 export function useAdminImageUpload() {
@@ -17,8 +21,9 @@ export function useAdminImageUpload() {
       formData.append("file", file);
       const { data } = await api.post<{ url: string }>(API_ROUTES.admin.menu.images, formData);
       return data.url;
-    } catch {
-      setError("Couldn't upload that photo — try a JPEG, PNG, or WebP under 5MB");
+    } catch (error) {
+      logError(error, "useAdminImageUpload.upload", { level: "warn" });
+      setError(isDemoReadOnlyError(error) ? DEMO_READ_ONLY_MESSAGE : IMAGE_UPLOAD_ERROR);
       return null;
     } finally {
       setIsUploading(false);

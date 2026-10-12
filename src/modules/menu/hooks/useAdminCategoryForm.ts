@@ -6,6 +6,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
 import { API_ROUTES } from "@/shared/api-routes";
 import { api } from "@/shared/lib/axios";
+import { DEMO_READ_ONLY_MESSAGE } from "@/shared/content/demo-content";
+import { isDemoReadOnlyError } from "@/shared/utils/demo-read-only";
 import { categoryInputSchema } from "../lib/categorySchema";
 import type { CategoryInput } from "../lib/categorySchema";
 import { categoryCreateErrorMessage } from "../content/adminMenuContent";
@@ -43,7 +45,7 @@ export function useAdminCategoryForm({ category, onSuccess }: UseAdminCategoryFo
       onSuccess();
     } catch (error) {
       const status = axios.isAxiosError(error) ? error.response?.status : undefined;
-      setFormError(categoryCreateErrorMessage(status));
+      setFormError(isDemoReadOnlyError(error) ? DEMO_READ_ONLY_MESSAGE : categoryCreateErrorMessage(status));
     }
   }
 

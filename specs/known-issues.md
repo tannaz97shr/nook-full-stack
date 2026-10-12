@@ -87,6 +87,19 @@ reorder categories/items from the admin UI; new ones always land last.
 Action: revisit if manual reordering becomes a real need. Status: open,
 deferred.
 
+**Demo orders accumulate in Firestore and the demo-admin queue.** Area:
+order, demo access. Issue: orders placed by `demo-customer@nook.local`
+are tagged `isDemo: true` and hidden from the real admin queue and stats
+(`order/lib/filterOrdersForAdminView.ts`). The demo-admin is read-only,
+though, so nothing ever advances or completes them. They stay
+"Received" forever and are never cleaned up. Impact: the demo-admin's
+"In queue" count and the demo customer's order history (no pagination)
+grow with every portfolio checkout. The real admin is unaffected.
+Action: if it gets noisy, add a dry-run-by-default
+`scripts/cleanup-demo-orders.ts --apply` that deletes `isDemo` orders
+older than N days, or a Vercel cron doing the same. Status: open,
+accepted trade-off of tagging over scheduled cleanup.
+
 **Phase 3 debug route needs deletion once a real protected route exists.**
 Area: auth. Issue: `src/app/api/debug/admin-check/route.ts` was added purely
 to exercise `requireAdminSession()` live, since Phase 3 built the guard but

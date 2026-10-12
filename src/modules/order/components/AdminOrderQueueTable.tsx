@@ -4,6 +4,8 @@ import { Fragment, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Badge } from "@/shared/components";
 import { useToast } from "@/shared/hooks/useToast";
+import { DEMO_READ_ONLY_MESSAGE } from "@/shared/content/demo-content";
+import { isDemoReadOnlyError } from "@/shared/utils/demo-read-only";
 import {
   ADMIN_ORDER_QUEUE_COLUMNS,
   ADMIN_ORDER_QUEUE_EMPTY_COPY,
@@ -44,13 +46,13 @@ export function AdminOrderQueueTable({ rows }: AdminOrderQueueTableProps) {
       { orderId: row.id, status: target },
       {
         onSuccess: () => router.refresh(), // stat tiles are server-computed, so they need a fresh RSC pass too
-        onError: () => {
+        onError: (error) => {
           setLocalRows((current) =>
             current.map((existing) =>
               existing.id === row.id ? { ...existing, fulfillmentStatus: row.fulfillmentStatus } : existing,
             ),
           );
-          showToast(ORDER_STATUS_ADVANCE_ERROR, "error");
+          showToast(isDemoReadOnlyError(error) ? DEMO_READ_ONLY_MESSAGE : ORDER_STATUS_ADVANCE_ERROR, "error");
         },
       },
     );

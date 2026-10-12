@@ -88,6 +88,7 @@ export function optionGroupCreateErrorMessage(status: number | undefined): strin
 }
 
 export const AVAILABILITY_TOGGLE_ERROR = "Couldn't update availability — try again";
+export const IMAGE_UPLOAD_ERROR = "Couldn't upload that photo — try a JPEG, PNG, or WebP under 5MB";
 export const DIETARY_TAG_OPTIONS: { value: string; label: string }[] = [
   { value: "vegan", label: "Vegan" },
   { value: "gluten-free", label: "Gluten free" },

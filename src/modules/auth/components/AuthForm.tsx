@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Button, TextField } from "@/shared/components";
 import { ROUTES, signInWithCallback, signUpWithCallback } from "@/shared/routes";
 import { useAuthForm } from "../hooks/useAuthForm";
+import { DemoSignInPanel } from "./DemoSignInPanel";
 import {
   AUTH_CONTENT,
   AUTH_DIVIDER,
@@ -17,9 +18,11 @@ export interface AuthFormProps {
   mode: AuthMode;
   callbackUrl?: string;
   errorMessage?: string;
+  /** Server-decided (DEMO_ACCESS_ENABLED) — this client component can't read server env. */
+  showDemoAccess?: boolean;
 }
 
-export function AuthForm({ mode, callbackUrl, errorMessage }: AuthFormProps) {
+export function AuthForm({ mode, callbackUrl, errorMessage, showDemoAccess = false }: AuthFormProps) {
   const copy = AUTH_CONTENT[mode];
   const isSignUp = mode === "sign-up";
   const { register, handleSubmit, errors, isSubmitting, formError, signInWithGoogle } =
@@ -35,6 +38,8 @@ export function AuthForm({ mode, callbackUrl, errorMessage }: AuthFormProps) {
         {copy.title}
       </h1>
       <p className="mb-[26px] text-[15.5px] leading-relaxed text-ink-muted">{copy.blurb}</p>
+
+      {showDemoAccess && <DemoSignInPanel callbackUrl={callbackUrl} />}
 
       <Button
         type="button"

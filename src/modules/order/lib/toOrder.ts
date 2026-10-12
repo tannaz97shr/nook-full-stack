@@ -30,6 +30,7 @@ export function toOrder(doc: DocumentSnapshot): Order {
     redemption: data.redemption ?? null,
     pointsAwardedAt: data.pointsAwardedAt?.toMillis() ?? null,
     pointsEarned: data.pointsEarned ?? null,
+    isDemo: data.isDemo ?? false,
     createdAt: data.createdAt.toMillis(),
     updatedAt: data.updatedAt.toMillis(),
   };

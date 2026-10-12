@@ -57,6 +57,17 @@ exported reference screens from Claude Design).
   rely on a page-level layout gate alone. `src/middleware.ts` uses its
   own lightweight, provider-less NextAuth instance;
   its matcher excludes `/api`, so API routes must self-check.
+- **Demo access (portfolio):** role `demo-admin` can *view* admin
+  (`canViewAdmin` in `auth/lib/roles.ts`, used by middleware and layouts),
+  but `requireAdminSession()` admits only `admin` (`canMutateAdmin`), so
+  every admin API route is read-only for it, and it gets a 403 with
+  `code: "demo-read-only"`. Admin API routes are mutation-only; if a
+  read-only admin API route is ever added, it needs its own view-level
+  check rather than `requireAdminSession()`. Demo accounts (`DEMO_ACCOUNTS`)
+  are passwordless: you sign into them only through the `demo` provider,
+  gated by the server-only `DEMO_ACCESS_ENABLED=true`. Orders placed by
+  the demo customer carry `isDemo: true` and are hidden from the real
+  admin.
 - **Firestore:** explicit field-mapping via mapper functions
   (`toProduct.ts`-style) — never spread `doc.data()` directly into a
   response. Natural slugs are the doc ID where one exists. Use

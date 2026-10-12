@@ -1,5 +1,6 @@
 import { registerCredentialsUser } from "@/modules/auth/api";
 import { registerSchema } from "@/modules/auth/lib/credentialsSchema";
+import { isDemoAccountEmail } from "@/modules/auth/lib/demoAccounts";
 import { EmailAlreadyRegisteredError } from "@/modules/auth/lib/errors";
 import { logError } from "@/shared/utils/log-error";
 
@@ -12,6 +13,11 @@ export async function POST(req: Request) {
   }
 
   const email = parsed.data.email.toLowerCase().trim();
+
+  // Reserved for scripts/seed-demo-users.ts — same response as a taken email.
+  if (isDemoAccountEmail(email)) {
+    return Response.json({ error: "Email already registered" }, { status: 409 });
+  }
 
   try {
     const user = await registerCredentialsUser({

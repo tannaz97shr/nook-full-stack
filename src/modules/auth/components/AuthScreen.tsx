@@ -7,9 +7,10 @@ export interface AuthScreenProps {
   mode: AuthMode;
   callbackUrl?: string;
   errorMessage?: string;
+  showDemoAccess?: boolean;
 }
 
-export function AuthScreen({ mode, callbackUrl, errorMessage }: AuthScreenProps) {
+export function AuthScreen({ mode, callbackUrl, errorMessage, showDemoAccess }: AuthScreenProps) {
   return (
     <main className="mx-auto max-w-[1240px] px-4 py-8 sm:px-8 md:py-12">
       <div className="grid items-center gap-6 sm:grid-cols-2 md:gap-12">
@@ -34,7 +35,12 @@ export function AuthScreen({ mode, callbackUrl, errorMessage }: AuthScreenProps)
           </p>
         </div>
 
-        <AuthForm mode={mode} callbackUrl={callbackUrl} errorMessage={errorMessage} />
+        <AuthForm
+          mode={mode}
+          callbackUrl={callbackUrl}
+          errorMessage={errorMessage}
+          showDemoAccess={showDemoAccess}
+        />
       </div>
     </main>
   );

@@ -4,6 +4,8 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import { Badge } from "@/shared/components";
 import { useToast } from "@/shared/hooks/useToast";
+import { DEMO_READ_ONLY_MESSAGE } from "@/shared/content/demo-content";
+import { isDemoReadOnlyError } from "@/shared/utils/demo-read-only";
 import { formatMoney } from "@/shared/utils/format-money";
 import { useMenuItemAvailabilityToggle } from "../hooks/useMenuItemAvailabilityToggle";
 import {
@@ -48,13 +50,13 @@ export function AdminItemsTable({
     toggle.mutate(
       { itemId: item.id, isAvailable: nextAvailable },
       {
-        onError: () => {
+        onError: (error) => {
           setLocalItems((current) =>
             current.map((existing) =>
               existing.id === item.id ? { ...existing, isAvailable: item.isAvailable } : existing,
             ),
           );
-          showToast(AVAILABILITY_TOGGLE_ERROR, "error");
+          showToast(isDemoReadOnlyError(error) ? DEMO_READ_ONLY_MESSAGE : AVAILABILITY_TOGGLE_ERROR, "error");
         },
       },
     );
