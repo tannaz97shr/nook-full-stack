@@ -1,6 +1,6 @@
-import { fileTypeFromBuffer } from "file-type";
 import { requireAdminSession } from "@/modules/auth/lib/requireAdminSession";
 import { uploadMenuItemImage } from "@/modules/menu/api";
+import { detectImageType } from "@/modules/menu/lib/detectImageType";
 import { ALLOWED_IMAGE_MIME_TYPES, MAX_IMAGE_UPLOAD_BYTES } from "@/modules/menu/lib/imageUpload";
 import { logError } from "@/shared/utils/log-error";
 
@@ -10,10 +10,18 @@ import { logError } from "@/shared/utils/log-error";
  * where magic-byte validation can happen before anything touches Storage.
  */
 export async function POST(req: Request) {
+  // Before touching the body, so a demo-admin or anonymous caller gets its 401/403 whatever it sent.
   const guard = await requireAdminSession();
   if ("error" in guard) return guard.error;
 
-  const formData = await req.formData();
+  let formData: FormData;
+  try {
+    formData = await req.formData();
+  } catch (error) {
+    logError(error, "admin.menu.images.parseBody", { level: "warn" });
+    return Response.json({ error: "Expected a multipart/form-data upload" }, { status: 400 });
+  }
+
   const file = formData.get("file");
   if (!(file instanceof File)) {
     return Response.json({ error: "No file provided" }, { status: 400 });
@@ -26,7 +34,7 @@ export async function POST(req: Request) {
 
   // Real content only, from the bytes themselves — never the client-
   // supplied filename or Content-Type header, both spoofable.
-  const detected = await fileTypeFromBuffer(buffer);
+  const detected = detectImageType(buffer);
   if (!detected || !ALLOWED_IMAGE_MIME_TYPES.has(detected.mime)) {
     return Response.json({ error: "Unsupported or unrecognized image file" }, { status: 415 });
   }
