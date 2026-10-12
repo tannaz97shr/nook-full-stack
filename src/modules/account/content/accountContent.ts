@@ -8,6 +8,7 @@ export const ACCOUNT_TABS: AccountTab[] = [
 ];
 
 export const SIGN_OUT_LABEL = "Sign out";
+export const SIGNING_OUT_LABEL = "Signing out…";
 export const SIGN_OUT_ERROR = "We couldn't sign you out just now. Please try again.";
 
 export const SAVED_DETAILS_HEADING = "Saved details";

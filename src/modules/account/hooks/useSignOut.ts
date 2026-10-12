@@ -8,10 +8,15 @@ import { logError } from "@/shared/utils/log-error";
 import { SIGN_OUT_ERROR } from "../content/accountContent";
 
 /**
- * Shared by every sign-out control. signOut() is a CSRF fetch + POST +
- * redirect, which can take a few seconds on a slow connection —
- * isSigningOut lets the caller show that the click registered instead of
- * looking dead (and inviting a second click).
+ * Shared by every sign-out control. signOut() is a CSRF fetch + POST,
+ * which can take a few seconds — isSigningOut lets the caller show that
+ * the click registered instead of looking dead (and inviting a second
+ * click). It stays true until the page unloads.
+ *
+ * redirect: false, then a full page navigation once the POST has
+ * returned, same as useDemoSignIn: the session cookie is already cleared
+ * when the next page loads, so nothing clicked mid-sign-out (e.g. a demo
+ * sign-in button) races a still-live session.
  */
 export function useSignOut(context: string) {
   const { showToast } = useToast();
@@ -20,7 +25,8 @@ export function useSignOut(context: string) {
   async function signOut() {
     setIsSigningOut(true);
     try {
-      await nextAuthSignOut({ callbackUrl: ROUTES.home });
+      await nextAuthSignOut({ redirect: false });
+      window.location.assign(ROUTES.home);
     } catch (error) {
       logError(error, context, { level: "error" });
       showToast(SIGN_OUT_ERROR, "error");
