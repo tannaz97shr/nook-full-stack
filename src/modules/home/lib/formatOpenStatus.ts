@@ -3,6 +3,8 @@ import type { OpenStatus } from "../types/open-status";
 
 export function formatOpenStatus(status: OpenStatus): string {
   switch (status.kind) {
+    case "always-open":
+      return OPEN_STATUS_COPY.alwaysOpen;
     case "open":
       return OPEN_STATUS_COPY.open(status.closesAt);
     case "closing-soon":
@@ -18,7 +20,7 @@ export function formatOpenStatus(status: OpenStatus): string {
   }
 }
 
-/** Open and closing-soon get the gold treatment; before-open, closed and public holidays are muted. */
+/** Always-open, open and closing-soon get the gold treatment; before-open, closed and public holidays are muted. */
 export function isOpenNow(status: OpenStatus): boolean {
-  return status.kind === "open" || status.kind === "closing-soon";
+  return status.kind === "always-open" || status.kind === "open" || status.kind === "closing-soon";
 }

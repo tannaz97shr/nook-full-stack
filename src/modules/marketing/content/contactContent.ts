@@ -1,4 +1,4 @@
-import { CLOSED_LABEL, formatHoursRange, OPENING_HOURS_ROWS } from "@/shared/content/opening-hours";
+import { ALWAYS_OPEN, CLOSED_LABEL, formatHoursRange, OPENING_HOURS_ROWS } from "@/shared/content/opening-hours";
 
 export const CONTACT_HEADER = {
   heading: "Come find us",
@@ -14,7 +14,8 @@ export const CONTACT_HOURS: {
       label: row.longLabel,
       value: formatHoursRange(row.hours, " – "),
     })),
-    { label: "Public holidays", value: CLOSED_LABEL, muted: true },
+    // The always-open demo never says "Closed", so the holiday row is dropped with it.
+    ...(ALWAYS_OPEN ? [] : [{ label: "Public holidays", value: CLOSED_LABEL, muted: true }]),
   ],
   badge: "Kitchen closes 15:30",
 };

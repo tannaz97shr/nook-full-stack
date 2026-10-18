@@ -5,6 +5,13 @@
  */
 export const CAFE_TIMEZONE = "Australia/Melbourne";
 
+/**
+ * Portfolio demo switch: report the cafe as open at every hour so visitors
+ * can always order. The real hours logic below stays intact — set to false
+ * to restore it. See specs/known-issues.md.
+ */
+export const ALWAYS_OPEN = true;
+
 /** The homepage badge switches from "Open today until X" to "Closing at X" inside this window. */
 export const CLOSING_SOON_THRESHOLD_MINUTES = 30;
 
