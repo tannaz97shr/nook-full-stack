@@ -81,6 +81,7 @@ export function formatBadgeTime(minutes: number): string {
 }
 
 export const OPEN_STATUS_COPY = {
+  alwaysOpen: "Open now · order ahead",
   open: (closesAt: number) => `Open today until ${formatBadgeTime(closesAt)}`,
   closingSoon: (closesAt: number) => `Closing at ${formatBadgeTime(closesAt)}`,
   beforeOpen: (opensAt: number) => `Opens at ${formatBadgeTime(opensAt)}`,

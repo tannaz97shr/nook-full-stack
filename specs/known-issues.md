@@ -288,6 +288,28 @@ the dialog div, `tabIndex={-1}`, backdrop `tabIndex={-1}`), then re-check
 each modal's initial focus. Status: open, deferred from fix/mobile-nav
 to keep that branch scoped.
 
+**`ALWAYS_OPEN` is on for the portfolio deployment.** Area: home, shared
+hours. Issue: `ALWAYS_OPEN = true` in `src/shared/content/opening-hours.ts`
+makes `getOpenStatus` return `always-open` at every hour, so the homepage
+badge always reads "Open now · order ahead". The contact page also drops its
+"Public holidays: Closed" row. The real Melbourne-time hours, closing-soon
+and public-holiday logic is still in place but unused. Ordering was never
+time-gated (no hours check in the menu, cart or `/api/checkout`). Action:
+set it to `false` for a real trading deployment. Nothing else needs to
+change. Status: open, deliberate for the portfolio demo.
+
+**Admin, rewards and footer dates use the server's timezone, not
+Melbourne.** Area: admin/orders, loyalty, shared footer. Issue:
+`computeAdminOrderStats` ("today" counts) and `formatOrderQueueTimestamp`
+use `toDateString()` and an `Intl.DateTimeFormat` with no `timeZone`.
+`computeRewardsStats` and the footer © use `getFullYear()`. All of them
+render on the server, which is UTC on Vercel. Impact: admin queue times
+show in UTC, and "today" rolls over at 10–11am Melbourne time. The rewards
+"this year" count and the © year are wrong for about 11 hours around New
+Year. Action: pass `timeZone: CAFE_TIMEZONE`, and compare Melbourne-local
+dates the way `getOpenStatus` does. Status: open, found during the
+always-open audit.
+
 ## Resolved
 
 **Items possibly lost on add right after sign-in.** ~~Seen once in QA:

@@ -1,4 +1,5 @@
 import {
+  ALWAYS_OPEN,
   CAFE_TIMEZONE,
   CLOSING_SOON_THRESHOLD_MINUTES,
   OPENING_HOURS,
@@ -50,6 +51,11 @@ function addDays(isoDate: string, days: number): string {
 }
 
 export function getOpenStatus(now: Date): OpenStatus {
+  // Time-independent, so the server render and every client recompute agree — no hydration flip.
+  if (ALWAYS_OPEN) {
+    return { kind: "always-open" };
+  }
+
   const { isoDate, weekday, minutes } = toCafeTime(now);
 
   if (isPublicHoliday(isoDate)) {
