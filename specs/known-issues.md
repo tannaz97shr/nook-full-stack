@@ -17,16 +17,6 @@ onto order line items, and compute GST over the taxable lines only (with
 a rule for apportioning a reward discount across taxable and GST-free
 lines). Status: open, deliberate MVP simplification.
 
-**Currency is USD, not AUD.** Area: checkout, shared utils. Issue:
-Stripe Checkout Sessions and reward coupons are created with
-`currency: "usd"`, and `formatMoney` formats as `en-US`/`USD`. That
-doesn't match the cafe's Australian, GST-inclusive pricing. Impact:
-display shows "$", so it looks right, but Stripe settles in USD and
-receipts say USD. Action: switch to `aud` (Stripe, coupons) and
-`en-AU`/`AUD` (`format-money.ts`) together. Do it in its own change,
-since every Stripe amount and test flow is affected. Status: open, noted
-during the GST-inclusive pricing change.
-
 **Add-to-cart toast overlaps the cart drawer's Checkout button on mobile.**
 Area: cart, shared components. Issue: `ToastProvider` positions toasts with
 `fixed inset-x-0 bottom-6 z-[70]` (full viewport width, centered, above the
@@ -311,6 +301,18 @@ dates the way `getOpenStatus` does. Status: open, found during the
 always-open audit.
 
 ## Resolved
+
+**Currency was USD, not AUD.** ~~Stripe Checkout Sessions and reward
+coupons were created with `currency: "usd"`, and `formatMoney` formatted
+as `en-US`/`USD`, so Stripe settled in USD and receipts said USD.~~
+Resolved 2026-10-19 (fix/aud-currency). `src/shared/currency.ts` holds the
+one currency (`AUD`, `en-AU`). `formatMoney` and `STRIPE_CURRENCY`
+(`order/lib/pricingConstants.ts`, used for both line items and the reward
+coupon) derive from it. Amounts were already integer cents via `toCents`,
+and the checkout route's amount-mismatch guard is unchanged. Existing
+orders store plain dollars with no currency field, and the webhook never
+reads currency, so nothing needed migrating; past USD sessions stay USD in
+the Stripe dashboard.
 
 **Items possibly lost on add right after sign-in.** ~~Seen once in QA:
 the first two adds right after signing in never reached the cart, and the

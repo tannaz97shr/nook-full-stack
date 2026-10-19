@@ -10,7 +10,7 @@ import {
 import { STRIPE_CHECKOUT_DEMO_MESSAGE } from "@/modules/order/content/checkoutContent";
 import { checkoutRequestSchema } from "@/modules/order/lib/checkoutRequestSchema";
 import { computeOrderTotals, toCents } from "@/modules/order/lib/gst";
-import { SHIPPING_FLAT } from "@/modules/order/lib/pricingConstants";
+import { SHIPPING_FLAT, STRIPE_CURRENCY } from "@/modules/order/lib/pricingConstants";
 import { reverifyOrderLines } from "@/modules/order/lib/reverifyOrderLines";
 import { ROUTES } from "@/shared/routes";
 import { stripe } from "@/shared/lib/stripe";
@@ -85,7 +85,7 @@ export async function POST(req: Request) {
     if (redemption && redemption.discountAmount > 0) {
       const coupon = await stripe.coupons.create({
         amount_off: stripeCouponCents,
-        currency: "usd",
+        currency: STRIPE_CURRENCY,
         duration: "once",
         name: `Reward: ${redemption.rewardId}`,
       });
@@ -97,7 +97,7 @@ export async function POST(req: Request) {
       // GST-inclusive unit prices — no separate tax line item.
       line_items: result.lines.map((line) => ({
         price_data: {
-          currency: "usd",
+          currency: STRIPE_CURRENCY,
           product_data: { name: line.name },
           unit_amount: toCents(line.unitPrice),
         },

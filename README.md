@@ -195,4 +195,4 @@ bun run stripe:listen    # forwards Stripe webhooks to localhost
 
 ## Known issues
 
-Open items, deliberate MVP trade-offs and resolved investigations are tracked in [`specs/known-issues.md`](specs/known-issues.md). Two headline items: Stripe currently settles in USD rather than AUD, and every menu item is treated as GST-taxable.
+Open items, deliberate MVP trade-offs and resolved investigations are tracked in [`specs/known-issues.md`](specs/known-issues.md). Headline item: every menu item is treated as GST-taxable.
