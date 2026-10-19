@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { formatHoursRange, OPENING_HOURS_ROWS } from "@/shared/content/opening-hours";
 import { ROUTES } from "@/shared/routes";
+import { toCafeYear } from "@/shared/utils/date";
 
 export function Footer() {
   return (
@@ -69,7 +70,7 @@ export function Footer() {
 
       <div className="border-t border-border">
         <div className="mx-auto max-w-[1240px] px-4 py-6 text-xs text-ink-subtle sm:px-8">
-          © {new Date().getFullYear()} Nook Coffee. Made on Wurundjeri land.
+          © {toCafeYear(new Date())} Nook Coffee. Made on Wurundjeri land.
         </div>
       </div>
     </footer>

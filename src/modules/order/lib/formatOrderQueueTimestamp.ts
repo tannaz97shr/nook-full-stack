@@ -1,10 +1,8 @@
-const TIME_FORMATTER = new Intl.DateTimeFormat("en-US", { hour: "numeric", minute: "2-digit" });
-const DATE_FORMATTER = new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric" });
+import { formatCafeDayMonth, formatCafeTime, isSameCafeDay } from "@/shared/utils/date";
 
-/** "8:04am" for today's orders, "Sep 5, 7:58am" for older ones — the queue has no per-shift scoping. */
-export function formatOrderQueueTimestamp(createdAt: number): string {
+/** "8:04am" for today's orders, "5 Sep, 7:58am" for older ones — in Melbourne time, since this renders on UTC servers. The queue has no per-shift scoping. */
+export function formatOrderQueueTimestamp(createdAt: number, now: Date = new Date()): string {
   const date = new Date(createdAt);
-  const isToday = new Date().toDateString() === date.toDateString();
-  const time = TIME_FORMATTER.format(date).replace(" ", "").toLowerCase();
-  return isToday ? time : `${DATE_FORMATTER.format(date)}, ${time}`;
+  const time = formatCafeTime(date);
+  return isSameCafeDay(date, now) ? time : `${formatCafeDayMonth(date)}, ${time}`;
 }

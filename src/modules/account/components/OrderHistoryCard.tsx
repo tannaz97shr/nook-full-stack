@@ -2,10 +2,10 @@ import { Badge, Button } from "@/shared/components";
 import { formatMoney } from "@/shared/utils/format-money";
 import { formatOrderTaxLine, orderHistoryChipLabel } from "@/modules/order/content/orderStatusContent";
 import type { OrderSummaryDTO } from "@/modules/order/types";
+import { formatOrderDisplayId } from "@/modules/order/lib/formatOrderDisplayId";
 import { formatOrderSummaryLine } from "@/modules/order/lib/formatOrderSummaryLine";
+import { formatCafeDate } from "@/shared/utils/date";
 import { REORDER_CTA, REORDER_DEFERRED_TITLE } from "../content/orderHistoryContent";
-
-const ORDER_DATE_FORMATTER = new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", year: "numeric" });
 
 export interface OrderHistoryCardProps {
   order: OrderSummaryDTO;
@@ -18,10 +18,10 @@ export function OrderHistoryCard({ order }: OrderHistoryCardProps) {
     <div className="grid gap-4 rounded-xl border border-border bg-surface p-5">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div className="flex items-center gap-3">
-          <span className="font-mono text-[13px] text-ink-subtle">{order.id}</span>
+          <span className="font-mono text-[13px] text-ink-subtle">{formatOrderDisplayId(order.id)}</span>
           <Badge variant={chip.tone}>{chip.label}</Badge>
         </div>
-        <span className="text-[13px] text-ink-subtle">{ORDER_DATE_FORMATTER.format(new Date(order.createdAt))}</span>
+        <span className="text-[13px] text-ink-subtle">{formatCafeDate(new Date(order.createdAt))}</span>
       </div>
 
       <p className="text-[14.5px] text-ink">{formatOrderSummaryLine(order.lineItems)}</p>

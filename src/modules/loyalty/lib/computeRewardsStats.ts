@@ -1,15 +1,17 @@
 import type { Order } from "@/modules/order/types/order";
+import { toCafeYear } from "@/shared/utils/date";
 
 export interface RewardsStats {
   earnedThisYear: number;
   redeemed: number;
 }
 
-export function computeRewardsStats(orders: Order[]): RewardsStats {
-  const currentYear = new Date().getFullYear();
+export function computeRewardsStats(orders: Order[], now: Date = new Date()): RewardsStats {
+  // Melbourne calendar year, not the server's UTC year — they differ for ~11 hours around New Year.
+  const currentYear = toCafeYear(now);
 
   const earnedThisYear = orders
-    .filter((order) => order.pointsAwardedAt !== null && new Date(order.pointsAwardedAt).getFullYear() === currentYear)
+    .filter((order) => order.pointsAwardedAt !== null && toCafeYear(new Date(order.pointsAwardedAt)) === currentYear)
     .reduce((sum, order) => sum + (order.pointsEarned ?? 0), 0);
 
   const redeemed = orders
