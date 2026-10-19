@@ -19,6 +19,9 @@ export function AuthScreen({ mode, callbackUrl, errorMessage, showDemoAccess }: 
             src="/images/marketing/coffee-latte-hands.jpg"
             alt="Hands holding a cup of latte art coffee"
             fill
+            // Above the fold at every width: load eagerly so the panel is
+            // never caught empty (lazy loading left it blank in screenshots).
+            priority
             sizes="(min-width: 640px) 50vw, 100vw"
             className="object-cover"
           />

@@ -4,7 +4,9 @@
  *
  * Dry-run by default — only writes to Firestore with an explicit --apply
  * flag. Doc IDs are deterministic natural slugs, so re-running --apply is
- * a safe upsert, not an additive duplicate-creator.
+ * a safe upsert, not an additive duplicate-creator. It resets every other
+ * seeded field (prices, copy, availability), but keeps any photo already
+ * uploaded to a menu item through the admin.
  *
  * Usage:
  *   bun run scripts/seed-menu.ts            # dry run, no writes
@@ -207,14 +209,39 @@ function withoutId<T extends { id: string }>({ id, ...rest }: T): Omit<T, "id"> 
   return rest;
 }
 
+/**
+ * Photos uploaded through the admin replace a seeded item's placeholder
+ * image, and a plain re-seed would silently overwrite them. Read each seeded
+ * item's current `images` first and keep any non-empty value. Read-then-write
+ * without a transaction is fine for a one-off script run by hand.
+ */
+async function keepExistingImages(items: MenuItem[]): Promise<{ items: MenuItem[]; keptIds: string[] }> {
+  const refs = items.map((item) => adminDb.collection(MENU_COLLECTIONS.menuItems).doc(item.id));
+  const snapshots = await adminDb.getAll(...refs);
+  const keptIds: string[] = [];
+
+  const merged = items.map((item, index) => {
+    const existing = snapshots[index].exists ? snapshots[index].get("images") : undefined;
+    const hasExistingImages =
+      Array.isArray(existing) && existing.length > 0 && existing.every((url) => typeof url === "string");
+    if (!hasExistingImages) return item;
+    keptIds.push(item.id);
+    return { ...item, images: existing as string[] };
+  });
+
+  return { items: merged, keptIds };
+}
+
 async function main() {
   const apply = process.argv.includes("--apply");
+
+  const { items: seededItems, keptIds } = await keepExistingImages(menuItems);
 
   const writes = [
     ...categories.map((c) => ({ collection: MENU_COLLECTIONS.categories, doc: c })),
     ...optionGroups.map((g) => ({ collection: MENU_COLLECTIONS.optionGroups, doc: g })),
     ...options.map((o) => ({ collection: MENU_COLLECTIONS.options, doc: o })),
-    ...menuItems.map((m) => ({ collection: MENU_COLLECTIONS.menuItems, doc: m })),
+    ...seededItems.map((m) => ({ collection: MENU_COLLECTIONS.menuItems, doc: m })),
   ];
 
   console.log(
@@ -227,6 +254,13 @@ async function main() {
   for (const { collection, doc } of writes) {
     console.log(`  ${collection}/${doc.id}${apply ? "" : "  (planned)"}`);
   }
+
+  console.log();
+  console.log(
+    keptIds.length > 0
+      ? `Keeping existing photos on ${keptIds.length} menu item(s): ${keptIds.join(", ")}`
+      : "No existing menu item photos to keep.",
+  );
 
   if (!apply) {
     console.log();
