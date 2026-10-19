@@ -298,17 +298,18 @@ time-gated (no hours check in the menu, cart or `/api/checkout`). Action:
 set it to `false` for a real trading deployment. Nothing else needs to
 change. Status: open, deliberate for the portfolio demo.
 
-**Admin, rewards and footer dates use the server's timezone, not
-Melbourne.** Area: admin/orders, loyalty, shared footer. Issue:
-`computeAdminOrderStats` ("today" counts) and `formatOrderQueueTimestamp`
-use `toDateString()` and an `Intl.DateTimeFormat` with no `timeZone`.
-`computeRewardsStats` and the footer © use `getFullYear()`. All of them
-render on the server, which is UTC on Vercel. Impact: admin queue times
-show in UTC, and "today" rolls over at 10–11am Melbourne time. The rewards
-"this year" count and the © year are wrong for about 11 hours around New
-Year. Action: pass `timeZone: CAFE_TIMEZONE`, and compare Melbourne-local
-dates the way `getOpenStatus` does. Status: open, found during the
-always-open audit.
+**Blank image tiles seen in portfolio screenshots (unreproduced).** Area:
+marketing/gallery, auth. Issue: while capturing portfolio screenshots, the
+first `/gallery` tile and the sign-in page's photo panel showed empty. On
+investigation (2026-10-19) every image returned 200, every file in
+`public/images/marketing` is a valid JPEG, and live screenshots in light
+and dark mode showed all seven tiles and the sign-in photo filled. Likely
+cause: next/image lazy-loads by default, so a capture taken right after
+navigation (or a full-page capture) can catch the `bg-sunken` placeholder
+before the photo arrives. Action taken: the sign-in photo and the first
+gallery row now load eagerly (`priority`), which removes that timing window.
+If a tile still shows empty, record the page, viewport and theme. Status:
+open, investigated but not reproduced.
 
 ## Resolved
 
@@ -352,6 +353,18 @@ flushes the hydration effect first; never lost), and bfcache restoring the
 pre-sign-in page (`Cache-Control: no-store` prevents it). Reconcile's
 non-functional `setItems` was only checked by reading the code. Exercising
 it needs an unavailable menu item, and dev shares production Firebase.
+
+**Admin, rewards and footer dates used the server's timezone, not
+Melbourne.** ~~`computeAdminOrderStats`, `formatOrderQueueTimestamp`,
+`computeRewardsStats`, the footer © and the order-history and member-since
+dates formatted or compared dates with no `timeZone`, on Vercel's UTC
+servers. Admin queue times showed in UTC (5:48pm read "6:48am"), and
+"today" rolled over at 10–11am Melbourne time.~~ Resolved 2026-10-19
+(fix/screenshot-polish). Every displayed date now goes through
+`src/shared/utils/date.ts`, pinned to `CAFE_TIMEZONE` and formatted en-AU
+("19 Oct 2026", "5:48pm"); Intl handles AEDT/AEST. "Today" and "this year"
+compare Melbourne calendar dates. The only other formatter left,
+`getOpenStatus`'s clock, was already pinned.
 
 **Production og:image / twitter:image pointed at localhost.** ~~`metadataBase`
 came from `SITE_URL` with a `http://localhost:3000` fallback, and `SITE_URL`
