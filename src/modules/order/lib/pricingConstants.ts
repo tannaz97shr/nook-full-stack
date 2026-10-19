@@ -1,3 +1,5 @@
+import { CURRENCY_CODE } from "@/shared/currency";
+
 /**
  * Single source of truth for GST/shipping — fixed constants at MVP, not
  * admin-configurable (see CLAUDE.md). Menu prices are GST-inclusive
@@ -7,6 +9,13 @@
  * specs/known-issues.md.
  */
 export const GST_DIVISOR = 11;
+
+/**
+ * Stripe's lowercase ISO code for every Checkout Session line item and
+ * reward coupon — the two must match, or Stripe rejects the session.
+ * Amounts sent to Stripe are integer cents (`toCents`).
+ */
+export const STRIPE_CURRENCY = CURRENCY_CODE.toLowerCase() as Lowercase<typeof CURRENCY_CODE>;
 
 /** Pickup-only cafe — no delivery in scope, kept as a named constant so a future delivery feature has one obvious place to change it. */
 export const SHIPPING_FLAT = 0;
