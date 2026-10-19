@@ -1,3 +1,4 @@
+import { isSameCafeDay } from "@/shared/utils/date";
 import { formatMoney } from "@/shared/utils/format-money";
 import type { Order } from "../types/order";
 
@@ -8,8 +9,9 @@ export interface AdminOrderStats {
   takingsTodayLabel: string;
 }
 
-function isToday(millis: number): boolean {
-  return new Date().toDateString() === new Date(millis).toDateString();
+/** "Today" is the Melbourne calendar day — the server runs on UTC, which would roll over at 10–11am. */
+function isToday(millis: number, now: Date): boolean {
+  return isSameCafeDay(new Date(millis), now);
 }
 
 /**
@@ -20,13 +22,13 @@ function isToday(millis: number): boolean {
  * write, including the guest-completion branch, and Completed is terminal
  * (nothing writes to a Completed order again), so it's a safe proxy here.
  */
-export function computeAdminOrderStats(orders: Order[]): AdminOrderStats {
+export function computeAdminOrderStats(orders: Order[], now: Date = new Date()): AdminOrderStats {
   const paid = orders.filter((order) => order.paymentStatus === "Paid");
   const inQueueCount = paid.filter(
     (order) => order.fulfillmentStatus === "Received" || order.fulfillmentStatus === "Preparing",
   ).length;
   const readyForPickupCount = paid.filter((order) => order.fulfillmentStatus === "Ready").length;
-  const completedToday = paid.filter((order) => order.fulfillmentStatus === "Completed" && isToday(order.updatedAt));
+  const completedToday = paid.filter((order) => order.fulfillmentStatus === "Completed" && isToday(order.updatedAt, now));
 
   return {
     inQueueCount,

@@ -5,6 +5,8 @@ import { GALLERY_HEADER, GALLERY_PHOTOS } from "../content/galleryContent";
 import { useLightbox } from "../hooks/useLightbox";
 import { GalleryLightbox } from "./GalleryLightbox";
 
+const EAGER_TILE_COUNT = 4;
+
 export function GalleryScreen() {
   const { current, open, close, prev, next } = useLightbox(GALLERY_PHOTOS);
 
@@ -27,6 +29,9 @@ export function GalleryScreen() {
               src={photo.src}
               alt={photo.alt}
               fill
+              // The first row (up to 4 tiles at lg) is above the fold: load
+              // it eagerly so a tile is never caught empty mid-load.
+              priority={index < EAGER_TILE_COUNT}
               sizes="(min-width: 1024px) 25vw, (min-width: 640px) 33vw, 50vw"
               className="object-cover transition-transform duration-300 group-hover:scale-105"
             />
